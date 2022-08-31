@@ -1326,8 +1326,20 @@ static void CG_CalculateWeaponPosition( vec3_t origin, vec3_t angles )
                                 fracsin = 55;
                         }
                         scale = (cg.time - cg.headEndYaw) * 0.0005;
-                        //CG_Printf("singles: %.4f \n", sin(cg.refdefViewAngles[PITCH] / 180 * M_PI) );
-                        //CG_Printf("cosgles: %.4f \n", cos(cg.refdefViewAngles[PITCH] / 180 * M_PI) );
+                        //CG_Printf("sin: %.4f \n", sin(cg.refdefViewAngles[PITCH] / 180 * M_PI) );
+                        //CG_Printf("cos: %.4f \n", cos(cg.refdefViewAngles[PITCH] / 180 * M_PI) );
+                        if (cg.landChange > 0) {
+                                scale = cg.time - cg.landTime;
+                                if (scale < LAND_DEFLECT_TIME) {
+                                        scale = 1-(LAND_DEFLECT_TIME-scale)/LAND_DEFLECT_TIME;
+                                } else if (scale < LAND_DEFLECT_TIME + LAND_RETURN_TIME) {
+                                        scale = ((LAND_DEFLECT_TIME + LAND_RETURN_TIME)-scale)/(LAND_DEFLECT_TIME + LAND_RETURN_TIME);
+                                } else {
+                                        cg.landChange = 0;
+                                        scale = 0;
+                                }
+                                fracsin = 55 * scale * 0.8;
+                        }
                         if (scale > 1) {
                                 scale = 1;
                         }
