@@ -1,5 +1,6 @@
 SET Q3ASM=windows\build\cgame.q3asm
 SET GAMEDIR=base
+cd /D "%~dp0"
 cd ..
 mkdir windows
 mkdir windows\build
@@ -85,8 +86,9 @@ q3asm -f ../cgame
 cd ..\..\..
 
 rmdir .\windows\build /S /Q
+cd /D "%~dp0"
+cd "..\windows\%GAMEDIR%\vm"
 IF NOT EXIST "%~dp0q3silent.txt" (
 pause
-cd %~dp0..\windows\base\vm
-"%WINDIR%\..\Program Files\Totalcmd_p\doublecmd.exe" -C %CD%
+"%WINDIR%\..\Program Files\Totalcmd_p\doublecmd.exe" -C "%CD%"
 )
