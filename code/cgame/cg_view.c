@@ -497,10 +497,16 @@ static void CG_OffsetFirstPersonView( void ) {
 	delta = cg.time - cg.landTime;
 	if ( delta < LAND_DEFLECT_TIME ) {
 		f = delta / LAND_DEFLECT_TIME;
+                if (cg.landChange > 0) {
+                        f = -f;
+                }
 		cg.refdef.vieworg[2] += cg.landChange * f;
 	} else if ( delta < LAND_DEFLECT_TIME + LAND_RETURN_TIME ) {
 		delta -= LAND_DEFLECT_TIME;
 		f = 1.0 - ( delta / LAND_RETURN_TIME );
+                if (cg.landChange > 0) {
+                        f = -f;
+                }
 		cg.refdef.vieworg[2] += cg.landChange * f;
 	}
 
@@ -536,7 +542,7 @@ void CG_ZoomDown_f( void ) {
         //Mix3r_Durachok gauntlet block stuff
         if (cg.predictedPlayerState.weapon == 1) {
                 if (cg.time - cg.landTime > (LAND_DEFLECT_TIME + LAND_RETURN_TIME)) {
-                        cg.landChange = 20;
+                        cg.landChange = 10;
                         cg.landTime = CG_CrosshairPlayer();
                         if (cg.landTime == -1) {
                         } else {
