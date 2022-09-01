@@ -2475,6 +2475,7 @@ static void CG_DrawCenterString(void) {
 	color = CG_FadeColor(cg.centerPrintTime, 1000 * cg_centertime.value);
 	if (!color) {
                 cg.centerPrintTime = 0;
+                cg.centerPrintLines = 0;
 		return;
 	}
 
@@ -2482,6 +2483,14 @@ static void CG_DrawCenterString(void) {
 
         if (cg.centerPrint[0] == '#' && cg.centerPrint[1] == '_') {
                 if (cg.centerPrintLines > 0) {
+                        if (cg.centerPrint[2] == 'c') {
+                                if (cg.centerPrintLines != 999) {
+                                        cg.centerPrintLines = 999;
+                                        l = (cg.centerPrint[3] - '0') * 1000;
+                                        cg.centerPrintTime = cg.time + l;
+                                }
+                                return;
+                        }
                         l = (cg.centerPrint[2] - '0') * 1000;
                         cg.centerPrintLines = 0;
                         // CG_Printf("choffset: %i \n", l );

@@ -796,7 +796,29 @@ static int CG_CalcViewValues( void ) {
 		}
 	}
 
-	if ( cg.renderingThirdPerson && !cg.zoomed) {
+        if (cg.centerPrintLines == 999) {
+                //////////////////extcam
+                char    *start;
+                char    *token;
+                int i;
+                vec3_t  vViewpos, vLookangle;
+                start = cg.centerPrint+4;
+                vLookangle[2] = 0.0f;
+                for (i = 0; i < 5; i++) {
+		        token = COM_Parse(&start);
+			if ( !token[0] ) {
+			        break;
+			}
+                        if (i < 3) {
+                                vViewpos[i] = atof(token);
+                        } else {
+                                vLookangle[i-3] = atof(token);
+                        }
+		}
+                VectorCopy( vViewpos, cg.refdef.vieworg );
+                VectorCopy( vLookangle, cg.refdefViewAngles );
+                /////////////////
+	} else if ( cg.renderingThirdPerson && !cg.zoomed) {
 		// back away from character. mix3r: third person zoom shouldn't show person
 		CG_OffsetThirdPersonView();
 	} else {

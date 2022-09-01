@@ -467,10 +467,23 @@ void Cmd_Give_f (gentity_t *ent)
 		give_all = qtrue;
 	} else {
 		give_all = qfalse;
-                if Q_strequal(name, "pos") {
-                        // Mix3r_Durachok: show current x y z position (origin) of player
-                        // useful for precise items placement preparation
-                        G_Printf( "THIS PLACE X Y Z ORIGIN \"%.2f %.2f %.2f\"\n",ent->r.currentOrigin[0],ent->r.currentOrigin[1],ent->r.currentOrigin[2]);
+                if Q_strequal(name, "editor_camera") {
+                        // Mix3r_Durachok: get current view position and angles
+                        // and save as camera entity target_print .map file to import via level editor
+                        fileHandle_t f;
+                        vec3_t cam_location;
+                        char mapname[MAX_CVAR_VALUE_STRING];
+                        trap_Cvar_VariableStringBuffer("mapname",mapname,sizeof(mapname));
+                        i = trap_FS_FOpenFile( va("cam_%s_%i_%i_%i.map",mapname,(int)ent->r.currentOrigin[0],(int)ent->r.currentOrigin[1],(int)ent->r.currentOrigin[2]), &f, FS_WRITE );
+                        if (i >= 0) {
+                                VectorCopy (ent->r.currentOrigin, cam_location);
+                                trap_FS_Write( "{\n\"classname\" \"target_print\"\n", 29, f );
+                                writeFile_string( va("\"origin\" \"%s\"\n",vtos(cam_location)), f );
+                                cam_location[2] += DEFAULT_VIEWHEIGHT;
+                                writeFile_string( va("\"message\" \"%s %i %i\"\n",vtos(cam_location),(int)ent->client->ps.viewangles[0],(int)ent->client->ps.viewangles[1]), f );
+                                trap_FS_Write( "}", 1, f );
+                                trap_FS_FCloseFile( f );
+                        }
                 }
 	}
 
