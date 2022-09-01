@@ -904,7 +904,7 @@ static void CG_LoadClientInfo(int clientNum, clientInfo_t *ci) {
 			/* /Neon_Knight */
 		} else {
 			if (!CG_RegisterClientModelname(ci, DEFAULT_MODEL, "default", DEFAULT_MODEL, "default", teamname)) {
-				CG_Error("DEFAULT_MODEL (%s) failed to register", DEFAULT_MODEL);
+				//CG_Error("DEFAULT_MODEL (%s) failed to register", DEFAULT_MODEL);
 			}
 		}
 		modelloaded = qfalse;

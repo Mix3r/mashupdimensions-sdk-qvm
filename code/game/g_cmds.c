@@ -478,9 +478,9 @@ void Cmd_Give_f (gentity_t *ent)
                         if (i >= 0) {
                                 VectorCopy (ent->r.currentOrigin, cam_location);
                                 trap_FS_Write( "{\n\"classname\" \"target_print\"\n", 29, f );
-                                writeFile_string( va("\"origin\" \"%s\"\n",vtos(cam_location)), f );
+                                writeFile_string( va("\"origin\" \"%i %i %i\"",(int)cam_location[0],(int)cam_location[1],(int)cam_location[2]), f );
                                 cam_location[2] += DEFAULT_VIEWHEIGHT;
-                                writeFile_string( va("\"message\" \"%s %i %i\"\n",vtos(cam_location),(int)ent->client->ps.viewangles[0],(int)ent->client->ps.viewangles[1]), f );
+                                writeFile_string( va("\"message\" \"#_9%i %i %i %i %i\"",(int)cam_location[0],(int)cam_location[1],(int)cam_location[2],(int)ent->client->ps.viewangles[0],(int)ent->client->ps.viewangles[1]), f );
                                 trap_FS_Write( "}", 1, f );
                                 trap_FS_FCloseFile( f );
                         }
