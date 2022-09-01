@@ -22,6 +22,30 @@ gfx/2d/bigchars
         }
 }
 // basic color non-texture shaders:
+textures/common/a_black
+{
+	surfaceparm nolightmap
+        {
+                map $whiteimage
+                rgbGen const ( 0.0 0.0 0.0 )
+        }
+}
+textures/common/a_gray
+{
+	surfaceparm nolightmap
+        {
+                map $whiteimage
+                rgbGen const ( 0.25 0.25 0.25 )
+        }
+}
+textures/common/a_white
+{
+	surfaceparm nolightmap
+        {
+                map $whiteimage
+                rgbGen const ( 0.5 0.5 0.5 )
+        }
+}
 textures/common/a_white_lm
 {
         {
@@ -44,6 +68,22 @@ textures/common/a_gray_lm
                 map $lightmap
                 rgbGen identity
                 blendfunc filter
+        }
+}
+textures/common/a_green
+{
+	surfaceparm nolightmap
+        {
+                map $whiteimage
+                rgbGen const ( 0.0 0.5 0.0 )
+        }
+}
+textures/common/a_green_dark
+{
+	surfaceparm nolightmap
+        {
+                map $whiteimage
+                rgbGen const ( 0.0 0.25 0.0 )
         }
 }
 textures/common/a_green_lm
