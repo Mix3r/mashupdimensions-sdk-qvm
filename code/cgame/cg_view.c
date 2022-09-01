@@ -986,7 +986,7 @@ void CG_DrawActiveFrame( int serverTime, stereoFrame_t stereoView, qboolean demo
 		// leilei - allow first person deathcam
 	//	cg.renderingThirdPerson = cg_thirdPerson.integer;
 	//} else {
-		cg.renderingThirdPerson = cg.snap->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR && (cg_thirdPerson.integer || (cg.snap->ps.stats[STAT_HEALTH] <= 0));
+		cg.renderingThirdPerson = cg.snap->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR && (cg_thirdPerson.integer || cg.snap->ps.stats[STAT_HEALTH] <= 0 || cg.centerPrintLines == 999);
 	//}
 
 	// build cg.refdef
