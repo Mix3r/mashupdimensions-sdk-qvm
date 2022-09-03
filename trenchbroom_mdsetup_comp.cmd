@@ -12,6 +12,7 @@ cd /D %~dp0
 cd ..
 SET GAMEPATH=%CD%
 md "baseq3"
+md "baseq3\maps"
 cd %APPDATA%
 md "TrenchBroom"
 
