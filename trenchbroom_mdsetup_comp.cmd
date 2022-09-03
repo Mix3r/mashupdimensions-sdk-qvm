@@ -1,3 +1,4 @@
+IF NOT EXIST "%~dp0TrenchBroom.exe" goto FINISH_HIM
 IF "%~6"=="" goto bSETUP
 IF %6 EQU bFAST goto bFAST
 IF %6 EQU bFULL goto bFULL
