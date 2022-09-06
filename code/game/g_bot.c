@@ -598,9 +598,9 @@ G_AddBot
 ===============
 */
 static void G_AddBot( const char *name, float skill, const char *team, int delay, char *altname) {
-	int				clientNum;
-	int				teamNum;
-	int				botinfoNum;
+	int			clientNum;
+	int			teamNum;
+	int			botinfoNum;
 	char			*botinfo;
 	char			*key;
 	char			*s;
@@ -608,6 +608,7 @@ static void G_AddBot( const char *name, float skill, const char *team, int delay
 	char			*model;
 	char			*headmodel;
 	char			userinfo[MAX_INFO_STRING];
+        char                    aif_buf[20];
 
 	// have the server allocate a client slot
 	clientNum = trap_BotAllocateClient();
@@ -753,6 +754,14 @@ static void G_AddBot( const char *name, float skill, const char *team, int delay
 		trap_BotFreeClient( clientNum );
 		return;
 	}
+        if (delay < 0) {
+                delay = -delay;
+                trap_Cvar_VariableStringBuffer("ui_seqplay", aif_buf, sizeof(aif_buf));
+                if (strlen(aif_buf)) {
+                        s = va("bots/%s.c",aif_buf);
+                        trap_Cvar_Set( "ui_seqplay", "" );
+                }
+        }
 	Info_SetValueForKey( userinfo, "characterfile", s );
 
 	// don't send tinfo to bots, they don't parse it
@@ -881,9 +890,9 @@ G_SpawnBots
 */
 static void G_SpawnBots( char *botList, int baseDelay ) {
 	char		*bot;
-	char		*p;
-	int			delay;
-	char		bots[MAX_INFO_VALUE];
+	int		delay, nOrder;
+        char		behaves[MAX_INFO_VALUE];
+        char            *beh;
 
 	podium1 = NULL;
 	podium2 = NULL;
@@ -896,35 +905,74 @@ static void G_SpawnBots( char *botList, int baseDelay ) {
 		g_spSkill.integer = 5;
 	}
 
-	Q_strncpyz( bots, botList, sizeof(bots) );
-	p = &bots[0];
-	delay = baseDelay;
-	while( *p ) {
-		//skip spaces
-		while( *p == ' ' ) {
-			p++;
-		}
-		if( !*p ) {
-			break;
-		}
+        if (baseDelay < 0) {
+                trap_Cvar_VariableStringBuffer("ui_seqplay", behaves, sizeof(behaves));
+                delay = -baseDelay;
+        } else {
+                delay = baseDelay;
+        }
 
-		// mark start of bot name
-		bot = p;
 
-		// skip until space of null
-		while( *p && *p != ' ' ) {
-			p++;
+
+        nOrder = 1;
+        while (1) {
+                bot = COM_Parse(&botList);
+		if ( !bot[0] ) {
+		        break;
 		}
-		if( *p ) {
-			*p++ = 0;
-		}
+                // TODO TODO
+                //if (baseDelay < 0) {
+                //        beh = strchr(behaves, ' ');
+                //        if (beh) {
+                //                behaves[beh] = '\0';
+                //                trap_Cvar_Set( "ui_seqplay", va("%s",behaves));
+                //                trap_Printf(va("BOTADD --- %s\n",behaves));      /// remove later
+                //                behaves[beh] = ' ';
+                //                Q_strncpyz(behaves, beh + 1, sizeof (behaves));
+                //                trap_Printf(va("BEHTRUNC --- %s\n",behaves));    /// remove later
+                //        } else {
+                //                trap_Cvar_Set( "ui_seqplay", behaves);
+                //                trap_Printf( "customAI larger order (last one)" );
+                //        }
+                //        delay = -delay;
+                //}
+                trap_SendConsoleCommand( EXEC_INSERT, va("addbot %s %i free %i\n", bot, g_spSkill.integer, delay) );
+                if (delay < 0) {
+                        delay = -delay;
+                }
+                delay += BOT_BEGIN_DELAY_INCREMENT;
+                nOrder++;
+        }
 
-		// we must add the bot this way, calling G_AddBot directly at this stage
-		// does "Bad Things"
-		trap_SendConsoleCommand( EXEC_INSERT, va("addbot %s %i free %i\n", bot, g_spSkill.integer, delay) );
 
-		delay += BOT_BEGIN_DELAY_INCREMENT;
-	}
+//	while( *p ) {
+//		//skip spaces
+//		while( *p == ' ' ) {
+//			p++;
+//		}
+//		if( !*p ) {
+//			break;
+//		}
+//
+//		// mark start of bot name
+//		bot = p;
+//
+//		// skip until space of null
+//		while( *p && *p != ' ' ) {
+//			p++;
+//		}
+//		if( *p ) {
+//			*p++ = 0;
+//		}
+//
+//                ///// mumbo jumbo
+//
+//		// we must add the bot this way, calling G_AddBot directly at this stage
+//		// does "Bad Things"
+//		trap_SendConsoleCommand( EXEC_INSERT, va("addbot %s %i free %i\n", bot, g_spSkill.integer, delay) );
+//
+//		delay += BOT_BEGIN_DELAY_INCREMENT;
+//	}
 }
 
 
@@ -1113,6 +1161,11 @@ void G_InitBots( qboolean restart ) {
                 }
 
 		if( !restart ) {
+                        strValue = Info_ValueForKey( arenainfo, "customai" );
+                        if (!Q_strequal( strValue, "" )) {
+                                trap_Cvar_Set( "ui_seqplay", strValue );
+                                basedelay = -basedelay;
+                        }
 			G_SpawnBots( Info_ValueForKey( arenainfo, "bots" ), basedelay );
 		}
 	} else {

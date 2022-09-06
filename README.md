@@ -17,9 +17,10 @@ Based on Open Arena gamecode, heavily modified gamecode aims to extend singlepla
 - func_button has destroyable object simulation mode
 - Culled maximum ammo loadout
 - Flight item improvement
-- Ingame picture show feature by target_print
-- Ingame console command executing by target_relay
-- Silent NPC relocation on demand by target_relay
+- Ingame picture show feature via target_print
+- Ingame console command executing via target_relay
+- Silent NPC relocation on demand via target_relay
+- switchable cameras feature via target_print
 
 
 ## Building ##
