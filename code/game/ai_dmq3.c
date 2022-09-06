@@ -2262,6 +2262,7 @@ float BotAggression(bot_state_t *bs) {
 	//if the bot has quad
         //return 100;
         if (trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_AGGRESSION, 0, 2) > 1.999) {
+                // Mix3r_Durachok: rage, special character (Xen) attacks aggressively on sight
                 return 100;
         };
 	if (bs->inventory[INVENTORY_QUAD]) {
@@ -2710,15 +2711,14 @@ bot_moveresult_t BotAttackMove(bot_state_t *bs, int tfl) {
 
 	attackentity = bs->enemy;
 	//
-        if (bs->cur_ps.weapon == WP_GAUNTLET) {     // mix3r_durachok: less jumpy on the ring
+        if (bs->cur_ps.weapon == WP_GAUNTLET) {
 		attack_dist = 0;
 		attack_range = 0;
-                jumper = 0.5;
-                attack_skill = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_AGGRESSION, 0, 2);
-                if (attack_skill > 1.999) {
-                        if (g_fraglimit.integer > 9999) {
-                                level.clients[bs->client].ps.powerups[PW_HASTE] = level.time - ( level.time % 1000 )+10000;
-                        }
+                jumper = 0.5; // Mix3r_Durachok: less jumpy on the ring
+                attack_skill = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_AGGRESSION, 0, 3);
+                if (attack_skill > 2.999) {
+                        // Mix3r_Durachok: special amok state - run faster, drop haste
+                        level.clients[bs->client].ps.powerups[PW_HASTE] = level.time - ( level.time % 1000 )+10000;
                         level.clients[bs->client].accurateCount = -3;
                 }
 	} else {

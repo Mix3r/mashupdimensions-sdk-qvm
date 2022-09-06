@@ -882,105 +882,12 @@ void Svcmd_BotList_f( void ) {
 	}
 }
 
-
-/*
-===============
-G_SpawnBots
-===============
-*/
-static void G_SpawnBots( char *botList, int baseDelay ) {
-	char		*bot;
-	int		delay, nOrder;
-        char		behaves[MAX_INFO_VALUE];
-        char            *beh;
-
-	podium1 = NULL;
-	podium2 = NULL;
-	podium3 = NULL;
-
-	if( g_spSkill.integer < 1 ) {
-		g_spSkill.integer = 1;
-	}
-	else if ( g_spSkill.integer > 5 ) {
-		g_spSkill.integer = 5;
-	}
-
-        if (baseDelay < 0) {
-                trap_Cvar_VariableStringBuffer("ui_seqplay", behaves, sizeof(behaves));
-                delay = -baseDelay;
-        } else {
-                delay = baseDelay;
-        }
-
-
-
-        nOrder = 1;
-        while (1) {
-                bot = COM_Parse(&botList);
-		if ( !bot[0] ) {
-		        break;
-		}
-                // TODO TODO
-                //if (baseDelay < 0) {
-                //        beh = strchr(behaves, ' ');
-                //        if (beh) {
-                //                behaves[beh] = '\0';
-                //                trap_Cvar_Set( "ui_seqplay", va("%s",behaves));
-                //                trap_Printf(va("BOTADD --- %s\n",behaves));      /// remove later
-                //                behaves[beh] = ' ';
-                //                Q_strncpyz(behaves, beh + 1, sizeof (behaves));
-                //                trap_Printf(va("BEHTRUNC --- %s\n",behaves));    /// remove later
-                //        } else {
-                //                trap_Cvar_Set( "ui_seqplay", behaves);
-                //                trap_Printf( "customAI larger order (last one)" );
-                //        }
-                //        delay = -delay;
-                //}
-                trap_SendConsoleCommand( EXEC_INSERT, va("addbot %s %i free %i\n", bot, g_spSkill.integer, delay) );
-                if (delay < 0) {
-                        delay = -delay;
-                }
-                delay += BOT_BEGIN_DELAY_INCREMENT;
-                nOrder++;
-        }
-
-
-//	while( *p ) {
-//		//skip spaces
-//		while( *p == ' ' ) {
-//			p++;
-//		}
-//		if( !*p ) {
-//			break;
-//		}
-//
-//		// mark start of bot name
-//		bot = p;
-//
-//		// skip until space of null
-//		while( *p && *p != ' ' ) {
-//			p++;
-//		}
-//		if( *p ) {
-//			*p++ = 0;
-//		}
-//
-//                ///// mumbo jumbo
-//
-//		// we must add the bot this way, calling G_AddBot directly at this stage
-//		// does "Bad Things"
-//		trap_SendConsoleCommand( EXEC_INSERT, va("addbot %s %i free %i\n", bot, g_spSkill.integer, delay) );
-//
-//		delay += BOT_BEGIN_DELAY_INCREMENT;
-//	}
-}
-
-
 /*
 ===============
 G_LoadBotsFromFile
 ===============
 */
+
 static void G_LoadBotsFromFile( char *filename ) {
 	int				len;
 	fileHandle_t	f;
@@ -1090,6 +997,7 @@ void G_InitBots( qboolean restart ) {
 	const char	*arenainfo;
 	char		*strValue;
         char            *fraglimit_by_skill;
+        char            *bot;
 	int		basedelay;
 	char		map[MAX_QPATH];
 	char		serverinfo[MAX_INFO_STRING];
@@ -1123,9 +1031,6 @@ void G_InitBots( qboolean restart ) {
                                 }
                         }
                 }
-
-                ///////////////////////
-		//fragLimit = atoi( strValue );
 
 		if ( fragLimit ) {
 			trap_Cvar_Set( "fraglimit", va("%i", fragLimit) );
@@ -1161,12 +1066,51 @@ void G_InitBots( qboolean restart ) {
                 }
 
 		if( !restart ) {
-                        strValue = Info_ValueForKey( arenainfo, "customai" );
-                        if (!Q_strequal( strValue, "" )) {
-                                trap_Cvar_Set( "ui_seqplay", strValue );
-                                basedelay = -basedelay;
+                        fraglimit_by_skill = Info_ValueForKey( arenainfo, "customai" );
+                        // trap_Printf(va("TEMPER0- %s\n",fraglimit_by_skill));  // debug
+                        if (strlen(fraglimit_by_skill)) {
+                                fragLimit = 1;
+                        } else {
+                                fragLimit = 0;
                         }
-			G_SpawnBots( Info_ValueForKey( arenainfo, "bots" ), basedelay );
+                        strValue = Info_ValueForKey( arenainfo, "bots" );
+
+			//G_SpawnBots( Info_ValueForKey( arenainfo, "bots" ), basedelay );
+                        //Mix3r_Durachok: G_SpawnBots removed from g_bot completely
+                        podium1 = NULL;
+	                podium2 = NULL;
+                        podium3 = NULL;
+                        if( g_spSkill.integer < 1 ) {
+		                g_spSkill.integer = 1;
+	                } else if ( g_spSkill.integer > 5 ) {
+		                g_spSkill.integer = 5;
+	                }
+                        while (1) {
+                                if (fragLimit) {
+                                        bot = COM_Parse(&fraglimit_by_skill);
+                                        if ( !bot[0] ) {
+		                                break;
+                                        }
+                                        if (!Q_strequal(va("%s",bot),"0")) {
+                                                // prepare to load remapped bot temper
+                                                trap_Cvar_Set( "ui_seqplay", bot);
+                                                // trap_Printf(va("TEMPER1- %s\n",bot));  // debug
+                                                basedelay = -basedelay;
+                                        } else {
+                                                // trap_Printf(va("TEMPER1- %s\n","000"));  // debug
+                                        }
+                                }
+                                bot = COM_Parse(&strValue);
+                                if ( !bot[0] ) {
+		                        break;
+		                }
+                                // trap_Printf(va("TEMPER2- %s\n",bot));  // debug
+                                trap_SendConsoleCommand( EXEC_INSERT, va("addbot %s %i free %i\n", bot, g_spSkill.integer, basedelay) );
+                                if (basedelay < 0) {
+                                        basedelay = -basedelay;
+                                }
+                                basedelay += BOT_BEGIN_DELAY_INCREMENT;
+                        }
 		}
 	} else {
 		if(bot_autominplayers.integer) {
