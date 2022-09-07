@@ -2716,9 +2716,11 @@ bot_moveresult_t BotAttackMove(bot_state_t *bs, int tfl) {
 		attack_range = 0;
                 jumper = 0.5; // Mix3r_Durachok: less jumpy on the ring
                 attack_skill = trap_Characteristic_BFloat(bs->character, CHARACTERISTIC_AGGRESSION, 0, 3);
-                if (attack_skill > 2.999) {
+                if (attack_skill > 1.999) {
                         // Mix3r_Durachok: special amok state - run faster, drop haste
-                        level.clients[bs->client].ps.powerups[PW_HASTE] = level.time - ( level.time % 1000 )+10000;
+                        if (attack_skill > 2.999) {
+                                level.clients[bs->client].ps.powerups[PW_HASTE] = level.time - ( level.time % 1000 )+10000;
+                        }
                         level.clients[bs->client].accurateCount = -3;
                 }
 	} else {

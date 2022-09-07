@@ -24,14 +24,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "g_local.h"
 
-
 static int		g_numBots;
 static char		*g_botInfos[MAX_BOTS];
 
-
-int				g_numArenas;
+int			g_numArenas;
 static char		*g_arenaInfos[MAX_ARENAS];
-
 
 #define BOT_BEGIN_DELAY_BASE		2000
 #define BOT_BEGIN_DELAY_INCREMENT	1500
@@ -620,15 +617,13 @@ static void G_AddBot( const char *name, float skill, const char *team, int delay
 
 	// set default team
 	if( !team || !*team ) {
-		if( GAMETYPE_IS_A_TEAM_GAME(g_gametype.integer) ) {
+		if ( GAMETYPE_IS_A_TEAM_GAME(g_gametype.integer) ) {
 			if( PickTeam(clientNum) == TEAM_RED) {
 				team = "red";
-			}
-			else {
+			} else {
 				team = "blue";
 			}
-		}
-		else {
+		} else {
 			team = "free";
 		}
 	}
@@ -754,14 +749,6 @@ static void G_AddBot( const char *name, float skill, const char *team, int delay
 		trap_BotFreeClient( clientNum );
 		return;
 	}
-        if (delay < 0) {
-                delay = -delay;
-                trap_Cvar_VariableStringBuffer("ui_seqplay", aif_buf, sizeof(aif_buf));
-                if (strlen(aif_buf)) {
-                        s = va("bots/%s.c",aif_buf);
-                        trap_Cvar_Set( "ui_seqplay", "" );
-                }
-        }
 	Info_SetValueForKey( userinfo, "characterfile", s );
 
 	// don't send tinfo to bots, they don't parse it
@@ -996,9 +983,7 @@ void G_InitBots( qboolean restart ) {
 	int		timeLimit;
 	const char	*arenainfo;
 	char		*strValue;
-        char            *fraglimit_by_skill;
         char            *bot;
-	int		basedelay;
 	char		map[MAX_QPATH];
 	char		serverinfo[MAX_INFO_STRING];
 
@@ -1017,15 +1002,15 @@ void G_InitBots( qboolean restart ) {
 		}
 
 		strValue = Info_ValueForKey( arenainfo, "fraglimit" );
-                ////////////////////////
+
                 for (timeLimit = 1; timeLimit < 6; ++timeLimit) {
-                        fraglimit_by_skill = COM_Parse(&strValue);
-                        if ( !fraglimit_by_skill[0] ) {
+                        bot = COM_Parse(&strValue);
+                        if ( !bot[0] ) {
 			        break;
 		        } else {
 
-                                fragLimit = atoi( fraglimit_by_skill );
-                                //trap_Printf( va( S_COLOR_RED "iteration: %i, fraglimit is %s, atoi is %i\n", timeLimit, fraglimit_by_skill, fragLimit ) );
+                                fragLimit = atoi( bot );
+                                //trap_Printf( va( S_COLOR_RED "iteration: %i, fraglimit is %s, atoi is %i\n", timeLimit, bot, fragLimit ) );
                                 if (timeLimit == g_spSkill.integer) {
                                         break;
                                 }
@@ -1053,10 +1038,10 @@ void G_InitBots( qboolean restart ) {
 			trap_Cvar_Set( "timelimit", "0" );
 		}
 
-		basedelay = BOT_BEGIN_DELAY_BASE;
+		timeLimit = BOT_BEGIN_DELAY_BASE;
 		strValue = Info_ValueForKey( arenainfo, "special" );
 		if( Q_strequal( strValue, "training" ) ) {
-			basedelay = 8500;
+			timeLimit = 8500;
 		}
                 strValue = Info_ValueForKey( arenainfo, "collab" );
                 if( atoi( strValue ) ) {
@@ -1066,50 +1051,28 @@ void G_InitBots( qboolean restart ) {
                 }
 
 		if( !restart ) {
-                        fraglimit_by_skill = Info_ValueForKey( arenainfo, "customai" );
-                        // trap_Printf(va("TEMPER0- %s\n",fraglimit_by_skill));  // debug
-                        if (strlen(fraglimit_by_skill)) {
-                                fragLimit = 1;
-                        } else {
-                                fragLimit = 0;
-                        }
                         strValue = Info_ValueForKey( arenainfo, "bots" );
 
 			//G_SpawnBots( Info_ValueForKey( arenainfo, "bots" ), basedelay );
                         //Mix3r_Durachok: G_SpawnBots removed from g_bot completely
+
                         podium1 = NULL;
 	                podium2 = NULL;
                         podium3 = NULL;
+
                         if( g_spSkill.integer < 1 ) {
 		                g_spSkill.integer = 1;
 	                } else if ( g_spSkill.integer > 5 ) {
 		                g_spSkill.integer = 5;
 	                }
+
                         while (1) {
-                                if (fragLimit) {
-                                        bot = COM_Parse(&fraglimit_by_skill);
-                                        if ( !bot[0] ) {
-		                                break;
-                                        }
-                                        if (!Q_strequal(va("%s",bot),"0")) {
-                                                // prepare to load remapped bot temper
-                                                trap_Cvar_Set( "ui_seqplay", bot);
-                                                // trap_Printf(va("TEMPER1- %s\n",bot));  // debug
-                                                basedelay = -basedelay;
-                                        } else {
-                                                // trap_Printf(va("TEMPER1- %s\n","000"));  // debug
-                                        }
-                                }
                                 bot = COM_Parse(&strValue);
                                 if ( !bot[0] ) {
 		                        break;
 		                }
-                                // trap_Printf(va("TEMPER2- %s\n",bot));  // debug
-                                trap_SendConsoleCommand( EXEC_INSERT, va("addbot %s %i free %i\n", bot, g_spSkill.integer, basedelay) );
-                                if (basedelay < 0) {
-                                        basedelay = -basedelay;
-                                }
-                                basedelay += BOT_BEGIN_DELAY_INCREMENT;
+                                trap_SendConsoleCommand( EXEC_INSERT, va("addbot %s %i free %i\n", bot, g_spSkill.integer, timeLimit) );
+                                timeLimit += BOT_BEGIN_DELAY_INCREMENT;
                         }
 		}
 	} else {
