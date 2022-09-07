@@ -628,13 +628,12 @@ static void G_AddBot( const char *name, float skill, const char *team, int delay
 		}
 	}
 
+        // Mix3r_Durachok: remap ai character, if name has format name/aifile example: ( addbot sarge/amok_c )
+        // detect if this ai remapped or not
         model = strchr(name,'/');
         if (model) {
-                //Q_strncpyz(aif_buf, model + 1, sizeof (aif_buf));
                 *model = 0;
                 headmodel = model+1;
-                G_Printf( S_COLOR_GREEN "Special Boss Bot '%s' ceased invitation.\n", name );
-                G_Printf( S_COLOR_GREEN "Check this '%s' \n", headmodel );
         }
 
 	// get the botinfo from bots.txt
@@ -707,6 +706,20 @@ static void G_AddBot( const char *name, float skill, const char *team, int delay
 		Info_SetValueForKey( userinfo, "handicap", "90" );
 	}
 
+        // Mix3r_Durachok: remap ai character, if name has format name/aifile example: ( addbot sarge/amok_c )
+        // set parameters
+        if (model) {
+                s = va("bots/%s.c",headmodel);
+        } else {
+                s = Info_ValueForKey(botinfo, "aifile");
+	        if (!*s ) {
+		        trap_Printf( S_COLOR_RED "No aifile for bot!\n" );
+		        trap_BotFreeClient( clientNum );
+		        return;
+	        }
+        }
+        Info_SetValueForKey( userinfo, "characterfile", s );
+
 	key = "model";
 	model = Info_ValueForKey( botinfo, key );
 	if ( !*model ) {
@@ -744,21 +757,14 @@ static void G_AddBot( const char *name, float skill, const char *team, int delay
 	if ( !*s ) {
 		s = "5";
 	}
+
         // Mix3r_Durachok: implement localized name here as it's value*10, so mod 10 still stores actual color
         key = Info_ValueForKey( botinfo, "n_localized" );
         if (key[0]) {
                 s = va("%i",atoi(key)*10+atoi(s));
         }
-        ///////
-	Info_SetValueForKey( userinfo, "color2", s );
 
-	s = Info_ValueForKey(botinfo, "aifile");
-	if (!*s ) {
-		trap_Printf( S_COLOR_RED "Error: bot has no aifile specified\n" );
-		trap_BotFreeClient( clientNum );
-		return;
-	}
-	Info_SetValueForKey( userinfo, "characterfile", s );
+	Info_SetValueForKey( userinfo, "color2", s );
 
 	// don't send tinfo to bots, they don't parse it
 	Info_SetValueForKey( userinfo, "teamoverlay", "0" );
