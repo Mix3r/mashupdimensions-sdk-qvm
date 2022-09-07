@@ -411,9 +411,15 @@ UI_GetBotInfoByName
 char *UI_GetBotInfoByName( const char *name ) {
 	int		n;
 	char	*value;
+        char    *slash;
+        slash = strchr(name, '/');
+        if (slash) {
+                *slash = 0;
+        }
 
 	for ( n = 0; n < ui_numBots ; n++ ) {
 		value = Info_ValueForKey( ui_botInfos[n], "name" );
+
 		if ( Q_strequal( value, name ) ) {
 			return ui_botInfos[n];
 		}
