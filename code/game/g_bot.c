@@ -605,7 +605,6 @@ static void G_AddBot( const char *name, float skill, const char *team, int delay
 	char			*model;
 	char			*headmodel;
 	char			userinfo[MAX_INFO_STRING];
-        char                    aif_buf[20];
 
 	// have the server allocate a client slot
 	clientNum = trap_BotAllocateClient();
