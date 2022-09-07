@@ -628,6 +628,15 @@ static void G_AddBot( const char *name, float skill, const char *team, int delay
 		}
 	}
 
+        model = strchr(name,'/');
+        if (model) {
+                //Q_strncpyz(aif_buf, model + 1, sizeof (aif_buf));
+                *model = 0;
+                headmodel = model+1;
+                G_Printf( S_COLOR_GREEN "Special Boss Bot '%s' ceased invitation.\n", name );
+                G_Printf( S_COLOR_GREEN "Check this '%s' \n", headmodel );
+        }
+
 	// get the botinfo from bots.txt
 	if ( Q_strequal( name, "random" ) ) {
 		if ( Q_strequal( team, "red" ) || Q_strequal( team, "r" ) ) {
@@ -1081,14 +1090,14 @@ void G_InitBots( qboolean restart ) {
 			if(g_gametype.integer == GT_TOURNAMENT) {
 				trap_Cvar_Set("bot_minplayers","2"); //Always 2 for Tourney
 			} else {
-				basedelay = MinSpawnpointCount()/2;
-				if(basedelay < 3 && !(G_IsATeamGametype(g_gametype.integer))) {
-					basedelay = 3; //Minimum 3 for FFA
+				timeLimit = MinSpawnpointCount()/2;
+				if(timeLimit < 3 && !(G_IsATeamGametype(g_gametype.integer))) {
+					timeLimit = 3; //Minimum 3 for FFA
 				}
-				if(basedelay < 2 && G_IsATeamGametype(g_gametype.integer)) {
-					basedelay = 2; //Minimum 2 for TEAM
+				if(timeLimit < 2 && G_IsATeamGametype(g_gametype.integer)) {
+					timeLimit = 2; //Minimum 2 for TEAM
 				}
-				trap_Cvar_Set("bot_minplayers",va("%i",basedelay) );
+				trap_Cvar_Set("bot_minplayers",va("%i",timeLimit) );
 			}
 		}
 	}
