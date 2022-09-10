@@ -1,9 +1,6 @@
 IF NOT EXIST "%~dp0TrenchBroom.exe" goto FINISH_HIM
 IF "%~6"=="" goto bSETUP
-IF %6 EQU bFAST goto bFAST
-IF %6 EQU bFULL goto bFULL
-IF %6 EQU bFULLNOSKY goto bFULLNOSKY
-goto FINISH_HIM
+goto bCOPYTHISMAP
 
 rem setup trenchbroom if no 6 command line parameters present
 
@@ -71,32 +68,66 @@ echo ^}>>%EDITR1%
 start "" "%~dp0trenchbroom.exe"
 goto FINISH_HIM
 
+rem copy source map text to exclude some redundant strings from worldspawn
+rem but keep the strings in source map, because Trenchbroom uses 'em as map settings
+
+:bCOPYTHISMAP
+@setlocal enableextensions enabledelayedexpansion
+SET BFIRST1=1
+for /F "usebackq tokens=*" %%a in (%3) do (
+    SET str0=%%a
+    SET str1=x!str0:^"_tb_mod^" ^"=!
+    SET str2=x!str0:^"_tb_textures^" ^"=!
+    IF x!str0! == !str1! IF x!str0! == !str2! (
+        if !BFIRST1! == 1 (
+            echo !str0!>"%~dp3%5TEMP.map"
+            SET BFIRST1=0
+        ) else (
+            echo !str0!>>"%~dp3%5TEMP.map"
+        )
+    )
+)
+endlocal
+
+IF %6 EQU bFAST goto bFAST
+IF %6 EQU bFULL goto bFULL
+IF %6 EQU bFULLNOSKY goto bFULLNOSKY
+del "%~dp3%5TEMP.map"
+goto FINISH_HIM
+
 rem compile map and start the map for test - fast mode for test, no lighmap at all!
 
 :bFAST
-"%~dp0q3map2" -fs_basepath %1 -fs_game %2 -meta -v %3
-"%~dp0bspc" -forcesidesvisible -bsp2aas %3
+"%~dp0q3map2" -fs_basepath %1 -fs_game %2 -meta -v "%~dp3%5TEMP.map"
+move /Y "%~dp3%5TEMP.bsp" "%~dp3%5.bsp"
+"%~dp0bspc" -forcesidesvisible -bsp2aas "%~dp3%5.bsp"
+del "%~dp3%5TEMP.map"
 "%~1\ioq3md.x64.exe" +set sv_pure 0 +set fs_game %~4 +devmap %5
 goto FINISH_HIM
 
 rem compile map and start the map for test - full mode for test, with lightmaps and skies enlight the map
 
 :bFULL
-"%~dp0q3map2" -fs_basepath %1 -fs_game %2 -meta -v %3
-"%~dp0q3map2" -fs_basepath %1 -fs_game %2 -vis -v %3
-"%~dp0q3map2" -fs_basepath %1 -fs_game %2 -light -fast -patchshadows -samples 3 -bounce 8 -gamma 2 -compensate 4 -dirty -v %3
-"%~dp0bspc" -forcesidesvisible -bsp2aas %3
+"%~dp0q3map2" -fs_basepath %1 -fs_game %2 -meta -v "%~dp3%5TEMP.map"
+"%~dp0q3map2" -fs_basepath %1 -fs_game %2 -vis -v "%~dp3%5TEMP.map"
+"%~dp0q3map2" -fs_basepath %1 -fs_game %2 -light -fast -patchshadows -samples 3 -bounce 8 -gamma 2 -compensate 4 -dirty -v "%~dp3%5TEMP.map"
+move /Y "%~dp3%5TEMP.bsp" "%~dp3%5.bsp"
+"%~dp0bspc" -forcesidesvisible -bsp2aas "%~dp3%5.bsp"
+del "%~dp3%5TEMP.map"
 "%~1\ioq3md.x64.exe" +set sv_pure 0 +set fs_game %~4 +devmap %5
 goto FINISH_HIM
 
 rem compile map and start the map for test - full mode for test, with lightmaps, skies don't affect the lightmap
 
 :bFULLNOSKY
-"%~dp0q3map2" -fs_basepath %1 -fs_game %2 -meta -v %3
-"%~dp0q3map2" -fs_basepath %1 -fs_game %2 -vis -v %3
-"%~dp0q3map2" -fs_basepath %1 -fs_game %2 -light -fast -patchshadows -samples 3 -bounce 8 -sky 0.0 -gamma 2 -compensate 4 -dirty -v %3
-"%~dp0bspc" -forcesidesvisible -bsp2aas %3
+"%~dp0q3map2" -fs_basepath %1 -fs_game %2 -meta -v "%~dp3%5TEMP.map"
+"%~dp0q3map2" -fs_basepath %1 -fs_game %2 -vis -v "%~dp3%5TEMP.map"
+"%~dp0q3map2" -fs_basepath %1 -fs_game %2 -light -fast -patchshadows -samples 3 -bounce 8 -sky 0.0 -gamma 2 -compensate 4 -dirty -v "%~dp3%5TEMP.map"
+move /Y "%~dp3%5TEMP.bsp" "%~dp3%5.bsp"
+"%~dp0bspc" -forcesidesvisible -bsp2aas "%~dp3%5.bsp"
+del "%~dp3%5TEMP.map"
 "%~1\ioq3md.x64.exe" +set sv_pure 0 +set fs_game %~4 +devmap %5
+
 goto FINISH_HIM
 
 :FINISH_HIM
