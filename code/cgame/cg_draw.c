@@ -2440,11 +2440,25 @@ void CG_CenterPrint(const char *str, int y, int charWidth) {
 
 	Q_strncpyz(cg.centerPrint, str, sizeof (cg.centerPrint));
 
-	cg.centerPrintTime = cg.time;
-	cg.centerPrintY = y;
-	cg.centerPrintCharWidth = charWidth;
+        // Mix3r_Durachok: switch or continue camera view
+        //(let's avoid viewpos blinking by keeping 999/1000 on camera switch)
+        if (cg.centerPrintLines >= 999) {
+                int nStrlen = strlen(str);
+                if (nStrlen > 3 && cg.centerPrint[0] == '#' && cg.centerPrint[1] == '_' && (cg.centerPrint[2] == 'c' || cg.centerPrint[2] == 'C')) {
+                        cg.centerPrintTime = cg.time + ((cg.centerPrint[3] - '0') * 1000);
+                        if (cg.centerPrintCharWidth != -nStrlen) {
+                                cg.centerPrintCharWidth = -nStrlen;
+                                cg.centerPrintY = cg.time;
+                        }
+                        return;
+                }
+        }
 
-	// count the number of lines for centering
+        cg.centerPrintTime = cg.time;
+	cg.centerPrintCharWidth = charWidth;
+        cg.centerPrintY = y;
+
+        // count lines for multi-line text draw
 	cg.centerPrintLines = 1;
 	s = cg.centerPrint;
 	while (*s) {
@@ -2482,6 +2496,7 @@ static void CG_DrawCenterString(void) {
 	trap_R_SetColor(color);
 
         if (cg.centerPrint[0] == '#' && cg.centerPrint[1] == '_') {
+                start = cg.centerPrint+3;
                 if (cg.centerPrintLines > 0) {
                         if (cg.centerPrint[2] == 'c') {
                                 if (cg.centerPrintLines != 999) {
@@ -2490,13 +2505,27 @@ static void CG_DrawCenterString(void) {
                                         cg.centerPrintTime = cg.time + l;
                                 }
                                 return;
+                        } else if (cg.centerPrint[2] == 'C') {
+                                if (cg.centerPrintLines != 1000) {
+                                        cg.centerPrintLines = 1000;
+                                        l = (cg.centerPrint[3] - '0') * 1000;
+                                        cg.centerPrintTime = cg.time + l;
+                                        cg.centerPrintY = cg.time;
+                                }
+                                start = strchr(start,'#');
+                                if (start) {
+                                        start++;
+                                        l = cg.time - cg.centerPrintY;
+                                        l = (int)l/33.33333;
+                                        trap_R_DrawStretchPic(0,0,cgs.glconfig.vidWidth, cgs.glconfig.vidHeight, 0, 0, 1, 1, trap_R_RegisterShaderNoMip(va("video/%s_%i",start,l)));
+                                }
+                                return;
                         }
                         l = (cg.centerPrint[2] - '0') * 1000;
                         cg.centerPrintLines = 0;
                         // CG_Printf("choffset: %i \n", l );
                         cg.centerPrintTime = cg.time + l;
                 }
-                start = cg.centerPrint+3;
                 trap_R_DrawStretchPic(0,0,cgs.glconfig.vidWidth, cgs.glconfig.vidHeight, 0, 0, 1, 1, trap_R_RegisterShaderNoMip(va("video/%s",start)));
                 return;
 	}
