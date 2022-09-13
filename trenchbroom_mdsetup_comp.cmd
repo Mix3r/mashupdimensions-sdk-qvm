@@ -10,7 +10,7 @@ cd ..
 SET GAMEPATH=%CD%
 md "baseq3"
 md "baseq3\maps"
-cd %APPDATA%
+cd /D %APPDATA%
 md "TrenchBroom"
 
 SET EDITR1="%APPDATA%\TrenchBroom\Preferences.json"
