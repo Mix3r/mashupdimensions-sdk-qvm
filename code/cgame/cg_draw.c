@@ -2441,11 +2441,13 @@ void CG_CenterPrint(const char *str, int y, int charWidth) {
 	Q_strncpyz(cg.centerPrint, str, sizeof (cg.centerPrint));
 
         // Mix3r_Durachok: switch or continue camera view
-        //(let's avoid viewpos blinking by keeping 999/1000 on camera switch)
+        //(let's avoid viewpos blinking by keeping 999/1000 on camera switch, seamless switching)
         if (cg.centerPrintLines >= 999) {
                 int nStrlen = strlen(str);
                 if (nStrlen > 3 && cg.centerPrint[0] == '#' && cg.centerPrint[1] == '_' && (cg.centerPrint[2] == 'c' || cg.centerPrint[2] == 'C')) {
                         cg.centerPrintTime = cg.time + ((cg.centerPrint[3] - '0') * 1000);
+                        // reset image sequence counter by using different [message] string length for this camera
+                        // hint: add/remove spaces to the message tail to achieve seamless switching between sequences
                         if (cg.centerPrintCharWidth != -nStrlen) {
                                 cg.centerPrintCharWidth = -nStrlen;
                                 cg.centerPrintY = cg.time;
@@ -2490,6 +2492,7 @@ static void CG_DrawCenterString(void) {
 	if (!color) {
                 cg.centerPrintTime = 0;
                 cg.centerPrintLines = 0;
+                cg.centerPrintCharWidth = 0;
 		return;
 	}
 
@@ -2509,15 +2512,20 @@ static void CG_DrawCenterString(void) {
                                 if (cg.centerPrintLines != 1000) {
                                         cg.centerPrintLines = 1000;
                                         l = (cg.centerPrint[3] - '0') * 1000;
+                                        cg.centerPrintCharWidth = -strlen(cg.centerPrint);
                                         cg.centerPrintTime = cg.time + l;
                                         cg.centerPrintY = cg.time;
                                 }
                                 start = strchr(start,'#');
                                 if (start) {
+                                        qhandle_t imgseq_frame;
                                         start++;
                                         l = cg.time - cg.centerPrintY;
                                         l = (int)l/33.33333;
-                                        trap_R_DrawStretchPic(0,0,cgs.glconfig.vidWidth, cgs.glconfig.vidHeight, 0, 0, 1, 1, trap_R_RegisterShaderNoMip(va("video/%s_%i",start,l)));
+                                        imgseq_frame = trap_R_RegisterShaderNoMip(va("video/%s_%i",start,l));
+                                        if (imgseq_frame) {
+                                                trap_R_DrawStretchPic(0,0,cgs.glconfig.vidWidth, cgs.glconfig.vidHeight, 0, 0, 1, 1, imgseq_frame);
+                                        }
                                 }
                                 return;
                         }
