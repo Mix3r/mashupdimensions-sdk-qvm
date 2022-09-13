@@ -1837,21 +1837,23 @@ gentity_t *RelaySomebody(int mde, vec3_t orig,int dist,char *msg) {
                 someone = &g_entities[i];
                 if ( someone->inuse ) {
                         switch (mde) {
-                                // 1: relay someone from above or below destination height
-                                // great for beaming slackers from upper or lower floors
-                                case 1:if (!someone->r.svFlags & SVF_BOT ) {
-                                              continue;
-                                       } else if (dist > 0) {
-                                              if (someone->client->ps.origin[2] < orig[2]+dist) continue;
-                                       } else {
-                                              if (someone->client->ps.origin[2] > orig[2]+dist) continue;
-                                       } break;
-                                case 2:if (someone->r.svFlags & SVF_BOT ) {
-                                              continue;
-                                       } else {
-                                              someone->s.angles[2] = (float)dist;
-                                              SetClientViewAngle(someone, someone->s.angles);
-                                       } break;
+                        // 1: relay someone from above or below destination height
+                        // great for beaming slackers from upper or lower floors
+                        case 1: if (!someone->r.svFlags & SVF_BOT ) {
+                                        continue;
+                                } else if (dist > 0) {
+                                        if (someone->client->ps.origin[2] < orig[2]+dist) continue;
+                                } else {
+                                        if (someone->client->ps.origin[2] > orig[2]+dist) continue;
+                                } break;
+                        case 2: if (someone->r.svFlags & SVF_BOT ) {
+                                        continue;
+                                } else {
+                                        VectorClear( someone->client->ps.velocity );
+                                        someone->client->ps.velocity[YAW] = (float)dist;
+                                        SetClientViewAngle(someone, someone->client->ps.velocity);
+                                        someone->client->ps.velocity[YAW] = 0.0f;
+                                } break;
                         }
                         // relay chosen one :)
 		        trap_UnlinkEntity (someone);
@@ -1862,9 +1864,9 @@ gentity_t *RelaySomebody(int mde, vec3_t orig,int dist,char *msg) {
                         BG_PlayerStateToEntityState( &someone->client->ps, &someone->s, qtrue );
                         VectorCopy( someone->client->ps.origin, someone->r.currentOrigin );
                         trap_LinkEntity (someone);
+
                         return someone;
-                        break;
-		}
+	        }
         }
         return NULL;
 }

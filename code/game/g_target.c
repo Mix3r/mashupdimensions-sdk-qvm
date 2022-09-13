@@ -432,7 +432,7 @@ void target_relay_use (gentity_t *self, gentity_t *other, gentity_t *activator) 
                         break;
                         // as above, but picks human and moves to target_relay origin
                         case 106:if (activator->client) {
-                                         activator=RelaySomebody(2,self->s.origin,(int)self->s.angles[2],self->message);
+                                         activator=RelaySomebody(2,self->s.origin,(int)self->s.angles[YAW],self->message);
                                  }
                         break;
                         // drops some item, specified as [message] property of this target_relay
@@ -448,6 +448,7 @@ void target_relay_use (gentity_t *self, gentity_t *other, gentity_t *activator) 
                         break;
                         // change wait property of target to the one specified as [message] property of this relay.
                         // used to activate disabled target_relay by changing it's [wait] property from 999.
+                        // or vice versa, to deactivate target_relay or shooter_someprojectile by setting it's [wait] property to 999
                         // just changes [wait] of target, not firing it.
                         case 111:if (self->message) {
                                          gentity_t *slacker = NULL;

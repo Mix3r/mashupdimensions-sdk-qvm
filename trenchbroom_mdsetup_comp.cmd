@@ -1,4 +1,14 @@
-IF NOT EXIST "%~dp0TrenchBroom.exe" goto FINISH_HIM
+IF NOT EXIST "%~dp0TrenchBroom.exe" (
+    @setlocal enableextensions enabledelayedexpansion
+    SET EDITR1="%~dp0Place TrenchBroom in this folder.htm"
+    echo ^<HTML^>^<HEAD^>^<TITLE^>Get TrenchBroom^<^/TITLE^>^<^/HEAD^>>!EDITR1!
+    echo ^<BODY BGCOLOR^=^#c0c0c0^ TEXT^=^#000000^>Place TrenchBroom in this folder. Download and extract Trenchbroom .7z file to^:>>!EDITR1!
+    echo ^<p^>%~dp0>>!EDITR1!
+    echo ^<p^>^<B^>^<a href=^"https^:^/^/github.com^/TrenchBroom^/TrenchBroom^/releases^" target=^"_blank^"^>LATEST TRENCHBROOM RELEASES^<^/a^>^<^/B^>^<^/BODY^>^<^/HTML^>>>!EDITR1!
+    explorer.exe /select,!EDITR1!
+    endlocal
+    goto FINISH_HIM
+)
 IF "%~6"=="" goto bSETUP
 goto bCOPYTHISMAP
 
