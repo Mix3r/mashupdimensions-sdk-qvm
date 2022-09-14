@@ -2515,14 +2515,38 @@ static void CG_DrawCenterString(void) {
                                         cg.centerPrintCharWidth = -strlen(cg.centerPrint);
                                         cg.centerPrintTime = cg.time + l;
                                         cg.centerPrintY = cg.time;
+                                        l = -999;
                                 }
                                 start = strchr(start,'#');
                                 if (start) {
                                         qhandle_t imgseq_frame;
+                                        char *media_path;
                                         start++;
+                                        media_path = va("video/%s",start);
+                                        if (l == -999) {
+                                                sfxHandle_t imgseq_snd;
+                                                if (cgs.clientinfo[ cg.predictedPlayerState.clientNum ].gender == GENDER_FEMALE) {
+                                                        imgseq_snd = trap_S_RegisterSound(va("%sf%s.wav",media_path,COM_Localize(1)), qfalse);
+                                                        if (!imgseq_snd) {
+                                                                imgseq_snd = trap_S_RegisterSound(va("%sf.wav",media_path), qfalse);
+                                                        }
+                                                }
+                                                if (!imgseq_snd) {
+                                                        imgseq_snd = trap_S_RegisterSound(va("%s%s.wav",media_path,COM_Localize(1)), qfalse);
+                                                        if (!imgseq_snd) {
+                                                                imgseq_snd = trap_S_RegisterSound(va("%s.wav",media_path), qfalse);
+                                                        }
+                                                }
+                                                trap_S_StartLocalSound(imgseq_snd, CHAN_ANNOUNCER);
+                                        }
                                         l = cg.time - cg.centerPrintY;
-                                        l = (int)l/33.33333;
-                                        imgseq_frame = trap_R_RegisterShaderNoMip(va("video/%s_%i",start,l));
+                                        l = (int)((l/33.33333)+1.0f);
+                                        if (cgs.clientinfo[ cg.predictedPlayerState.clientNum ].gender == GENDER_FEMALE) {
+                                                imgseq_frame = trap_R_RegisterShaderNoMip(va("%s_%if",media_path,l));
+                                        }
+                                        if (!imgseq_frame) {
+                                                imgseq_frame = trap_R_RegisterShaderNoMip(va("%s_%i",media_path,l));
+                                        }
                                         if (imgseq_frame) {
                                                 trap_R_DrawStretchPic(0,0,cgs.glconfig.vidWidth, cgs.glconfig.vidHeight, 0, 0, 1, 1, imgseq_frame);
                                         }

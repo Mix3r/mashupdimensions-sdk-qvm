@@ -771,22 +771,6 @@ sfxHandle_t CG_CacheLocalizedSound(char *snd) {
         return trap_S_RegisterSound(trysnd, regsnd_flag);
 }
 
-//sfxHandle_t CG_CacheLocalizedSound(char *snd) {
-//        char *trysnd;
-//        sfxHandle_t rethandle;
-//        trysnd = va("%s_%s",cl_language.string,snd);
-//        rethandle = trap_S_RegisterSound(trysnd, regsnd_flag);
-//        if (rethandle) {
-//                return rethandle;
-//        }
-//        rethandle = trap_S_RegisterSound(snd, regsnd_flag);
-//        if (rethandle) {
-//                return rethandle;
-//        }
-//        trysnd = va("ru_%s",snd);
-//        return trap_S_RegisterSound(trysnd, regsnd_flag);
-//}
-
 /*																																			
 ===================
 CG_ForceModelChange
@@ -822,7 +806,7 @@ void CG_UpdateCvars(void) {
 		// players *long* after they had left the area, on purpose
 		if (cv->vmCvar == &cg_cmdTimeNudge) {
 			CG_Cvar_ClampInt(cv->cvarName, cv->vmCvar, 0, 999);
-		}			// cl_timenudge less than -50 or greater than 50 doesn't actually
+		}	// cl_timenudge less than -50 or greater than 50 doesn't actually
 			// do anything more than -50 or 50 (actually the numbers are probably
 			// closer to -30 and 30, but 50 is nice and round-ish)
 			// might as well not feed the myth, eh?
