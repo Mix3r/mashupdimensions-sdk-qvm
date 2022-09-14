@@ -2498,6 +2498,39 @@ static void CG_DrawCenterString(void) {
 
 	trap_R_SetColor(color);
 
+        // Mix3r_Durachok: ingame still pic/sequence/camera feature via target_print entity message
+        // Message formats are:
+        // #_cN x y z pitch yaw - static camera hanging at x y z, looking at pitch yaw during N+3 seconds (0-9 range allowed only, but see note below!)
+        // hud and crosshair are present, pov player forced to 3rd person, MUST be located within player vicinity, otherwise HOM effects happen(!)
+        // example: #_c9-33 112 40 0 45  means camera hanging at -33 112 40, vertically centered (pitch 0), 45 angled (yaw 45),
+        // the camera view duration is 12 seconds (9 sec + 3 default seconds).
+        // NOTE 1: To make longer duration, just send the same message via target_print, which resets the camera duration seamlessly to N+3 sec again
+
+        // to disable hud & crosshair within camera view and allow image sequence playback, use C instead of c:
+        // example: #_C9-33 112 40 0 45 is the same as above, but both hud & crosshair aren't on the screen.
+
+        // jpeg image sequence playback description:
+        // use the following format:
+        // #_CN x y z pitch yaw #clipname - sets view as described above and shows video/clipname_F.jpg, where F is frame counting from 1 since
+        // message sent, then increasing every frame by 30 frames per second. Gaps (clipname_32, clipname_33 ..empty range.. clipname_91) are allowed,
+        // camera view used within gap :) rules are above
+        // example: #_C9-33 112 40 0 45 #soccerball starts video/soccerball_1.jpg and continues up to soccerball_2.jpg _3.jpg etc within camera duration.
+        // starts video/soccerball_L.wav file on img sequence start where L is selected game language
+        // gender dependent: pov female model makes the code look for soccerballf_L.wav sound and soccerballf_F.jpg sequence. If soccerballf frame missing
+        // (clipnamef), then fallback to soccerball (clipname) follows for this particular frame, so you can use this for mixing generic and gender-dependent
+        // frames during clip. Sound code can perform soccerballf_L.wav fallback too, so if no soccerballf_L.wav, soccerball_L.wav will be played at clip start
+        // language fallback is present too, so even further fallback to soccerball.wav possible, if language-dependent wav is missing.
+        // language-dependent image sequence isn't implemented because of game small size conservation (avoiding language signs in sequence images), just
+        // gender-dependence allowed at now :)
+
+        // NOTE 2: to stop camera/sequence at any moment, send target_print message containing anything but #_ , space character for example
+
+        // still image show format:
+        // #_Nstillimagename shows video/stillimagename.jpg for N+2 seconds, then fades away for 1 second. You can prolong the duration by sending the same
+        // message until fade away occur, or switch image by sending #_Nanotherstillimage message
+        // example: #_9evildogbarking shows video/evildogbarking.jpg for 11 seconds then fades away for 1 second.
+
+
         if (cg.centerPrint[0] == '#' && cg.centerPrint[1] == '_') {
                 start = cg.centerPrint+3;
                 if (cg.centerPrintLines > 0) {
@@ -2515,26 +2548,37 @@ static void CG_DrawCenterString(void) {
                                         cg.centerPrintCharWidth = -strlen(cg.centerPrint);
                                         cg.centerPrintTime = cg.time + l;
                                         cg.centerPrintY = cg.time;
-                                        l = -999;
+                                        l = -999; // flag to choose and start clipname sound
                                 }
                                 start = strchr(start,'#');
                                 if (start) {
-                                        qhandle_t imgseq_frame;
-                                        char *media_path;
+                                        qhandle_t imgseq_frame = 0;
+                                        char media_path[MAX_QPATH];
                                         start++;
-                                        media_path = va("video/%s",start);
                                         if (l == -999) {
-                                                sfxHandle_t imgseq_snd;
+                                                sfxHandle_t imgseq_snd = 0;
                                                 if (cgs.clientinfo[ cg.predictedPlayerState.clientNum ].gender == GENDER_FEMALE) {
-                                                        imgseq_snd = trap_S_RegisterSound(va("%sf%s.wav",media_path,COM_Localize(1)), qfalse);
-                                                        if (!imgseq_snd) {
-                                                                imgseq_snd = trap_S_RegisterSound(va("%sf.wav",media_path), qfalse);
+                                                        // pov player has female model, let's find clipnamef_lang, clipnamef
+                                                        for( l = 1; l < 3; l++ ) {
+                                                                // l is small L, not ONE
+                                                                Com_sprintf(media_path, sizeof(media_path), "video/%sf%s.wav", start, COM_Localize(l));
+                                                                imgseq_snd = trap_S_RegisterSound(media_path, qfalse);
+                                                                if (imgseq_snd) {
+                                                                        break;
+                                                                }
                                                         }
                                                 }
                                                 if (!imgseq_snd) {
-                                                        imgseq_snd = trap_S_RegisterSound(va("%s%s.wav",media_path,COM_Localize(1)), qfalse);
-                                                        if (!imgseq_snd) {
-                                                                imgseq_snd = trap_S_RegisterSound(va("%s.wav",media_path), qfalse);
+                                                        // pov player hasn't female model, or it is nevermind for this particular clip, so
+                                                        // clipnamef isn't present
+                                                        // look for generic sound for the clip, clipname_lang, clipname
+                                                        for( l = 1; l < 3; l++ ) {
+                                                                // l is small L, not ONE
+                                                                Com_sprintf(media_path, sizeof(media_path), "video/%s%s.wav", start, COM_Localize(l));
+                                                                imgseq_snd = trap_S_RegisterSound(media_path, qfalse);
+                                                                if (imgseq_snd) {
+                                                                        break;
+                                                                }
                                                         }
                                                 }
                                                 trap_S_StartLocalSound(imgseq_snd, CHAN_ANNOUNCER);
@@ -2542,10 +2586,12 @@ static void CG_DrawCenterString(void) {
                                         l = cg.time - cg.centerPrintY;
                                         l = (int)((l/33.33333)+1.0f);
                                         if (cgs.clientinfo[ cg.predictedPlayerState.clientNum ].gender == GENDER_FEMALE) {
-                                                imgseq_frame = trap_R_RegisterShaderNoMip(va("%s_%if",media_path,l));
+                                                Com_sprintf(media_path, sizeof(media_path), "video/%s_%if", start,l);
+                                                imgseq_frame = trap_R_RegisterShaderNoMip(media_path);
                                         }
                                         if (!imgseq_frame) {
-                                                imgseq_frame = trap_R_RegisterShaderNoMip(va("%s_%i",media_path,l));
+                                                Com_sprintf(media_path, sizeof(media_path), "video/%s_%i", start,l);
+                                                imgseq_frame = trap_R_RegisterShaderNoMip(media_path);
                                         }
                                         if (imgseq_frame) {
                                                 trap_R_DrawStretchPic(0,0,cgs.glconfig.vidWidth, cgs.glconfig.vidHeight, 0, 0, 1, 1, imgseq_frame);
