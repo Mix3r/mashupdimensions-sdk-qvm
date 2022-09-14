@@ -21,6 +21,7 @@ Based on Open Arena gamecode, heavily modified gamecode aims to extend singlepla
 - Ingame console command executing via target_relay
 - Silent NPC relocation on demand via target_relay
 - switchable cameras feature via target_print
+- player-model-gender-sensitive ingame image sequence playback feature via target_print (see detailed description in cgame/cg_draw.c)
 
 
 ## Building ##
