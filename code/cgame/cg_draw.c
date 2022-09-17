@@ -2586,7 +2586,7 @@ static void CG_DrawCenterString(void) {
                                         l = cg.time - cg.centerPrintY;
                                         l = (int)((l/33.33333)+1.0f);
                                         if (cgs.clientinfo[ cg.predictedPlayerState.clientNum ].gender == GENDER_FEMALE) {
-                                                Com_sprintf(media_path, sizeof(media_path), "video/%s_%if", start,l);
+                                                Com_sprintf(media_path, sizeof(media_path), "video/%sf_%i", start,l);
                                                 imgseq_frame = trap_R_RegisterShaderNoMip(media_path);
                                         }
                                         if (!imgseq_frame) {
