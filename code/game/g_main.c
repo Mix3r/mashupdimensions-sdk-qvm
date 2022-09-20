@@ -1832,6 +1832,9 @@ void QDECL G_LogPrintf( const char *fmt, ... )
 // Mix3r_Durachok: relay pawns under various conditions
 gentity_t *RelaySomebody(int mde, vec3_t orig,int dist,char *msg) {
         int i;
+        int chosen_one_id = -1;
+        int pawn_order = 1;
+        vec3_t vPawnLineAngle;
         gentity_t *someone;
         for( i = 0; i < level.maxclients; i++ ) {
                 someone = &g_entities[i];
@@ -1853,6 +1856,13 @@ gentity_t *RelaySomebody(int mde, vec3_t orig,int dist,char *msg) {
                                         someone->client->ps.velocity[YAW] = (float)dist;
                                         SetClientViewAngle(someone, someone->client->ps.velocity);
                                         someone->client->ps.velocity[YAW] = 0.0f;
+                                        if (pawn_order > 1) {
+                                                vPawnLineAngle[ROLL] = 0;
+                                                vPawnLineAngle[PITCH] = 0;
+                                                vPawnLineAngle[YAW] = atof(msg);
+                                                AngleVectors( vPawnLineAngle, vPawnLineAngle, NULL, NULL );
+                                                VectorMA( orig, 32, vPawnLineAngle, orig );
+                                        }
                                 } break;
                         }
                         // relay chosen one :)
@@ -1863,10 +1873,20 @@ gentity_t *RelaySomebody(int mde, vec3_t orig,int dist,char *msg) {
                         G_ResetHistory( someone );
                         BG_PlayerStateToEntityState( &someone->client->ps, &someone->s, qtrue );
                         VectorCopy( someone->client->ps.origin, someone->r.currentOrigin );
+                        chosen_one_id = i;
+                        pawn_order++;
+                        // kill anything at the destination
+	                if ( someone->client->sess.sessionTeam != TEAM_SPECTATOR && someone->client->ps.pm_type != PM_SPECTATOR ) {
+		                G_KillBox (someone);
+	                }
                         trap_LinkEntity (someone);
-
-                        return someone;
+                        if (mde < 2) {
+                                break;
+                        }
 	        }
+        }
+        if (chosen_one_id >= 0) {
+                return &g_entities[chosen_one_id];
         }
         return NULL;
 }

@@ -2581,7 +2581,7 @@ static void CG_DrawCenterString(void) {
                                                                 }
                                                         }
                                                 }
-                                                trap_S_StartLocalSound(imgseq_snd, CHAN_ANNOUNCER);
+                                                trap_SendConsoleCommand(va("music %s video/v\n",media_path));
                                         }
                                         l = cg.time - cg.centerPrintY;
                                         l = (int)((l/33.33333)+1.0f);
@@ -2604,7 +2604,16 @@ static void CG_DrawCenterString(void) {
                         // CG_Printf("choffset: %i \n", l );
                         cg.centerPrintTime = cg.time + l;
                 }
-                trap_R_DrawStretchPic(0,0,cgs.glconfig.vidWidth, cgs.glconfig.vidHeight, 0, 0, 1, 1, trap_R_RegisterShaderNoMip(va("video/%s",start)));
+                for( l = 1; l < 3; l++ ) {
+                        cgs.media.scoreboardScore = trap_R_RegisterShaderNoMip(va("video/%s%s",start,COM_Localize(l)));
+                        if (cgs.media.scoreboardScore) {
+                                break;
+                        }
+                }
+                trap_R_DrawStretchPic(0,0,cgs.glconfig.vidWidth, cgs.glconfig.vidHeight, 0, 0, 1, 1, cgs.media.scoreboardScore);
+                if (start[0] == '_') {
+                        trap_R_DrawStretchPic( 0,0,cgs.glconfig.vidWidth, cgs.glconfig.vidHeight, 0, 0, 1, 1, trap_R_RegisterShaderNoMip( "gfx/misc/mma_storyteller_scratches" ) );
+                }
                 return;
 	}
 

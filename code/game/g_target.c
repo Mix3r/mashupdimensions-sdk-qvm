@@ -139,6 +139,9 @@ void SP_target_score( gentity_t *ent ) {
 If "private", only the activator gets the message.  If no checks, all clients get the message.
 */
 void Use_Target_Print (gentity_t *ent, gentity_t *other, gentity_t *activator) {
+        if (ent->wait && ent->wait == 999) {
+                return;
+        }
 	if ( activator->client && ( ent->spawnflags & 4 ) ) {
 		trap_SendServerCommand( activator-g_entities, va("cp \"%s\"", ent->message ));
 		return;
@@ -455,6 +458,10 @@ void target_relay_use (gentity_t *self, gentity_t *other, gentity_t *activator) 
                                          slacker = G_Find (slacker, FOFS(targetname), self->target);
                                          if ( slacker && slacker->wait ) {
                                                  slacker->wait = atoi(self->message) * 1.0f;
+                                                 slacker = G_Find (slacker, FOFS(targetname), self->target);
+                                                 if ( slacker && slacker->wait ) {
+                                                         slacker->wait = atoi(self->message) * 1.0f;
+                                                 }
                                          }
                                          return;
                                  }

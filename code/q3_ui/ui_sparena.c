@@ -49,14 +49,12 @@ void UI_SPArena_Start( const char *arenaInfo ) {
 	}
 	trap_Cvar_SetValue( "ui_spSelection", level );
 
-	map = Info_ValueForKey( arenaInfo, "map" );
-        //if (level == -4) {
-        //    trap_Cvar_Set( "nextmap", va( "spmap %s\n", map ) );
-        //    trap_Cmd_ExecuteText( EXEC_APPEND, "disconnect; cinematic intro_mma.RoQ\n" );
-        //    trap_Cmd_ExecuteText( EXEC_APPEND, "play video/intro_mma.wav\n" );
-        //} else {
-	//    trap_Cmd_ExecuteText( EXEC_APPEND, va( "spmap %s\n", map ) );
-        //}
-        trap_Cmd_ExecuteText( EXEC_APPEND, va( "set ui_seqplay \"sequence=%s\"\n", map ) );
-        trap_Cmd_ExecuteText( EXEC_APPEND, "disconnect; levelselect\n" );
+        map = Info_ValueForKey( arenaInfo, "mapintro" );
+        if (map[0]) {
+                trap_Cmd_ExecuteText( EXEC_APPEND, va( "spmap %s\n", map ) );
+        } else {
+	        map = Info_ValueForKey( arenaInfo, "map" );
+                trap_Cmd_ExecuteText( EXEC_APPEND, va( "set ui_seqplay \"sequence=%s\"\n", map ) );
+                trap_Cmd_ExecuteText( EXEC_APPEND, "disconnect; levelselect\n" );
+        }
 }
