@@ -1833,7 +1833,7 @@ void QDECL G_LogPrintf( const char *fmt, ... )
 gentity_t *RelaySomebody(int mde, vec3_t orig,int dist,char *msg) {
         int i;
         int chosen_one_id = -1;
-        int pawn_order = 1;
+        int pawn_order = 0;
         vec3_t vPawnLineAngle;
         gentity_t *someone;
         for( i = 0; i < level.maxclients; i++ ) {
@@ -1842,32 +1842,36 @@ gentity_t *RelaySomebody(int mde, vec3_t orig,int dist,char *msg) {
                         switch (mde) {
                         // 1: relay someone from above or below destination height
                         // great for beaming slackers from upper or lower floors
-                        case 1: if (!someone->r.svFlags & SVF_BOT ) {
+                        case 1: if (!(someone->r.svFlags & SVF_BOT) ) {
                                         continue;
                                 } else if (dist > 0) {
                                         if (someone->client->ps.origin[2] < orig[2]+dist) continue;
                                 } else {
                                         if (someone->client->ps.origin[2] > orig[2]+dist) continue;
                                 } break;
-                        case 2: if (someone->r.svFlags & SVF_BOT ) {
+                        case 2: if (someone->r.svFlags & SVF_BOT) {
                                         continue;
                                 } else {
                                         VectorClear( someone->client->ps.velocity );
                                         someone->client->ps.velocity[YAW] = (float)dist;
                                         SetClientViewAngle(someone, someone->client->ps.velocity);
                                         someone->client->ps.velocity[YAW] = 0.0f;
-                                        if (pawn_order > 1) {
+                                        if (pawn_order) {
                                                 vPawnLineAngle[ROLL] = 0;
                                                 vPawnLineAngle[PITCH] = 0;
                                                 vPawnLineAngle[YAW] = atof(msg);
                                                 AngleVectors( vPawnLineAngle, vPawnLineAngle, NULL, NULL );
-                                                VectorMA( orig, 32, vPawnLineAngle, orig );
+                                                VectorMA( orig, 45*pawn_order, vPawnLineAngle, vPawnLineAngle );
                                         }
                                 } break;
                         }
                         // relay chosen one :)
 		        trap_UnlinkEntity (someone);
-                        VectorCopy ( orig, someone->client->ps.origin );
+                        if (pawn_order) {
+                                VectorCopy ( vPawnLineAngle, someone->client->ps.origin );
+                        } else {
+                                VectorCopy ( orig, someone->client->ps.origin );
+                        }
 	                someone->client->ps.origin[2] += 1;
                         someone->client->ps.eFlags ^= EF_TELEPORT_BIT;
                         G_ResetHistory( someone );
