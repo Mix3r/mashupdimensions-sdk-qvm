@@ -418,19 +418,13 @@ void target_relay_use (gentity_t *self, gentity_t *other, gentity_t *activator) 
                         case 102:LogExit( "#0" ); break;
                         // execute this target_relay [message] property as console string
                         case 103:trap_SendConsoleCommand( EXEC_APPEND, va("%s\n",self->message) ); break;
-                        // execute this target_relay [message] property as console string (for native single player)
-                        case 1031:if( g_gametype.integer == GT_SINGLE_PLAYER ) {
-                                          trap_SendConsoleCommand( EXEC_APPEND, va("%s\n",self->message) );
-                                  } else {
-                                          return;
-                                  }
-                        break;
-                        // execute this target_relay [message] property as console string (for coop/multiplayer)
-                        case 1032:if (g_gametype.integer != GT_SINGLE_PLAYER) {
-                                          trap_SendConsoleCommand( EXEC_APPEND, va("%s\n",self->message) );
-                                  } else {
-                                          return;
-                                  }
+                        // immediately change map to the one specified as [message] property of this target_relay
+                        case 104:if( g_gametype.integer == GT_SINGLE_PLAYER ) {
+                                         self->targetShaderName = "spmap %s\n";
+                                 } else {
+                                         self->targetShaderName = "map %s\n";
+                                 }
+                                 trap_SendConsoleCommand( EXEC_APPEND, va(self->targetShaderName,self->message) );
                         break;
                         // relay some bot from below or above [random] property height
                         // relative to this target_relay origin.
