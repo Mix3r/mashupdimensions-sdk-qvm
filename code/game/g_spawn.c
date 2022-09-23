@@ -430,9 +430,9 @@ level.spawnVars[], then call the class specfic spawn function
 ===================
 */
 void G_SpawnGEntityFromSpawnVars( void ) {
-	int			i;
+	int		i;
 	gentity_t	*ent;
-	char		*s, *value, *gametypeName;
+	char		*s, *value;
 	static char *gametypeNames[] = {"ffa", "tournament", "single", "team", "ctf", "oneflag", "obelisk", "harvester", 
 	"elimination", "ctf", "lms", "dd", "dom", "pos"};
 
@@ -480,9 +480,9 @@ void G_SpawnGEntityFromSpawnVars( void ) {
 	//}
 //endif
 
-	if( G_SpawnString( "!gametype", NULL, &value ) ) {
+	if( G_SpawnString( "exclude", NULL, &value ) ) {
 		if( g_gametype.integer >= GT_FFA && g_gametype.integer < ARRAY_LEN(gametypeNames) ) {
-			s = strstr( value, gametypeName );
+			s = strstr( value, gametypeNames[g_gametype.integer] );
 			if( s ) {
 				G_FreeEntity( ent );
 				return;
@@ -492,11 +492,11 @@ void G_SpawnGEntityFromSpawnVars( void ) {
 	if( G_SpawnString( "gametype", NULL, &value ) ) {
 		if( g_gametype.integer >= GT_FFA && g_gametype.integer < ARRAY_LEN(gametypeNames) ) {
                         if (G_IsACoop()) {
-                                gametypeName = gametypeNames[2]; //single subst for coop play
+                                i = 2; //single subst for coop play
                         } else {
-			        gametypeName = gametypeNames[g_gametype.integer];
+			        i = g_gametype.integer;
                         }
-			s = strstr( value, gametypeName );
+			s = strstr( value, gametypeNames[i] );
 			if( !s ) {
 				G_FreeEntity( ent );
 				return;
