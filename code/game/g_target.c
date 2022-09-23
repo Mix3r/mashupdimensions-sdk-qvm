@@ -419,14 +419,14 @@ void target_relay_use (gentity_t *self, gentity_t *other, gentity_t *activator) 
                         // execute this target_relay [message] property as console string
                         case 103:trap_SendConsoleCommand( EXEC_APPEND, va("%s\n",self->message) ); break;
                         // execute this target_relay [message] property as console string (for native single player)
-                        case 1041:if( g_gametype.integer == GT_SINGLE_PLAYER ) {
+                        case 1031:if( g_gametype.integer == GT_SINGLE_PLAYER ) {
                                           trap_SendConsoleCommand( EXEC_APPEND, va("%s\n",self->message) );
                                   } else {
                                           return;
                                   }
                         break;
                         // execute this target_relay [message] property as console string (for coop/multiplayer)
-                        case 1048:if (g_gametype.integer != GT_SINGLE_PLAYER) {
+                        case 1032:if (g_gametype.integer != GT_SINGLE_PLAYER) {
                                           trap_SendConsoleCommand( EXEC_APPEND, va("%s\n",self->message) );
                                   } else {
                                           return;
