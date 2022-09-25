@@ -435,13 +435,13 @@ void target_relay_use (gentity_t *self, gentity_t *other, gentity_t *activator) 
                                  }
                         break;
                         // as above, but picks human and moves to target_relay origin
-                        case 106:if (activator->client) {
+                        case 106:if (self) {
                                          activator=RelaySomebody(2,self->s.origin,(int)self->s.angles[YAW],self->message);
                                  }
                         break;
                         // drops some item, specified as [message] property of this target_relay
                         // for example, [message] is item_armor_body, so it drops Heavy Armor when signal received
-                        case 107:if (activator->client) {
+                        case 107:if (self->message) {
                                          LaunchItem( BG_FindItem(va("%s",self->message)), self->s.origin, axisDefault[2] );
                                  }
                         break;

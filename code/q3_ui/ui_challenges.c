@@ -102,7 +102,7 @@ static void UI_Contests_Event( void *ptr, int event ) {
                 } else if (ui_is_missionpack) {
                         UI_SPSkillMenu( "exec ta1_mpteam1.cfg" );
                 } else {
-                        UI_SPSkillMenu( "exec coop_oa_box4box.cfg" );
+                        UI_SPSkillMenu( "exec coop_intro.cfg" );
                 }
 		break;
 

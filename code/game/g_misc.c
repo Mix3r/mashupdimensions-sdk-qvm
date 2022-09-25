@@ -267,19 +267,23 @@ void Use_Shooter( gentity_t *ent, gentity_t *other, gentity_t *activator ) {
                         // Mix3r_Durachok: let's aim at activator, if shooter has parameter wait was set to 1
                         VectorSubtract( activator->r.currentOrigin, ent->s.origin, dir );
                         switch ((int)ent->wait) {
-                        case 1:
-                                ent->s.weapon = WP_BFG;
+                                case 1:
+                                        ent->s.weapon = WP_BFG;
                                 break;
-                        case 2:
-                                ent->s.weapon = WP_ROCKET_LAUNCHER;
+                                case 2:
+                                        ent->s.weapon = WP_ROCKET_LAUNCHER;
                                 break;
-                        case 3:
-                                deg = 0.0f;
-                                ent->s.weapon = WP_PLASMAGUN;
+                                case 3:
+                                        deg = 0.0f;
+                                        ent->s.weapon = WP_PLASMAGUN;
                                 break;
-                        case 4:
-                                deg *= 0.33f;
-                                ent->s.weapon = WP_NAILGUN;
+                                case 4:
+                                        deg *= 0.33f;
+                                        ent->s.weapon = WP_NAILGUN;
+                                break;
+                                // case for hold fire
+                                case 999:
+                                        return;
                                 break;
                         }
                 } else {

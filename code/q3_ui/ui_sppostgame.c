@@ -150,15 +150,26 @@ static void UI_SPPostgameMenu_NextEvent( void* ptr, int event ) {
 		return;
 	}
         // handle specially if we just won the training map
-        // Mixer_Durachok : moved up from under UI_PopMenu to change tier advance behavior
+        // Mixer_Durachok : moved up from under won check section to change tier advance behavior
 	if( postgameMenuInfo.won == 0 ) {
 		level = 0;
-	}
-	else {
+	} else {
 		level = postgameMenuInfo.level + 1;
 	}
 	levelSet = level / ARENAS_PER_TIER;
-        /////////////////////////////////
+
+        UI_PopMenu();
+
+        // Mix3r_Durachok: multi-mission map support (several maps during one mission)
+        // check for goto [mapname] parameter in just finished level data from scripts/arenas.txt
+        // open the map immediately if found
+        arenaInfo = UI_GetArenaInfoByNumber( postgameMenuInfo.level );
+        sf = Info_ValueForKey( arenaInfo, "goto" );
+        if ( sf[0] ) {
+                trap_Cmd_ExecuteText( EXEC_APPEND, va( "spmap %s\n", sf ) );
+                return;
+        }
+
         if ((level == 0) || (levelSet > (level-1)/ARENAS_PER_TIER) || (postgameMenuInfo.won == postgameMenuInfo.lastTier)) {
                if ( uis.demoversion ) {
 			if( postgameMenuInfo.won == 1) {
@@ -218,19 +229,6 @@ static void UI_SPPostgameMenu_NextEvent( void* ptr, int event ) {
                         trap_Cmd_ExecuteText( EXEC_APPEND, "disconnect; levelselect");
 			return;
 		}
-        }
-        ///////////////////////////////////////////////
-
-	UI_PopMenu();
-
-        // Mix3r_Durachok: multi-mission map support (several maps during one mission)
-        // check for goto [mapname] parameter in just finished level data from scripts/arenas.txt
-        // open the map immediately if found
-        arenaInfo = UI_GetArenaInfoByNumber( postgameMenuInfo.level );
-        sf = Info_ValueForKey( arenaInfo, "goto" );
-        if ( sf[0] ) {
-                trap_Cmd_ExecuteText( EXEC_APPEND, va( "spmap %s\n", sf ) );
-                return;
         }
 
 	//currentLevel = UI_GetCurrentGame();
