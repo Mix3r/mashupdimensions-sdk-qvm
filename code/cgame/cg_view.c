@@ -814,26 +814,34 @@ static int CG_CalcViewValues( void ) {
                                 vLookangle[i-3] = atof(token);
                         }
 		}
+                VectorCopy( vLookangle, cg.refdefViewAngles );
+
                 // Mix3r_Durachok: let's implement camera movement:
                 token = COM_Parse(&start);
                 if (token[0]) {
                         i = atoi(token);
                         token = COM_Parse(&start);
                         if (token[0] && i > 0) {
-                                if (token[0] == 'S') {
+                                if (token[0] == 'B') {
                                         vLookangle[YAW] += 180; // dolly backward
-                                } else if (token[0] == 'A') {
+                                } else if (token[0] == 'R') {
                                         vLookangle[YAW] += 270; // dolly left
-                                } else if (token[0] == 'D') {
+                                } else if (token[0] == 'L') {
                                         vLookangle[YAW] += 90; // dolly right
+                                } else if (token[0] == 'U') {
+                                        vLookangle[PITCH] = -90; // crane up
+                                        vLookangle[YAW] = 0;
+                                } else if (token[0] == 'D') {
+                                        vLookangle[PITCH] = 90; // crane down
+                                        vLookangle[YAW] = 0;
+                                        // use W or another letter to dolly forward
                                 }
                                 AngleVectors( vLookangle, cg.refdef.vieworg, NULL, NULL );
                                 VectorMA( vViewpos, i*((cg.time - cg.centerPrintY)*0.001), cg.refdef.vieworg, vViewpos );
                         }
                 }
-                //
+
                 VectorCopy( vViewpos, cg.refdef.vieworg );
-                VectorCopy( vLookangle, cg.refdefViewAngles );
 	} else if ( cg.renderingThirdPerson && !cg.zoomed) {
 		// back away from character. Mix3r_Durachok: third person zoom shouldn't show person
 		CG_OffsetThirdPersonView();
