@@ -3652,10 +3652,6 @@ static void CG_Draw2D(stereoFrame_t stereoFrame) {
 		CG_CheckOrderPending();
 	}
 #endif
-	// if we are taking a levelshot for the menu, don't draw anything
-	if (cg.levelShot) {
-		return;
-	}
 
 	if (cg_draw2D.integer == 0) {
 		return;
@@ -3666,11 +3662,12 @@ static void CG_Draw2D(stereoFrame_t stereoFrame) {
 		return;
 	}
 
-	/*
-		if (cg.cameraMode) {
-			return;
-		}
-	 */
+        // Mix3r_Durachok: camera mode special case
+        if (cg.centerPrintLines == 1000) {
+                CG_DrawCenterString();
+                return;
+        }
+
 	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR /*|| cg.snap->ps.pm_type == PM_SPECTATOR*/) {
 		CG_DrawSpectator();
 

@@ -814,10 +814,28 @@ static int CG_CalcViewValues( void ) {
                                 vLookangle[i-3] = atof(token);
                         }
 		}
+                // Mix3r_Durachok: let's implement camera movement:
+                token = COM_Parse(&start);
+                if (token[0]) {
+                        i = atoi(token);
+                        token = COM_Parse(&start);
+                        if (token[0] && i > 0) {
+                                if (token[0] == 'S') {
+                                        vLookangle[YAW] += 180; // dolly backward
+                                } else if (token[0] == 'A') {
+                                        vLookangle[YAW] += 270; // dolly left
+                                } else if (token[0] == 'D') {
+                                        vLookangle[YAW] += 90; // dolly right
+                                }
+                                AngleVectors( vLookangle, cg.refdef.vieworg, NULL, NULL );
+                                VectorMA( vViewpos, i*((cg.time - cg.centerPrintY)*0.001), cg.refdef.vieworg, vViewpos );
+                        }
+                }
+                //
                 VectorCopy( vViewpos, cg.refdef.vieworg );
                 VectorCopy( vLookangle, cg.refdefViewAngles );
 	} else if ( cg.renderingThirdPerson && !cg.zoomed) {
-		// back away from character. mix3r: third person zoom shouldn't show person
+		// back away from character. Mix3r_Durachok: third person zoom shouldn't show person
 		CG_OffsetThirdPersonView();
 	} else {
 		// offset for local bobbing and kicks
