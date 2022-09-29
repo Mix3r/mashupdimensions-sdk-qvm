@@ -38,6 +38,14 @@ textures/common/a_gray
                 rgbGen const ( 0.25 0.25 0.25 )
         }
 }
+textures/common/a_gray_low
+{
+	surfaceparm nolightmap
+        {
+                map $whiteimage
+                rgbGen const ( 0.125 0.125 0.125 )
+        }
+}
 textures/common/a_white
 {
 	surfaceparm nolightmap

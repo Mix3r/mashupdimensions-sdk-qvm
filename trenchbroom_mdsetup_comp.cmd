@@ -111,8 +111,17 @@ rem compile map and start the map for test - fast mode for test, no lighmap at a
 "%~dp0q3map2" -fs_basepath %1 -fs_game %2 -meta -v "%~dp3%5TEMP.map"
 move /Y "%~dp3%5TEMP.bsp" "%~dp3%5.bsp"
 "%~dp0bspc" -forcesidesvisible -bsp2aas "%~dp3%5.bsp"
-del "%~dp3%5TEMP.map"
+del /F /Q "%~dp3%5TEMP.*"
+md "%~dp3maps"
+copy /Y "%~dp3%5.bsp" "%~dp3maps"
+copy /Y "%~dp3%5.aas" "%~dp3maps"
+powershell Compress-Archive '%~dp3maps' '%~dp3zombietest%5.zip'
+move /Y "%~dp3zombietest%5.zip" "%~dp3..\zombietest%5.pk3"
+del /F /Q "%~dp3maps\%5.bsp"
+del /F /Q "%~dp3maps\%5.aas"
+rmdir "%~dp3maps"
 "%~1\ioq3md.x64.exe" +set sv_pure 0 +set fs_game %~4 +devmap %5
+del /F /Q "%~dp3..\zombietest%5.pk3"
 goto FINISH_HIM
 
 rem compile map and start the map for test - full mode for test, with lightmaps and skies enlight the map
@@ -123,8 +132,17 @@ rem compile map and start the map for test - full mode for test, with lightmaps 
 "%~dp0q3map2" -fs_basepath %1 -fs_game %2 -light -fast -patchshadows -samples 3 -bounce 8 -gamma 2 -compensate 4 -dirty -v "%~dp3%5TEMP.map"
 move /Y "%~dp3%5TEMP.bsp" "%~dp3%5.bsp"
 "%~dp0bspc" -forcesidesvisible -bsp2aas "%~dp3%5.bsp"
-del "%~dp3%5TEMP.map"
+del /F /Q "%~dp3%5TEMP.*"
+md "%~dp3maps"
+copy /Y "%~dp3%5.bsp" "%~dp3maps"
+copy /Y "%~dp3%5.aas" "%~dp3maps"
+powershell Compress-Archive '%~dp3maps' '%~dp3zombietest%5.zip'
+move /Y "%~dp3zombietest%5.zip" "%~dp3..\zombietest%5.pk3"
+del /F /Q "%~dp3maps\%5.bsp"
+del /F /Q "%~dp3maps\%5.aas"
+rmdir "%~dp3maps"
 "%~1\ioq3md.x64.exe" +set sv_pure 0 +set fs_game %~4 +devmap %5
+del /F /Q "%~dp3..\zombietest%5.pk3"
 goto FINISH_HIM
 
 rem compile map and start the map for test - full mode for test, with lightmaps, skies don't affect the lightmap
@@ -135,9 +153,17 @@ rem compile map and start the map for test - full mode for test, with lightmaps,
 "%~dp0q3map2" -fs_basepath %1 -fs_game %2 -light -fast -patchshadows -samples 3 -bounce 8 -sky 0.0 -gamma 2 -compensate 4 -dirty -v "%~dp3%5TEMP.map"
 move /Y "%~dp3%5TEMP.bsp" "%~dp3%5.bsp"
 "%~dp0bspc" -forcesidesvisible -bsp2aas "%~dp3%5.bsp"
-del "%~dp3%5TEMP.map"
+del /F /Q "%~dp3%5TEMP.*"
+md "%~dp3maps"
+copy /Y "%~dp3%5.bsp" "%~dp3maps"
+copy /Y "%~dp3%5.aas" "%~dp3maps"
+powershell Compress-Archive '%~dp3maps' '%~dp3zombietest%5.zip'
+move /Y "%~dp3zombietest%5.zip" "%~dp3..\zombietest%5.pk3"
+del /F /Q "%~dp3maps\%5.bsp"
+del /F /Q "%~dp3maps\%5.aas"
+rmdir "%~dp3maps"
 "%~1\ioq3md.x64.exe" +set sv_pure 0 +set fs_game %~4 +devmap %5
-
+del /F /Q "%~dp3..\zombietest%5.pk3"
 goto FINISH_HIM
 
 :FINISH_HIM
