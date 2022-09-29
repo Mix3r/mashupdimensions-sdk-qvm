@@ -1130,6 +1130,9 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_
                                         }
                                         return;
                                 }
+                                // fire entity which has pre_x targetname, where x is [target] property value of this button entity
+                                // used to fire something right on start of button movement
+                                // just cause the button's target fired only when button movement ends
                                 asave = 0;
                                 if (targ->target) {
                                         gentity_t *dpre = NULL;
@@ -1139,7 +1142,8 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_
                                                 asave = 1;
                                         }
                                 }
-                                if (asave == 0) {
+                                // prevent any effects in center of map axis on func_button event firing without [origin] property
+                                if (asave == 0 && !(targ->r.currentOrigin[0] == 0 && targ->r.currentOrigin[1] == 0 && targ->r.currentOrigin[2] == 0)) {
                                         ScorePlum(attacker, targ->r.currentOrigin, 999, 10);
                                 }
                         }
