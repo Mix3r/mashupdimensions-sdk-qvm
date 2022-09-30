@@ -1853,8 +1853,13 @@ gentity_t *RelaySomebody(int mde, vec3_t orig,int dist,char *msg) {
                                         continue;
                                 } else {
                                         VectorClear( someone->client->ps.velocity );
-                                        someone->client->ps.velocity[YAW] = (float)dist;
+                                        if (dist == -1) {
+                                                someone->client->ps.velocity[PITCH] = -90.0f;
+                                        } else {
+                                                someone->client->ps.velocity[YAW] = (float)dist;
+                                        }
                                         SetClientViewAngle(someone, someone->client->ps.velocity);
+                                        someone->client->ps.velocity[PITCH] = 0.0f;
                                         someone->client->ps.velocity[YAW] = 0.0f;
                                         if (pawn_order) {
                                                 vPawnLineAngle[ROLL] = 0;
