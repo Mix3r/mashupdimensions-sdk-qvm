@@ -17,13 +17,16 @@ Based on Open Arena gamecode, heavily modified gamecode aims to extend singlepla
 - func_button has destroyable object simulation mode
 - Culled maximum ammo loadout
 - Flight item improvement
-- Ingame picture show feature via target_print
 - Ingame console command executing via target_relay
 - Silent NPC relocation on demand via target_relay
 - Switchable cameras feature via target_print
+- Ingame picture show feature via target_print
 - Definition of bot characteristics (botname_c.c) file during spawn (for example, console command addbot Xaero/Crash_c adds Xaero with Crash characteristics)
 - Heavy integration with Trenchbroom level editor
 - Player-model-gender-sensitive ingame jpeg sequence playback feature via target_print (see detailed description in cgame/cg_draw.c)
+- Automatic column formation for players via target_relay with both arbitrary direction and horisontal looking angle (even stare-on-the-ceiling, if angle is -1). Useful for coop mode start, cutscene awaiting line up and checkpoint teammates relocation. Set target_relay's "wait" property to 106, and "message" to formation direction angle (0-360)
+- Added "exclude" property for entities, to remove particular entities from specified gametypes. Allows to exec gametype-dependent console command in conjunction with target_relay entity which has "wait" property set to 103 and "message" set to console command text. For example, exec "spmap barkingdog" command for single play map switch, but exec "execq coop_barkingdog.cfg" for team (coop) instead.
+
 
 
 ## Building ##
