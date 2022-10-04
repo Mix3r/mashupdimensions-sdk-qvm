@@ -48,8 +48,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 int Pickup_Powerup( gentity_t *ent, gentity_t *other )
 {
-	int			quantity;
-	int			i;
+	int		quantity;
+	int		i;
 	gclient_t	*client;
 
 	if ( !other->client->ps.powerups[ent->item->giTag] ) {

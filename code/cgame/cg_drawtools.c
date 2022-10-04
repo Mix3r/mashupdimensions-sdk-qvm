@@ -310,10 +310,8 @@ void CG_DrawMission( float *yp, int *sco ) {
                 }
         }
 }
-/*
-CG_DrawDigilen
-Mix3r_Durachok: returns 2-4 digits count of given number
-*/
+
+// Mix3r_Durachok: returns 2-4 digits count of given number
 int CG_DrawDigilen( int *s1 ) {
         int w = abs(*s1);
         if (w >= 1000) {
@@ -327,6 +325,17 @@ int CG_DrawDigilen( int *s1 ) {
                 w ++;
         }
         return w;
+}
+
+// Mix3r_Durachok: returns qtrue if picture (frame) file is present
+qboolean CG_TouchPic(char *pic) {
+        fileHandle_t f;
+        trap_FS_FOpenFile(pic, &f, FS_READ);
+        if (f) {
+                trap_FS_FCloseFile(f);
+                return qtrue;
+        }
+        return qfalse;
 }
 
 /*

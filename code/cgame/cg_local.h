@@ -1564,6 +1564,7 @@ void CG_DrawSmallStringColor( int x, int y, const char *s, vec4_t color );
 
 void CG_DrawMission( float *yp, int *sco ); // Mix3r_Durachok draw mission bar lower right
 int CG_DrawDigilen( int *s1 ); // Mix3r_Durachok number digits count
+qboolean CG_TouchPic(char *pic); // Mix3r_Durachok picture presence check
 int CG_DrawStrlen( const char *str );
 
 float	*CG_FadeColor( int startMsec, int totalMsec );

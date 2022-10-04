@@ -2586,14 +2586,16 @@ static void CG_DrawCenterString(void) {
                                         l = cg.time - cg.centerPrintY;
                                         l = (int)((l/33.33333)+1.0f);
                                         if (cgs.clientinfo[ cg.predictedPlayerState.clientNum ].gender == GENDER_FEMALE) {
-                                                Com_sprintf(media_path, sizeof(media_path), "video/%sf_%i", start,l);
-                                                imgseq_frame = trap_R_RegisterShaderNoMip(media_path);
+                                                Com_sprintf(media_path, sizeof(media_path), "video/%sf_%i.jpg", start,l);
                                         }
-                                        if (!imgseq_frame) {
-                                                Com_sprintf(media_path, sizeof(media_path), "video/%s_%i", start,l);
-                                                imgseq_frame = trap_R_RegisterShaderNoMip(media_path);
+                                        if (!CG_TouchPic(media_path)) {
+                                                Com_sprintf(media_path, sizeof(media_path), "video/%s_%i.jpg", start,l);
+                                                if (!CG_TouchPic(media_path)) {
+                                                        l = 0;
+                                                }
                                         }
-                                        if (imgseq_frame) {
+                                        if (l) {
+                                                imgseq_frame = trap_R_RegisterShaderNoMip(media_path);
                                                 trap_R_DrawStretchPic(0,0,cgs.glconfig.vidWidth, cgs.glconfig.vidHeight, 0, 0, 1, 1, imgseq_frame);
                                         }
                                 }
