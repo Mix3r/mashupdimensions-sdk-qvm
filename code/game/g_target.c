@@ -455,6 +455,22 @@ void target_relay_use (gentity_t *self, gentity_t *other, gentity_t *activator) 
                         // or vice versa, to deactivate target_relay or shooter_someprojectile by setting it's [wait] property to 999
                         // just changes [wait] of target, not firing it.
                         case 111:if (self->message) {
+                                         ////////////////////////////////
+                                        // gentity_t *slacker = NULL;
+	                                 //while ( (t = G_Find (t, FOFS(targetname), ent->target)) != NULL ) {
+		                         //if ( t == ent ) {
+			                 //        G_Printf ("WARNING: Entity used itself.\n");
+		                         //} else {
+                                         //        if ( t->use ) {
+				         //                t->use (t, ent, activator);
+			                 //        }
+		                         //}
+		                         //        if ( !ent->inuse ) {
+			                 //                G_Printf("entity was removed while using targets\n");
+			                 //                return;
+		                         //        }
+	                                 //}
+                                         ///////////////////////////////////
                                          gentity_t *slacker = NULL;
                                          slacker = G_Find (slacker, FOFS(targetname), self->target);
                                          if ( slacker && slacker->wait ) {
