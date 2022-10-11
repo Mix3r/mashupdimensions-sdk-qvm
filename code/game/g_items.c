@@ -248,9 +248,20 @@ int Pickup_Weapon (gentity_t *ent, gentity_t *other)
 		quantity = 0; // None for you, sir!
                 // Mix3r_Durachok: special case for some arenas to spawn with gauntlet only
                 // give to players a gauntlet pickup with -99 count property, via "target_give" at respawn
-                if ( ent->item->giTag == WP_GAUNTLET && ent->count == -99) {
-                        other->client->ps.stats[STAT_WEAPONS] = ( 1 << WP_GAUNTLET );
-                        other->client->ps.weapon = WP_GAUNTLET;
+                // give basic weapons, take other with -999 count property
+                if ( ent->item->giTag == WP_GAUNTLET ) {
+                        switch ( ent->count ) {
+                                case -99:
+                                        other->client->ps.stats[STAT_WEAPONS] = ( 1 << WP_GAUNTLET );
+                                        other->client->ps.weapon = WP_GAUNTLET;
+                                break;
+                                case -999:
+                                        other->client->ps.stats[STAT_WEAPONS] = ( 1 << WP_GAUNTLET );
+                                        other->client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_MACHINEGUN );
+                                        other->client->ps.ammo[WP_MACHINEGUN] = 250; // find better solution later
+                                        other->client->ps.weapon = WP_MACHINEGUN;
+                                break;
+                        }
                 // also special case for Airhog vehicle to lock player to "mounted" chaingun only
                 } else if ( ent->item->giTag == WP_CHAINGUN ) {
                         other->client->ps.stats[STAT_WEAPONS] = ( 1 << WP_CHAINGUN );
