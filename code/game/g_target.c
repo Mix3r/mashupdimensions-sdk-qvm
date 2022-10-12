@@ -417,7 +417,22 @@ void target_relay_use (gentity_t *self, gentity_t *other, gentity_t *activator) 
                         // exit level normally (go to intermission after short delay)
                         case 102:LogExit( "#0" ); break;
                         // execute this target_relay [message] property as console string
-                        case 103:trap_SendConsoleCommand( EXEC_APPEND, va("%s\n",self->message) ); break;
+                        case 103:
+                                if (self->message[0] == 'm' && self->message[2] == 's' && self->message[4] == 'c') {
+                                        // special case for music console command, let's broadcast it as configstring change, to
+                                        // deliver changed music to all clients
+                                        // for example: command is: music music/thunderdome.ogg
+                                        // let's send it as CS_MUSIC field of configstring to everyone on the server
+                                        char *bgm;
+                                        bgm = strchr(self->message, ' ');
+                                        if (bgm) {
+                                                bgm++;
+                                                trap_SetConfigstring( CS_MUSIC, bgm );
+                                        }
+                                } else {
+                                        trap_SendConsoleCommand( EXEC_APPEND, va("%s\n",self->message) );
+                                }
+                        break;
                         // immediately change map to the one specified as [message] property of this target_relay
                         case 104:if( g_gametype.integer == GT_SINGLE_PLAYER ) {
                                          self->targetShaderName = "spmap %s\n";

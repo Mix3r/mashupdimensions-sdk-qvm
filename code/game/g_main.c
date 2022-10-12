@@ -1885,7 +1885,7 @@ gentity_t *RelaySomebody(int mde, vec3_t orig,int dist,char *msg) {
                         chosen_one_id = i;
                         pawn_order++;
                         // kill anything at the destination
-	                if ( someone->client->sess.sessionTeam != TEAM_SPECTATOR && someone->client->ps.pm_type != PM_SPECTATOR ) {
+	                if ( mde < 2 && someone->client->sess.sessionTeam != TEAM_SPECTATOR && someone->client->ps.pm_type != PM_SPECTATOR ) {
 		                G_KillBox (someone);
 	                }
                         trap_LinkEntity (someone);
