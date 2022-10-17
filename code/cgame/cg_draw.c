@@ -3669,6 +3669,11 @@ static void CG_Draw2D(stereoFrame_t stereoFrame) {
         // Mix3r_Durachok: camera mode special case
         if (cg.centerPrintLines == 1000) {
                 CG_DrawCenterString();
+                if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR) {
+                        CG_DrawSpectator();
+                }
+                CG_DrawVote();
+	        CG_DrawTeamVote();
                 return;
         }
 
