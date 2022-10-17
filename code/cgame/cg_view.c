@@ -263,13 +263,93 @@ CG_OffsetThirdPersonView
 */
 #define	FOCUS_DISTANCE	8192
 static void CG_OffsetThirdPersonView( void ) {
-	vec3_t		forward, right, up;
-	vec3_t		view;
+        vec3_t		forward, right, up, view;
         trace_t		trace;
-        static vec3_t	mins = { -4, -4, -4 };
+        static vec3_t	mins;
+	static vec3_t	maxs = { 4, 4, 4 };
+	float		forwardScale, sideScale;
+	float		range = cg_thirdPersonRange.value;
+
+        cg.refdef.vieworg[2] += cg.predictedPlayerState.viewheight;
+
+        up[2] = cg.time - cg.duckTime;
+	if ( up[2] < DUCK_TIME) {
+		cg.refdef.vieworg[2] -= cg.duckChange * (DUCK_TIME - up[2]) / DUCK_TIME;
+	}
+
+        // if dead, look at killer
+	if (cg.predictedPlayerState.stats[STAT_HEALTH] <= 0) {
+                if (!CG_IsARoundBasedGametype(cgs.gametype)) {
+                        cg.refdefViewAngles[YAW] = cg.predictedPlayerState.stats[STAT_DEAD_YAW];
+                }
+	} else {
+                cg.refdefViewAngles[YAW] += cg_thirdPersonAngle.value;
+        }
+
+        AngleVectors( cg.refdefViewAngles, forward, right, up );
+
+        VectorCopy( cg.refdef.vieworg, view );
+
+        if (cg.predictedPlayerState.powerups[PW_FLIGHT]) {
+                forwardScale = 2.0f;
+                sideScale = 0.0f;
+                view[2] += 24.0f;
+        } else {
+                forwardScale = 1 + cgs.clientinfo[ cg.predictedPlayerState.clientNum ].eyepos[0];  // cos(0) = 1
+                sideScale = 0 - cgs.clientinfo[ cg.predictedPlayerState.clientNum ].eyepos[1];    //sin(0) = 0 //- cg_leiDebug.value;
+                //view[2] += 8;    // mix3r - it was 8, 15 by default in cg_players.c
+                view[2] += cgs.clientinfo[ cg.predictedPlayerState.clientNum ].eyepos[2];
+        }
+
+        mins[0] = 45; // head up for look down when centered model view used (flight, arachnotron model)
+        if (cg.refdefViewAngles[PITCH] > mins[0] && sideScale == 0) {
+                mins[1] = (cg.refdefViewAngles[PITCH] - mins[0]) * 1.15;
+                VectorMA( view, mins[1], up, view );
+        }
+
+	VectorMA( view, -range * forwardScale, forward, view );
+	VectorMA( view, -range * sideScale, right, view );
+
+        mins[0] = mins[1] = mins[2] = -4.0;
+        range = 2.93 + 0.52 * (((-sideScale)-0.33)/0.17);  /// !!!!!!!! cg_leiDebug.value (to test)
+        if (range < 2.93) {
+                range = 2.93;
+        }
+
+        // trace rear obstacle
+        CG_Trace( &trace, cg.refdef.vieworg, mins, maxs, view, cg.predictedPlayerState.clientNum, MASK_SOLID );
+        if ( trace.fraction != 1.0 ) {
+                VectorCopy( trace.endpos, view );
+        }
+        // trace right obstacle
+        VectorMA( view, range, right, up );
+        CG_Trace( &trace, view, mins, maxs, up, cg.predictedPlayerState.clientNum, MASK_SOLID );
+        if ( trace.fraction != 1.0 ) {
+                //CG_Printf("obstacle: %.2f \n", trace.fraction);
+                VectorMA( view, -(range * (1-trace.fraction)), right, view );
+        }
+        // trace left obstacle
+        VectorMA( view, -range, right, up );
+        CG_Trace( &trace, view, mins, maxs, up, cg.predictedPlayerState.clientNum, MASK_SOLID );
+        if ( trace.fraction != 1.0 ) {
+                //CG_Printf("obstacle: %.2f \n", trace.fraction);
+                VectorMA( view, (range * (1-trace.fraction)), right, view );
+        }
+
+        VectorCopy( view, cg.refdef.vieworg );
+
+        CG_StepOffset();
+
+}
+
+
+/*
+static void CG_OffsetThirdPersonView( void ) {
+	vec3_t		forward, right, up, view;
+        trace_t		trace;
+        static vec3_t	mins;
 	static vec3_t	maxs = { 4, 4, 4 };
 	vec3_t		focusPoint;
-	float		focusDist;
 	float		forwardScale, sideScale;
 	float		range = cg_thirdPersonRange.value;
 
@@ -294,7 +374,7 @@ static void CG_OffsetThirdPersonView( void ) {
 
 	VectorCopy( cg.refdef.vieworg, view );
 
-	cg.refdefViewAngles[PITCH] *= 0.5;
+	//cg.refdefViewAngles[PITCH] *= 0.5;
 
 	AngleVectors( cg.refdefViewAngles, forward, right, up );
 
@@ -315,13 +395,21 @@ static void CG_OffsetThirdPersonView( void ) {
         //CG_Printf("pitch: %.2f \n", cg.refdefViewAngles[PITCH] );
         //CG_Printf("side: %.2f \n", cgs.clientinfo[ cg.predictedPlayerState.clientNum ].eyepos[1] );
 
-        if (cg.refdefViewAngles[PITCH] > 2.5 && sideScale == 0) {
-            range -= 20; //world of tanks view of arachnotron third person
+        mins[0] = 2.5;
+        //if (cg.refdefViewAngles[PITCH] > mins[0] && sideScale == 0) {
+
+        if (cg.refdefViewAngles[PITCH] > mins[0]) {
+            mins[1] = (cg.refdefViewAngles[PITCH] - mins[0]) / mins[0];   //try various mins[0] as divider
+            if (mins[1] > 1.0) {
+                    mins[1] = 1.0;
+            }
+            range -= 20 * mins[1];
             forwardScale = forwardScale - (cg.refdefViewAngles[PITCH] - 2.5) * 0.14;
             if (forwardScale < -0.9) {
                     forwardScale = -0.9;
             }
         }
+        mins[0] = mins[1] = mins[2] = -4.0;
 
 	VectorMA( view, -range * forwardScale, forward, view );
 	VectorMA( view, -range * sideScale, right, view );
@@ -362,6 +450,7 @@ static void CG_OffsetThirdPersonView( void ) {
         // add step offset
 	CG_StepOffset();
 }
+*/
 
 /*
 ===============
@@ -777,7 +866,17 @@ static int CG_CalcViewValues( void ) {
 	VectorCopy( ps->viewangles, cg.refdefViewAngles );
 
 	if (cg_cameraOrbit.integer) {
-		if (cg.time > cg.nextOrbitTime) {
+                if (cg_cameraOrbit.integer == 999) {
+                        // Mix3r_Durachok: third person offset developer adjustment for 3rd person player model
+                        // start a map as devmap [map] console command, then type cg_cameraOrbit 999, go third person
+                        // then use cg_gun_x, cg_gun_y, cg_gun_z values to adjust 3rd person cam. then write discovered
+                        // values into the model's animation.cfg file as following line on start of file:
+                        // eyes x y z
+                        // where x y z are corresponding cg_gun_* (_x _y _z) values just discovered during adjust
+                        cgs.clientinfo[ cg.predictedPlayerState.clientNum ].eyepos[0] = cg_gun_x.value;
+                        cgs.clientinfo[ cg.predictedPlayerState.clientNum ].eyepos[1] = cg_gun_y.value;
+                        cgs.clientinfo[ cg.predictedPlayerState.clientNum ].eyepos[2] = cg_gun_z.value;
+		} else if (cg.time > cg.nextOrbitTime) {
 			cg.nextOrbitTime = cg.time + cg_cameraOrbitDelay.integer;
 			cg_thirdPersonAngle.value += cg_cameraOrbit.value;
 		}

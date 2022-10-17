@@ -792,12 +792,17 @@ static qboolean CG_RegisterClientModelname(clientInfo_t *ci, const char *modelNa
 			Com_Printf("Failed to load animation file %s\n", filename);
 		}
 	} else {
-		Com_sprintf(filename, sizeof ( filename), "models/players/%s/animation.cfg", modelName);
+                // Mix3r_Durachok: some hack to load alternative animation .ini for some mods and Quake 3 native models,
+                // to load eye pos for 3rd person, ini file tries to be loaded first, then normal procedure used
+		Com_sprintf(filename, sizeof ( filename), "models/players/%s/animation.ini", modelName);
 		if (!CG_ParseAnimationFile(filename, ci, qfalse)) {
 			Com_sprintf(filename, sizeof ( filename), "models/players/characters/%s/animation.cfg", modelName);
 			if (!CG_ParseAnimationFile(filename, ci, qfalse)) {
-				Com_Printf("Failed to load animation file %s\n", filename);
-				return qfalse;
+                                Com_sprintf(filename, sizeof ( filename), "models/players/%s/animation.cfg", modelName);
+                                if (!CG_ParseAnimationFile(filename, ci, qfalse)) {
+				        Com_Printf("Failed to load animation file %s\n", filename);
+				        return qfalse;
+                                }
 			}
 		}
 	}

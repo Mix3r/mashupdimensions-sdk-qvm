@@ -299,12 +299,25 @@ CG_DrawMission
 Mix3r_Durachok: draw mission bar in lower right for mission mode
 */
 void CG_DrawMission( float *yp, int *sco ) {
-        int n;
+        int n,
+            x = 640-96,
+            y = *yp-23,
+            w = (BIGCHAR_HEIGHT+8)*4;
+        float blowup;
         char *sc = strchr(cgs.mapname,'/')+1;
         for( n = 1; n < 3; n++ ) {
                 cgs.media.scoreboardScore = trap_R_RegisterShaderNoMip(va("video/%s_hud%i%s.tga",sc,cgs.fraglimit-9999,COM_Localize(n)));
                 if (cgs.media.scoreboardScore) {
-                        CG_DrawPic(640-96, *yp-23, (BIGCHAR_HEIGHT+8)*4, (BIGCHAR_HEIGHT+8)*2, cgs.media.scoreboardScore);
+                        blowup = (0.5 - (cg.time - cg.headEndTime) * 0.001);
+                        n = (BIGCHAR_HEIGHT+8)*2;
+                        if (blowup > 0) {
+                                blowup *= 2;
+                                w += blowup*110;
+                                x -= blowup*55;
+                                n += blowup*76;
+                                y -= blowup*38;
+                        }
+                        CG_DrawPic(x, y, w, n, cgs.media.scoreboardScore);
                         CG_DrawStringExt( 640-62, *yp-3, va("x %i",*sco), colorWhite, qfalse, qtrue, BIGCHAR_HEIGHT, BIGCHAR_HEIGHT, 0 );
                         break;
                 }

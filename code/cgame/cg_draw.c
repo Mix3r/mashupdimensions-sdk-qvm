@@ -1592,8 +1592,9 @@ static float CG_DrawScores(float y) {
 		w = CG_DrawDigilen(&s2) * BIGCHAR_WIDTH + 8;
 		x -= w;
 
-                blowup = (0.5 - (cg.time - cg.headEndTime) * 0.001)*2;
+                blowup = (0.5 - (cg.time - cg.headEndTime) * 0.001);
                 if (blowup > 0) {
+                        blowup *= 2;
                         w += blowup*110;
                         x -= blowup*55;
                         v += blowup*76;
@@ -1634,8 +1635,9 @@ static float CG_DrawScores(float y) {
 		w = CG_DrawDigilen(&s1) * BIGCHAR_WIDTH + 8;
 		x -= w;
 
-                blowup = (0.5 - (cg.time - cg.headStartTime) * 0.001)*2;
+                blowup = (0.5 - (cg.time - cg.headStartTime) * 0.001);
                 if (blowup > 0) {
+                        blowup *= 2;
                         w += blowup*110;
                         x -= blowup*55;
                         v += blowup*76;
