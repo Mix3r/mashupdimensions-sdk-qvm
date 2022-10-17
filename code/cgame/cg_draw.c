@@ -3150,6 +3150,7 @@ CG_DrawSpectator
 static void CG_DrawSpectator(void) {
         char *sinfo;
         sinfo = COM_Localize(68);
+        CG_Printf("drawspec: %s \n", sinfo );
         CG_DrawTeamBackground(160, 457, 320, 15, 0.5f, TEAM_FREE);
         CG_DrawStringExt(35+SCREEN_WIDTH*0.5-CG_DrawStrlen(sinfo)*0.5*10, 459, sinfo, colorWhite,0, 0, 10, 10, 0 );
 	if (cgs.gametype == GT_TOURNAMENT) {
@@ -3668,10 +3669,10 @@ static void CG_Draw2D(stereoFrame_t stereoFrame) {
 
         // Mix3r_Durachok: camera mode special case
         if (cg.centerPrintLines == 1000) {
-                CG_DrawCenterString();
                 if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR) {
                         CG_DrawSpectator();
                 }
+                CG_DrawCenterString();
                 CG_DrawVote();
 	        CG_DrawTeamVote();
                 return;
