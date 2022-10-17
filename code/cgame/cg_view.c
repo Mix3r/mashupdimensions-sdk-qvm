@@ -261,7 +261,6 @@ CG_OffsetThirdPersonView
 
 ===============
 */
-#define	FOCUS_DISTANCE	8192
 static void CG_OffsetThirdPersonView( void ) {
         vec3_t		forward, right, up, view;
         trace_t		trace;
@@ -297,24 +296,34 @@ static void CG_OffsetThirdPersonView( void ) {
         } else {
                 forwardScale = 1 + cgs.clientinfo[ cg.predictedPlayerState.clientNum ].eyepos[0];  // cos(0) = 1
                 sideScale = 0 - cgs.clientinfo[ cg.predictedPlayerState.clientNum ].eyepos[1];    //sin(0) = 0 //- cg_leiDebug.value;
-                //view[2] += 8;    // mix3r - it was 8, 15 by default in cg_players.c
+                //view[2] += 8;    // Mix3r_Durachok - it was 8, 15 by default in cg_players.c
                 view[2] += cgs.clientinfo[ cg.predictedPlayerState.clientNum ].eyepos[2];
         }
 
-        mins[0] = 45; // head up for look down when centered model view used (flight, arachnotron model)
-        if (cg.refdefViewAngles[PITCH] > mins[0] && sideScale == 0) {
-                mins[1] = (cg.refdefViewAngles[PITCH] - mins[0]) * 1.15;
-                VectorMA( view, mins[1], up, view );
-        }
+        mins[2] = view[2];
 
 	VectorMA( view, -range * forwardScale, forward, view );
 	VectorMA( view, -range * sideScale, right, view );
 
-        mins[0] = mins[1] = mins[2] = -4.0;
+        mins[0] = 45; // head up for look down when centered model view used (flight, arachnotron model)
+        if (sideScale == 0) {
+                if (cg.refdefViewAngles[PITCH] > mins[0]) {
+                        mins[1] = (cg.refdefViewAngles[PITCH] - mins[0]) * 1.15;
+                        VectorMA( view, mins[1], up, view );
+                } else {
+                        if (view[2] < mins[2]) {
+                                view[2] = mins[2];
+                        }
+                }
+        }
+
+        // trace obstacles for camera:
         range = 2.93 + 0.52 * (((-sideScale)-0.33)/0.17);  /// !!!!!!!! cg_leiDebug.value (to test)
         if (range < 2.93) {
                 range = 2.93;
         }
+
+        mins[0] = mins[1] = mins[2] = -4.0;
 
         // trace rear obstacle
         CG_Trace( &trace, cg.refdef.vieworg, mins, maxs, view, cg.predictedPlayerState.clientNum, MASK_SOLID );
@@ -339,118 +348,7 @@ static void CG_OffsetThirdPersonView( void ) {
         VectorCopy( view, cg.refdef.vieworg );
 
         CG_StepOffset();
-
 }
-
-
-/*
-static void CG_OffsetThirdPersonView( void ) {
-	vec3_t		forward, right, up, view;
-        trace_t		trace;
-        static vec3_t	mins;
-	static vec3_t	maxs = { 4, 4, 4 };
-	vec3_t		focusPoint;
-	float		forwardScale, sideScale;
-	float		range = cg_thirdPersonRange.value;
-
-        cg.refdef.vieworg[2] += cg.predictedPlayerState.viewheight;
-
-	up[2] = cg.time - cg.duckTime;
-	if ( up[2] < DUCK_TIME) {
-		cg.refdef.vieworg[2] -= cg.duckChange * (DUCK_TIME - up[2]) / DUCK_TIME;
-	}
-
-	// if dead, look at killer
-	if (cg.predictedPlayerState.stats[STAT_HEALTH] <= 0) {
-                if (!CG_IsARoundBasedGametype(cgs.gametype)) {
-                        cg.refdefViewAngles[YAW] = cg.predictedPlayerState.stats[STAT_DEAD_YAW];
-                }
-	} else {
-                cg.refdefViewAngles[YAW] += cg_thirdPersonAngle.value;
-        }
-
-        AngleVectors( cg.refdefViewAngles, forward, NULL, NULL );
-	VectorMA( cg.refdef.vieworg, FOCUS_DISTANCE, forward, focusPoint );
-
-	VectorCopy( cg.refdef.vieworg, view );
-
-	//cg.refdefViewAngles[PITCH] *= 0.5;
-
-	AngleVectors( cg.refdefViewAngles, forward, right, up );
-
-        if (cg.predictedPlayerState.powerups[PW_FLIGHT]) {
-                forwardScale = 2.0f;
-                sideScale = 0.0f;
-                view[2] += 24.0f;
-        } else {
-                forwardScale = 1 + cgs.clientinfo[ cg.predictedPlayerState.clientNum ].eyepos[0];  // cos(0) = 1
-                sideScale = 0 - cgs.clientinfo[ cg.predictedPlayerState.clientNum ].eyepos[1];    //sin(0) = 0 //- cg_leiDebug.value;
-                //view[2] += 8;    // mix3r - it was 8, 15 by default in cg_players.c
-                view[2] += cgs.clientinfo[ cg.predictedPlayerState.clientNum ].eyepos[2];
-        }
-
-        //forwardScale = cos( cg_thirdPersonAngle.value / 180 * M_PI ) + cgs.clientinfo[ cg.predictedPlayerState.clientNum ].eyepos[0];
-        //sideScale = sin( cg_thirdPersonAngle.value / 180 * M_PI ) - cgs.clientinfo[ cg.predictedPlayerState.clientNum ].eyepos[1];    //- cg_leiDebug.value;
-
-        //CG_Printf("pitch: %.2f \n", cg.refdefViewAngles[PITCH] );
-        //CG_Printf("side: %.2f \n", cgs.clientinfo[ cg.predictedPlayerState.clientNum ].eyepos[1] );
-
-        mins[0] = 2.5;
-        //if (cg.refdefViewAngles[PITCH] > mins[0] && sideScale == 0) {
-
-        if (cg.refdefViewAngles[PITCH] > mins[0]) {
-            mins[1] = (cg.refdefViewAngles[PITCH] - mins[0]) / mins[0];   //try various mins[0] as divider
-            if (mins[1] > 1.0) {
-                    mins[1] = 1.0;
-            }
-            range -= 20 * mins[1];
-            forwardScale = forwardScale - (cg.refdefViewAngles[PITCH] - 2.5) * 0.14;
-            if (forwardScale < -0.9) {
-                    forwardScale = -0.9;
-            }
-        }
-        mins[0] = mins[1] = mins[2] = -4.0;
-
-	VectorMA( view, -range * forwardScale, forward, view );
-	VectorMA( view, -range * sideScale, right, view );
-
-	// trace a ray from the origin to the viewpoint to make sure the view isn't
-	// in a solid block.  Use an 8 by 8 block to prevent the view from near clipping anything
-
-	CG_Trace( &trace, cg.refdef.vieworg, mins, maxs, view, cg.predictedPlayerState.clientNum, MASK_SOLID );
-
-	if ( trace.fraction != 1.0 ) {
-	   VectorCopy( trace.endpos, view );
-	   view[2] += (1.0 - trace.fraction) * 32;
-	   // try another trace to this position, because a tunnel may have the ceiling
-	   // close enough that this is poking out
-
-	   CG_Trace( &trace, cg.refdef.vieworg, mins, maxs, view, cg.predictedPlayerState.clientNum, MASK_SOLID );
-	   VectorCopy( trace.endpos, view );
-	}
-
-        forwardScale = cg_fov.value / 115;
-        forwardScale = forwardScale * forwardScale * forwardScale * forwardScale * 0.25;
-        if (forwardScale < 0.25 ) {
-            forwardScale = 0.25;
-        }
-
-        view[0] = view[0] - ((view[0]-cg.refdef.vieworg[0]) * forwardScale);
-        view[1] = view[1] - ((view[1]-cg.refdef.vieworg[1]) * forwardScale);
-        view[2] = view[2] - ((view[2]-cg.refdef.vieworg[2]) * forwardScale);
-
-	VectorCopy( view, cg.refdef.vieworg );
-
-	// select pitch to look at focus point from vieworg
-	VectorSubtract( focusPoint, cg.refdef.vieworg, focusPoint );
-        vectoangles(focusPoint, view);
-
-        cg.refdefViewAngles[PITCH] = view[PITCH];
-	cg.refdefViewAngles[YAW] = view[YAW];
-        // add step offset
-	CG_StepOffset();
-}
-*/
 
 /*
 ===============
