@@ -268,6 +268,7 @@ static void CG_OffsetThirdPersonView( void ) {
 	static vec3_t	maxs = { 4, 4, 4 };
 	float		forwardScale, sideScale;
 	float		range = cg_thirdPersonRange.value;
+        float           fOldz = cg.refdef.vieworg[2];
 
         cg.refdef.vieworg[2] += cg.predictedPlayerState.viewheight;
 
@@ -343,6 +344,15 @@ static void CG_OffsetThirdPersonView( void ) {
         if ( trace.fraction != 1.0 ) {
                 //CG_Printf("obstacle: %.2f \n", trace.fraction);
                 VectorMA( view, (range * (1-trace.fraction)), right, view );
+        }
+
+        //CG_Printf("dist: %.2f \n", Distance( view, cg.refdef.vieworg ));
+        if (sideScale == 0) {
+                if (Distance( view, cg.refdef.vieworg ) < 37) {
+                        cg.renderingThirdPerson = qfalse;
+                        cg.refdef.vieworg[2] = fOldz;
+                        return;
+                }
         }
 
         VectorCopy( view, cg.refdef.vieworg );
@@ -842,6 +852,9 @@ static int CG_CalcViewValues( void ) {
 	} else if ( cg.renderingThirdPerson && !cg.zoomed) {
 		// back away from character. Mix3r_Durachok: third person zoom shouldn't show person
 		CG_OffsetThirdPersonView();
+                if (!cg.renderingThirdPerson) {
+                        CG_OffsetFirstPersonView();
+                }
 	} else {
 		// offset for local bobbing and kicks
 		CG_OffsetFirstPersonView();
