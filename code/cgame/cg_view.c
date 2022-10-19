@@ -347,8 +347,10 @@ static void CG_OffsetThirdPersonView( void ) {
         }
 
         //CG_Printf("dist: %.2f \n", Distance( view, cg.refdef.vieworg ));
+        //CG_Printf("pitch: %.2f \n", cg.refdefViewAngles[PITCH]);
+
         if (sideScale == 0) {
-                if (Distance( view, cg.refdef.vieworg ) < 37) {
+                if (Distance( view, cg.refdef.vieworg ) < 37 && cg.refdefViewAngles[PITCH] > -26) {
                         cg.renderingThirdPerson = qfalse;
                         cg.refdef.vieworg[2] = fOldz;
                         return;
