@@ -1214,12 +1214,11 @@ static void CG_CalculateWeaponPosition( vec3_t origin, vec3_t angles )
 
 
 	// Engoo bobbing port
-	if (cg_bobmodel.integer) {
+	if (cg_bobmodel.integer || cg.predictedPlayerState.powerups[PW_FLIGHT]) {
 		vec3_t		forward, right, up;
 		float		bob;
-		//float		sinsin;
 
-		//sinsin = fabs( sin( ( ps->bobCycle & 127 ) / 127.0 * M_PI ) );
+                fracsin = 999;
 		AngleVectors (angles, forward, right, up);
 
 
@@ -1259,6 +1258,8 @@ static void CG_CalculateWeaponPosition( vec3_t origin, vec3_t angles )
                 //VectorMA (dest_point, -13, right, dest_point);
                 //VectorSubtract( dest_point, origin, dest_point );
                 //vectoangles(dest_point, angles);
+
+                fracsin = 0;
 
 		angles[ROLL] += scale * cg.bobfracsin * 0.005;
 		angles[YAW] += scale * cg.bobfracsin * 0.01;
@@ -1308,7 +1309,7 @@ static void CG_CalculateWeaponPosition( vec3_t origin, vec3_t angles )
 #endif
 
 	// idle drift
-	if (!cg_bobmodel.integer) {
+	if (fracsin == 0) {
 		scale = cg.xyspeed + 40;
 		//fracsin = sin( cg.time * 0.001 );
                 fracsin = sin( cg.time * 0.0021 );
@@ -1349,11 +1350,7 @@ static void CG_CalculateWeaponPosition( vec3_t origin, vec3_t angles )
 
                         //angles[ROLL] += fracsin * cg_leiDebug.value * sin(cg.refdefViewAngles[PITCH] / 180 * M_PI);
 
-                        if (cg.predictedPlayerState.powerups[PW_FLIGHT]) {
-                                delta = 0;
-                                scale = scale * 0.125;
-                        } else {
-                                switch ( cg_drawGun.integer ) {
+                        switch ( cg_drawGun.integer ) {
                                 case 2:
                                         scale = -scale;
                                 break;
@@ -1361,7 +1358,6 @@ static void CG_CalculateWeaponPosition( vec3_t origin, vec3_t angles )
                                         scale = scale * 0.25;
                                         delta = 0; // PITCH
                                 break;
-                                }
                         }
 
                         angles[delta] += fracsin * scale * cos(cg.refdefViewAngles[PITCH] / 180 * M_PI);

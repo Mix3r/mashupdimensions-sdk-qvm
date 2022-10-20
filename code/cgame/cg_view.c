@@ -312,8 +312,8 @@ static void CG_OffsetThirdPersonView( void ) {
                         mins[1] = (cg.refdefViewAngles[PITCH] - mins[0]) * 1.15;
                         VectorMA( view, mins[1], up, view );
                 } else {
-                        if (view[2] < mins[2]) {
-                                view[2] = mins[2];
+                        if (view[2] < mins[2] - 25) {
+                                view[2] = mins[2] - 25;
                         }
                 }
         }
