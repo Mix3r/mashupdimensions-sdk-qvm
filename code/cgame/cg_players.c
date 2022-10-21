@@ -2219,7 +2219,7 @@ static void CG_PlayerPowerups(centity_t *cent, refEntity_t *torso, float *zaltit
                 //vlct[0] = cg_gun_x.value;
 		//vlct[1] = cg_gun_y.value;
 		//vlct[2] = cg_gun_z.value;
-	        trap_S_AddLoopingSound(cent->currentState.number, cent->lerpOrigin, vec3_origin, cgs.media.flightSound);
+	        trap_S_AddLoopingSound(cent->currentState.number, cent->lerpOrigin, vec3_origin, cgs.media.airhogSound);
 	}
 
 	ci = &cgs.clientinfo[ cent->currentState.clientNum ];

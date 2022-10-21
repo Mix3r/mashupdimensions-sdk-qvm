@@ -1228,6 +1228,7 @@ static void CG_RegisterSounds(void) {
 	CG_UpdateMediaFraction(0.50f);
 #endif
 	// end loadingscreen
+	cgs.media.airhogSound = trap_S_RegisterSound("sound/items/airhog.wav", qfalse);
 	cgs.media.flightSound = trap_S_RegisterSound("sound/items/flight.wav", qfalse);
 	cgs.media.medkitSound = trap_S_RegisterSound("sound/items/use_medkit.wav", qfalse);
 	cgs.media.quadSound = trap_S_RegisterSound("sound/items/damage3.wav", qfalse);
