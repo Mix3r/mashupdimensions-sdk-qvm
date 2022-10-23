@@ -852,7 +852,9 @@ typedef struct {
 	qhandle_t	waterBubbleShader;
 	qhandle_t	bloodTrailShader;
 
-
+        // Mix3r_Durachok: airhog front window handler for imitation of cockpit
+        // gets loaded only if flight item is present and active
+        qhandle_t       airhog_window;
 
 	// LEILEI shaders
 
@@ -1084,6 +1086,7 @@ typedef struct {
 	sfxHandle_t watrUnSound;
 
 	sfxHandle_t airhogSound;
+        sfxHandle_t airhinSound;
         sfxHandle_t flightSound;
 	sfxHandle_t medkitSound;
 

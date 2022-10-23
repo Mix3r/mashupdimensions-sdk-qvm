@@ -2219,7 +2219,11 @@ static void CG_PlayerPowerups(centity_t *cent, refEntity_t *torso, float *zaltit
                 //vlct[0] = cg_gun_x.value;
 		//vlct[1] = cg_gun_y.value;
 		//vlct[2] = cg_gun_z.value;
-	        trap_S_AddLoopingSound(cent->currentState.number, cent->lerpOrigin, vec3_origin, cgs.media.airhogSound);
+                if (cent->currentState.number == cg.snap->ps.clientNum && !cg.renderingThirdPerson) {
+                        trap_S_AddLoopingSound(cent->currentState.number, cent->lerpOrigin, vec3_origin, cgs.media.airhinSound);
+                } else {
+	                trap_S_AddLoopingSound(cent->currentState.number, cent->lerpOrigin, vec3_origin, cgs.media.airhogSound);
+                }
 	}
 
 	ci = &cgs.clientinfo[ cent->currentState.clientNum ];
@@ -2947,7 +2951,7 @@ void CG_Player(centity_t *cent) {
 			CrossProduct(head.axis[1], head.axis[2], head.axis[0]);
 
                         if (cent->currentState.number == cg.snap->ps.clientNum) {
-                                head.renderfx &= ~RF_THIRD_PERSON;
+                                //head.renderfx &= ~RF_THIRD_PERSON;
                                 VectorScale(head.axis[0], 0.3, head.axis[0]);
 	                        VectorScale(head.axis[1], 0.3, head.axis[1]);
 	                        VectorScale(head.axis[2], 0.3, head.axis[2]);

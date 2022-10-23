@@ -1896,7 +1896,23 @@ static float CG_DrawPowerups(float y) {
 
 			trap_R_SetColor(colors[color]);
                         if (item->giTag == PW_FLIGHT) {
+                                centity_t *cent;
                                 // Mix3r_Durachok: airhog has bigger timer (battery)
+                                if (!cg.renderingThirdPerson) {
+                                    if (!cgs.media.airhog_window) {
+                                            cgs.media.airhog_window = trap_R_RegisterShaderNoMip("gfx/2d/airhog_window");
+                                    }
+                                    t = ((cg.refdefViewAngles[PITCH]+90)/180)*(cgs.glconfig.vidHeight*1.38888*-0.28);
+                                    cent = &cg_entities[cg.snap->ps.clientNum];
+                                    if (cent->currentState.weapon && cg.predictedPlayerState.weaponstate == WEAPON_FIRING && ps->ammo[cent->currentState.weapon] > 0 && cg.predictedPlayerState.weaponTime < 201) {
+                                            color = 10; // shake it when firing big gun
+                                    } else {
+                                        color = 3;
+                                    }
+                                    trap_R_DrawStretchPic(sin(cg.time * color) * color, t, cgs.glconfig.vidWidth*0.5, cgs.glconfig.vidHeight*1.38888, 0, 0, 1, 1, cgs.media.airhog_window);
+                                    // flipped horisontally
+                                    trap_R_DrawStretchPic(cgs.glconfig.vidWidth*0.5+sin(cg.time*color)*color-1, t, cgs.glconfig.vidWidth*0.5+1, cgs.glconfig.vidHeight*1.38888, 1, 0, 0, 1, cgs.media.airhog_window);
+                                }
                                 CG_DrawField(x, y, 2, sortedTime[ i ] / 10000);
                         } else {
 			        CG_DrawField(x, y, 2, sortedTime[ i ] / 1000);
@@ -1922,8 +1938,7 @@ static float CG_DrawPowerups(float y) {
 				size = ICON_SIZE;
 			}
 
-			CG_DrawPic(640 - size, y + ICON_SIZE / 2 - size / 2,
-					size, size, trap_R_RegisterShader(item->icon));
+			CG_DrawPic(640 - size, y + ICON_SIZE / 2 - size / 2, size, size, trap_R_RegisterShader(item->icon));
 		}
 	}
 	trap_R_SetColor(NULL);
@@ -3678,6 +3693,11 @@ static void CG_Draw2D(stereoFrame_t stereoFrame) {
                 return;
         }
 
+#ifndef MISSIONPACK
+	CG_DrawLowerRight();
+	CG_DrawLowerLeft();
+#endif
+
 	if (cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR /*|| cg.snap->ps.pm_type == PM_SPECTATOR*/) {
 		CG_DrawSpectator();
 
@@ -3731,11 +3751,6 @@ static void CG_Draw2D(stereoFrame_t stereoFrame) {
 	}
 #else
 	CG_DrawUpperRight(stereoFrame);
-#endif
-
-#ifndef MISSIONPACK
-	CG_DrawLowerRight();
-	CG_DrawLowerLeft();
 #endif
 
 	CG_DrawFragMessage();

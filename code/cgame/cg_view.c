@@ -265,7 +265,7 @@ static void CG_OffsetThirdPersonView( void ) {
         vec3_t		forward, right, up, view;
         trace_t		trace;
         static vec3_t	mins;
-	static vec3_t	maxs = { 4, 4, 4 };
+	static vec3_t	maxs;
 	float		forwardScale, sideScale;
 	float		range = cg_thirdPersonRange.value;
         float           fOldz = cg.refdef.vieworg[2];
@@ -319,31 +319,14 @@ static void CG_OffsetThirdPersonView( void ) {
         }
 
         // trace obstacles for camera:
-        range = 2.93 + 0.52 * (((-sideScale)-0.33)/0.17);  /// !!!!!!!! cg_leiDebug.value (to test)
-        if (range < 2.93) {
-                range = 2.93;
-        }
 
-        mins[0] = mins[1] = mins[2] = -4.0;
+        maxs[0] = maxs[1] = maxs[2] = 13.97;
+        mins[0] = mins[1] = mins[2] = -maxs[0];
 
         // trace rear obstacle
         CG_Trace( &trace, cg.refdef.vieworg, mins, maxs, view, cg.predictedPlayerState.clientNum, MASK_SOLID );
         if ( trace.fraction != 1.0 ) {
                 VectorCopy( trace.endpos, view );
-        }
-        // trace right obstacle
-        VectorMA( view, range, right, up );
-        CG_Trace( &trace, view, mins, maxs, up, cg.predictedPlayerState.clientNum, MASK_SOLID );
-        if ( trace.fraction != 1.0 ) {
-                //CG_Printf("obstacle: %.2f \n", trace.fraction);
-                VectorMA( view, -(range * (1-trace.fraction)), right, view );
-        }
-        // trace left obstacle
-        VectorMA( view, -range, right, up );
-        CG_Trace( &trace, view, mins, maxs, up, cg.predictedPlayerState.clientNum, MASK_SOLID );
-        if ( trace.fraction != 1.0 ) {
-                //CG_Printf("obstacle: %.2f \n", trace.fraction);
-                VectorMA( view, (range * (1-trace.fraction)), right, view );
         }
 
         //CG_Printf("dist: %.2f \n", Distance( view, cg.refdef.vieworg ));
@@ -354,6 +337,12 @@ static void CG_OffsetThirdPersonView( void ) {
                         cg.renderingThirdPerson = qfalse;
                         cg.refdef.vieworg[2] = fOldz;
                         return;
+                }
+        } else {
+                sideScale = Distance( view, cg.refdef.vieworg );
+                forwardScale = range * forwardScale * 0.5;
+                if (sideScale < forwardScale) {
+                        view[2] += (forwardScale - sideScale) * 0.42;
                 }
         }
 
