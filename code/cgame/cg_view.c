@@ -304,10 +304,9 @@ static void CG_OffsetThirdPersonView( void ) {
         mins[2] = view[2];
 
 	VectorMA( view, -range * forwardScale, forward, view );
-	VectorMA( view, -range * sideScale, right, view );
 
-        mins[0] = 45; // head up for look down when centered model view used (flight, arachnotron model)
         if (sideScale == 0) {
+                mins[0] = 45; // head up for look down when centered model view used (flight, arachnotron model)
                 if (cg.refdefViewAngles[PITCH] > mins[0]) {
                         mins[1] = (cg.refdefViewAngles[PITCH] - mins[0]) * 1.15;
                         VectorMA( view, mins[1], up, view );
@@ -316,6 +315,8 @@ static void CG_OffsetThirdPersonView( void ) {
                                 view[2] = mins[2] - 25;
                         }
                 }
+        } else {
+                VectorMA( view, -range * sideScale, right, view );
         }
 
         // trace obstacles for camera:
@@ -342,7 +343,14 @@ static void CG_OffsetThirdPersonView( void ) {
                 sideScale = Distance( view, cg.refdef.vieworg );
                 forwardScale = range * forwardScale * 0.5;
                 if (sideScale < forwardScale) {
-                        view[2] += (forwardScale - sideScale) * 0.42;
+                        view[2] += (forwardScale - sideScale) * 0.58; //0.42;
+                        // trace ceiling
+                        maxs[0] = maxs[1] = maxs[2] = 4.1;
+                        mins[0] = mins[1] = mins[2] = -maxs[0];
+                        CG_Trace( &trace, cg.refdef.vieworg, mins, maxs, view, cg.predictedPlayerState.clientNum, MASK_SOLID );
+                        if ( trace.fraction != 1.0 ) {
+                                VectorCopy( trace.endpos, view );
+                        }
                 }
         }
 
