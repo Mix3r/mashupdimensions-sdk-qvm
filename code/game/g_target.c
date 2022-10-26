@@ -138,32 +138,51 @@ void SP_target_score( gentity_t *ent ) {
 "message"	text to print
 If "private", only the activator gets the message.  If no checks, all clients get the message.
 */
+
+// Mix3r_Durachok: camera x y z may be entity origin-dependent now,
+// so anyone can use xyz instead of manually writing x y z values to message field
+// #_C9xyz pitch yaw instead of #_C9xvalue yvalue zvalue pitch yaw
+// for example #_C9xyz -45 90 instead of #_C123 456 789 -45 90
+
 void Use_Target_Print (gentity_t *ent, gentity_t *other, gentity_t *activator) {
+        char* tpr_replace;
         if (ent->wait && ent->wait == 999) {
                 return;
         }
+
+        tpr_replace = ent->message;
+
+        if (ent->count) {
+                char* bufr = ent->message+ent->count;
+                tpr_replace = va("#_%c%c%i %i %i %s", ent->message[2], ent->message[3], (int)ent->r.currentOrigin[0], (int)ent->r.currentOrigin[1], (int)(ent->r.currentOrigin[2]+DEFAULT_VIEWHEIGHT), bufr );
+        }
+
 	if ( activator->client && ( ent->spawnflags & 4 ) ) {
-		trap_SendServerCommand( activator-g_entities, va("cp \"%s\"", ent->message ));
+		trap_SendServerCommand( activator-g_entities, va("cp \"%s\"", tpr_replace ));
 		return;
 	}
 
 	if ( ent->spawnflags & 3 ) {
 		if ( ent->spawnflags & 1 ) {
-			G_TeamCommand( TEAM_RED, va("cp \"%s\"", ent->message) );
+			G_TeamCommand( TEAM_RED, va("cp \"%s\"", tpr_replace) );
 		}
 		if ( ent->spawnflags & 2 ) {
-			G_TeamCommand( TEAM_BLUE, va("cp \"%s\"", ent->message) );
+			G_TeamCommand( TEAM_BLUE, va("cp \"%s\"", tpr_replace) );
 		}
 		return;
 	}
 
-	trap_SendServerCommand( -1, va("cp \"%s\"", ent->message ));
+	trap_SendServerCommand( -1, va("cp \"%s\"", tpr_replace ));
 }
 
 void SP_target_print( gentity_t *ent ) {
 	ent->use = Use_Target_Print;
+        if (strlen(ent->message)>6 && ent->message[4]=='x' && ent->message[5]=='y' && ent->message[6]=='z') {
+                ent->count = 8;
+        } else {
+                ent->count = 0;
+        }
 }
-
 
 //==========================================================
 

@@ -476,18 +476,17 @@ void Cmd_Give_f (gentity_t *ent)
                         trap_Cvar_VariableStringBuffer("mapname",mapname,sizeof(mapname));
                         i = trap_FS_FOpenFile( va("camera_%s_%i_%i_%i.txt",mapname,(int)ent->r.currentOrigin[0],(int)ent->r.currentOrigin[1],(int)ent->r.currentOrigin[2]), &f, FS_WRITE );
                         if (i >= 0) {
-                                name = ConcatArgs( 2 );
-                                if (strlen(name)) {
-                                        name = va(" #%s\"",name);
+                                trap_Argv( 2, mapname, sizeof( mapname ) );
+                                if ( mapname[0] ) {
+                                        Com_sprintf (mapname, sizeof(mapname), " #%s\"", mapname );
                                 } else {
-                                        name = "\"";
+                                        Q_strncpyz( mapname, "\"", sizeof( mapname ) );
                                 }
                                 VectorCopy (ent->r.currentOrigin, cam_location);
                                 writeFile_string( "// select & copy to clipboard (Ctrl+A,Ctrl+C)", f );
                                 trap_FS_Write( "{\n\"classname\" \"target_print\"\n", 29, f );
                                 writeFile_string( va("\"origin\" \"%i %i %i\"",(int)cam_location[0],(int)cam_location[1],(int)cam_location[2]), f );
-                                cam_location[2] += DEFAULT_VIEWHEIGHT;
-                                writeFile_string( va("\"message\" \"#_c9%i %i %i %i %i%s",(int)cam_location[0],(int)cam_location[1],(int)cam_location[2],(int)ent->client->ps.viewangles[0],(int)ent->client->ps.viewangles[1],name), f );
+                                writeFile_string( va("\"message\" \"#_c9xyz %i %i%s",(int)ent->client->ps.viewangles[0],(int)ent->client->ps.viewangles[1],mapname), f );
                                 trap_FS_Write( "}", 1, f );
                                 trap_FS_FCloseFile( f );
                                 trap_SendServerCommand( ent-g_entities, va("print \"%s\"", "^2[OK]"));

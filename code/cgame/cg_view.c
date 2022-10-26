@@ -319,7 +319,7 @@ static void CG_OffsetThirdPersonView( void ) {
                 VectorMA( view, -range * sideScale, right, view );
         }
 
-        // trace obstacles for camera:
+        // Mix3r_Durachok: trace obstacles for camera:
 
         maxs[0] = maxs[1] = maxs[2] = 13.97;
         mins[0] = mins[1] = mins[2] = -maxs[0];

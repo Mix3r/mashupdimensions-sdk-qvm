@@ -2547,6 +2547,13 @@ static void CG_DrawCenterString(void) {
         // message until fade away occur, or switch image by sending #_Nanotherstillimage message
         // example: #_9evildogbarking shows video/evildogbarking.jpg for 11 seconds then fades away for 1 second.
 
+        // Mix3r_Durachok: editor-friendly improvement added now (makes camera entity copying and moving easier, no need to re-adjust x y z values in
+        // message field of camera entity after every moving of camera in editor window)
+
+        // Camera x y z may be entity origin-dependent now,
+        // so anyone can use xyz instead of manually writing x y z values to message field
+        // format: #_C9xyz pitch yaw instead of #_C9xvalue yvalue zvalue pitch yaw
+        // for example #_C9xyz -45 90 instead of #_C123 456 789 -45 90
 
         if (cg.centerPrint[0] == '#' && cg.centerPrint[1] == '_') {
                 start = cg.centerPrint+3;
