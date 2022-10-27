@@ -1162,6 +1162,11 @@ qboolean UI_ConsoleCommand( int realTime ) {
 		return qtrue;
 	}
 
+        if ( Q_strequal(cmd, "contests") ) {
+		UI_ContestsMenu();
+		return qtrue;
+	}
+
         if ( Q_strequal(cmd, "levelselect-attack") ) {
 		UI_SPLevelMenu_f();
 		return qtrue;

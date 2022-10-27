@@ -467,7 +467,7 @@ void Cmd_Give_f (gentity_t *ent)
 		give_all = qtrue;
 	} else {
 		give_all = qfalse;
-                if Q_strequal(name, "editor_camera") {
+                if (strstr(name, "editor_camera")) {
                         // Mix3r_Durachok: get current view position and angles
                         // and save as camera entity target_print .map file to import via level editor
                         fileHandle_t f;
