@@ -2630,10 +2630,22 @@ static void CG_DrawCenterString(void) {
                         // CG_Printf("choffset: %i \n", l );
                         cg.centerPrintTime = cg.time + l;
                 }
-                for( l = 1; l < 3; l++ ) {
-                        cgs.media.scoreboardScore = trap_R_RegisterShaderNoMip(va("video/%s%s",start,COM_Localize(l)));
-                        if (cgs.media.scoreboardScore) {
-                                break;
+                y = 0;
+                if (cgs.clientinfo[ cg.predictedPlayerState.clientNum ].gender == GENDER_FEMALE) {
+                        for( l = 1; l < 3; l++ ) {
+                                cgs.media.scoreboardScore = trap_R_RegisterShaderNoMip(va("video/%sf%s",start,COM_Localize(l)));
+                                if (cgs.media.scoreboardScore) {
+                                        y = 1;
+                                        break;
+                                }
+                        }
+                }
+                if (y == 0) {
+                        for( l = 1; l < 3; l++ ) {
+                                cgs.media.scoreboardScore = trap_R_RegisterShaderNoMip(va("video/%s%s",start,COM_Localize(l)));
+                                if (cgs.media.scoreboardScore) {
+                                        break;
+                                }
                         }
                 }
                 trap_R_DrawStretchPic(0,0,cgs.glconfig.vidWidth, cgs.glconfig.vidHeight, 0, 0, 1, 1, cgs.media.scoreboardScore);

@@ -349,6 +349,11 @@ static void CG_OffsetThirdPersonView( void ) {
                         mins[0] = mins[1] = mins[2] = -maxs[0];
                         CG_Trace( &trace, cg.refdef.vieworg, mins, maxs, view, cg.predictedPlayerState.clientNum, MASK_SOLID );
                         if ( trace.fraction != 1.0 ) {
+                                if (Distance( trace.endpos, cg.refdef.vieworg ) < 2) {
+                                        cg.renderingThirdPerson = qfalse;
+                                        cg.refdef.vieworg[2] = fOldz;
+                                        return;
+                                }
                                 VectorCopy( trace.endpos, view );
                         }
                 }
