@@ -548,6 +548,7 @@ typedef struct {
 	qboolean	mapRestart;			// set on a map restart to set back the weapon
 
 	qboolean	renderingThirdPerson;		// during deaths, chasecams, etc
+        qboolean        submerged;                      // Mix3r_Durachok: submerge flag
 
 	// prediction state
 	qboolean	hyperspace;				// true if prediction has hit a trigger_teleport

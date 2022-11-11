@@ -272,10 +272,14 @@ static void CG_OffsetThirdPersonView( void ) {
 
         cg.refdef.vieworg[2] += cg.predictedPlayerState.viewheight;
 
+        //sideScale = cg.refdef.vieworg[2];
+
         up[2] = cg.time - cg.duckTime;
 	if ( up[2] < DUCK_TIME) {
 		cg.refdef.vieworg[2] -= cg.duckChange * (DUCK_TIME - up[2]) / DUCK_TIME;
 	}
+
+        //CG_Printf("pitch: %.2f \n", sideScale-cg.refdef.vieworg[2]);
 
         // if dead, look at killer
 	if (cg.predictedPlayerState.stats[STAT_HEALTH] <= 0) {
@@ -289,6 +293,11 @@ static void CG_OffsetThirdPersonView( void ) {
         AngleVectors( cg.refdefViewAngles, forward, right, up );
 
         VectorCopy( cg.refdef.vieworg, view );
+
+        //cg.refdef.vieworg[2] -= cg_leiDebug.value;
+        if (cg.submerged) {
+                cg.refdef.vieworg[2] -= 8;
+        }
 
         if (cg.predictedPlayerState.powerups[PW_FLIGHT]) {
                 forwardScale = 2.0f;
@@ -584,11 +593,12 @@ static int CG_CalcFov( void ) {
 	float	fov_x, fov_y;
 	float	zoomFov;
 	float	f;
-	int		inwater;
+	int	inwater;
 
-	if ( cg.predictedPlayerState.pm_type == PM_INTERMISSION ) {
+	//if ( cg.predictedPlayerState.pm_type == PM_INTERMISSION ) {
+        if (cg.centerPrintLines >= 999) {
 		// if in intermission, use a fixed value
-		fov_x = 90;
+		fov_x = 115;
 	} else {
 		// user selectable
 		if ( cgs.dmflags & DF_FIXED_FOV ) {
@@ -663,11 +673,11 @@ static int CG_CalcFov( void ) {
 		fov_x += v;
 		fov_y -= v;
 		inwater = qtrue;
-	}
-	else {
+                cg.submerged = qtrue;
+	} else {
 		inwater = qfalse;
+                cg.submerged = qfalse;
 	}
-
 
 	// set it
 	cg.refdef.fov_x = fov_x;
