@@ -279,8 +279,6 @@ static void CG_OffsetThirdPersonView( void ) {
 		cg.refdef.vieworg[2] -= cg.duckChange * (DUCK_TIME - up[2]) / DUCK_TIME;
 	}
 
-        //CG_Printf("pitch: %.2f \n", sideScale-cg.refdef.vieworg[2]);
-
         // if dead, look at killer
 	if (cg.predictedPlayerState.stats[STAT_HEALTH] <= 0) {
                 if (!CG_IsARoundBasedGametype(cgs.gametype)) {
@@ -293,11 +291,6 @@ static void CG_OffsetThirdPersonView( void ) {
         AngleVectors( cg.refdefViewAngles, forward, right, up );
 
         VectorCopy( cg.refdef.vieworg, view );
-
-        //cg.refdef.vieworg[2] -= cg_leiDebug.value;
-        if (cg.submerged) {
-                cg.refdef.vieworg[2] -= 8;
-        }
 
         if (cg.predictedPlayerState.powerups[PW_FLIGHT]) {
                 forwardScale = 2.0f;
@@ -353,22 +346,25 @@ static void CG_OffsetThirdPersonView( void ) {
                 forwardScale = range * forwardScale * 0.5;
                 if (sideScale < forwardScale) {
                         view[2] += (forwardScale - sideScale) * 0.58; //0.42;
-                        // trace ceiling
-                        maxs[0] = maxs[1] = maxs[2] = 4.1;
-                        mins[0] = mins[1] = mins[2] = -maxs[0];
-                        CG_Trace( &trace, cg.refdef.vieworg, mins, maxs, view, cg.predictedPlayerState.clientNum, MASK_SOLID );
-                        if ( trace.fraction != 1.0 ) {
-                                if (Distance( trace.endpos, cg.refdef.vieworg ) < 2) {
-                                        cg.renderingThirdPerson = qfalse;
-                                        cg.refdef.vieworg[2] = fOldz;
-                                        return;
-                                }
-                                VectorCopy( trace.endpos, view );
-                        }
                 }
         }
 
-        VectorCopy( view, cg.refdef.vieworg );
+        // trace ceiling
+        maxs[0] = maxs[1] = maxs[2] = 5.215; //4.1;
+        mins[0] = mins[1] = mins[2] = -maxs[0];
+        cg.refdef.vieworg[2] -= 8;
+        CG_Trace( &trace, cg.refdef.vieworg, mins, maxs, view, cg.predictedPlayerState.clientNum, MASK_SOLID );
+        cg.refdef.vieworg[2] += 8;
+        if ( trace.fraction != 1.0 ) {
+                if (cg.submerged && Distance( trace.endpos, cg.refdef.vieworg ) < 19) {
+                        cg.renderingThirdPerson = qfalse;
+                        cg.refdef.vieworg[2] = fOldz;
+                        return;
+                }
+                VectorCopy( trace.endpos, cg.refdef.vieworg );
+        } else {
+                VectorCopy( view, cg.refdef.vieworg );
+        }
 
         CG_StepOffset();
 }

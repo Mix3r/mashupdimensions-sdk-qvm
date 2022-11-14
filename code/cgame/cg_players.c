@@ -126,13 +126,13 @@ static qboolean CG_ParseAnimationFile(const char *filename, clientInfo_t *ci, qb
 	text_p = text;
 	skip = 0; // quite the compiler warning
 
-        // Mix3r: skip this if just loading gender for head voice
+        // Mix3r_Durachok: skip this if just loading gender for head voice
         if (!genderonly) {
 	        ci->footsteps = FOOTSTEP_NORMAL;
 	        ci->gender = GENDER_MALE;
 	        ci->fixedlegs = qfalse;
 	        ci->fixedtorso = qfalse;
-                // Mix3r: set default camera offset for third person
+                // Mix3r_Durachok: set default camera offset for third person
                 ci->eyepos[0] = 0.0;
                 ci->eyepos[1] = 0.33;
                 ci->eyepos[2] = 15.0;
