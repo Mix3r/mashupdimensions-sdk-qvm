@@ -448,38 +448,35 @@ static void CG_DrawStatusBarFlag(float x, int team) {
 #endif // MISSIONPACK
 
 /*
-================
 CG_DrawTeamBackground
-
-================
  */
 void CG_DrawTeamBackground(int x, int y, int w, int h, float alpha, int team) {
 	vec4_t hcolor;
-
 	hcolor[3] = alpha;
-	if (team == TEAM_RED) {
-		hcolor[0] = 0.906;
-		hcolor[1] = 0;
-		hcolor[2] = 0.2;
-	} else if (team == TEAM_BLUE) {
-		hcolor[0] = 0;
-		hcolor[1] = 0.1098;
-		hcolor[2] = 0.6588;
-	} else {
-                hcolor[0] = 0;
-		hcolor[1] = 0;
-		hcolor[2] = 0;
-	}
+        switch(team) {
+                case TEAM_RED:
+                        hcolor[0] = 0.906;
+		        hcolor[1] = 0;
+		        hcolor[2] = 0.2;
+                        break;
+                case TEAM_BLUE:
+                        hcolor[0] = 0;
+		        hcolor[1] = 0.1098;
+		        hcolor[2] = 0.6588;
+                        break;
+                default:
+                        hcolor[0] = 0;
+		        hcolor[1] = 0;
+		        hcolor[2] = 0;
+                break;
+        }
 	trap_R_SetColor(hcolor);
 	CG_DrawPic(x, y, w, h, cgs.media.teamStatusBar);
 	trap_R_SetColor(NULL);
 }
 
 /*
-================
 CG_DrawStatusBar
-
-================
  */
 #ifndef MISSIONPACK
 
@@ -505,9 +502,9 @@ static void CG_DrawStatusBar(void) {
 
 	// draw the team background
 	if (!(cg.snap->ps.pm_flags & PMF_FOLLOW)) //If not following anybody:
-		CG_DrawTeamBackground(160, 442, 320, 30, 0.5f, cg.snap->ps.persistant[PERS_TEAM]);
+	CG_DrawTeamBackground(160, 442, 320, 30, 0.5f, cg.snap->ps.persistant[PERS_TEAM]);
 	else //Sago: If we follow find the teamcolor of the guy we follow. It might not be our own team!
-		CG_DrawTeamBackground(160, 442, 320, 30, 0.5f, cgs.clientinfo[ cg.snap->ps.clientNum ].team);
+	CG_DrawTeamBackground(160, 442, 320, 30, 0.5f, cgs.clientinfo[ cg.snap->ps.clientNum ].team);
 
 	cent = &cg_entities[cg.snap->ps.clientNum];
 	ps = &cg.snap->ps;
@@ -2556,6 +2553,7 @@ static void CG_DrawCenterString(void) {
         // for example #_C9xyz -45 90 instead of #_C123 456 789 -45 90
 
         if (cg.centerPrint[0] == '#' && cg.centerPrint[1] == '_') {
+                char *ccgfx;
                 start = cg.centerPrint+3;
                 if (cg.centerPrintLines > 0) {
                         if (cg.centerPrint[2] == 'c') {
@@ -2631,6 +2629,14 @@ static void CG_DrawCenterString(void) {
                         cg.centerPrintTime = cg.time + l;
                 }
                 y = 0;
+                /// check for close caption sub gfx
+                ccgfx = strchr(start,'/');
+                if (ccgfx) {
+                        Q_strncpyz(start, cg.centerPrint+3,(int)(ccgfx-cg.centerPrint)-2);
+                        ccgfx++;
+                        CG_Printf("start: %s ccgfx: %s\n", start, ccgfx );
+                }
+                ///////
                 if (cgs.clientinfo[ cg.predictedPlayerState.clientNum ].gender == GENDER_FEMALE) {
                         for( l = 1; l < 3; l++ ) {
                                 cgs.media.scoreboardScore = trap_R_RegisterShaderNoMip(va("video/%sf%s",start,COM_Localize(l)));
@@ -2649,6 +2655,9 @@ static void CG_DrawCenterString(void) {
                         }
                 }
                 trap_R_DrawStretchPic(0,0,cgs.glconfig.vidWidth, cgs.glconfig.vidHeight, 0, 0, 1, 1, cgs.media.scoreboardScore);
+                ////// add substring for close caption gfx
+
+                //////
                 if (start[0] == '_') {
                         trap_R_DrawStretchPic( 0,0,cgs.glconfig.vidWidth, cgs.glconfig.vidHeight, 0, 0, 1, 1, trap_R_RegisterShaderNoMip( "gfx/misc/mma_storyteller_scratches" ) );
                 }
