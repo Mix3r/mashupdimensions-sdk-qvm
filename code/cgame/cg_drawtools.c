@@ -343,7 +343,12 @@ int CG_DrawDigilen( int *s1 ) {
 // Mix3r_Durachok: returns qtrue if picture (frame) file is present
 qboolean CG_TouchPic(char *pic) {
         fileHandle_t f;
-        trap_FS_FOpenFile(pic, &f, FS_READ);
+        trap_FS_FOpenFile(va("%s.jpg",pic), &f, FS_READ);
+        if (f) {
+                trap_FS_FCloseFile(f);
+                return qtrue;
+        }
+        trap_FS_FOpenFile(va("%s.png",pic), &f, FS_READ);
         if (f) {
                 trap_FS_FCloseFile(f);
                 return qtrue;

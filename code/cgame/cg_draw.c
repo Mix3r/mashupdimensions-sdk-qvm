@@ -2554,6 +2554,8 @@ static void CG_DrawCenterString(void) {
 
         if (cg.centerPrint[0] == '#' && cg.centerPrint[1] == '_') {
                 char *ccgfx;
+                char media_path[MAX_QPATH];
+                char ccgfp[MAX_QPATH];
                 start = cg.centerPrint+3;
                 if (cg.centerPrintLines > 0) {
                         if (cg.centerPrint[2] == 'c') {
@@ -2575,7 +2577,6 @@ static void CG_DrawCenterString(void) {
                                 start = strchr(start,'#');
                                 if (start) {
                                         qhandle_t imgseq_frame = 0;
-                                        char media_path[MAX_QPATH];
                                         start++;
                                         if (l == -999) {
                                                 sfxHandle_t imgseq_snd = 0;
@@ -2608,10 +2609,10 @@ static void CG_DrawCenterString(void) {
                                         l = cg.time - cg.centerPrintY;
                                         l = (int)((l/33.33333)+1.0f);
                                         if (cgs.clientinfo[ cg.predictedPlayerState.clientNum ].gender == GENDER_FEMALE) {
-                                                Com_sprintf(media_path, sizeof(media_path), "video/%sf_%i.jpg", start,l);
+                                                Com_sprintf(media_path, sizeof(media_path), "video/%sf_%i", start,l);
                                         }
                                         if (!CG_TouchPic(media_path)) {
-                                                Com_sprintf(media_path, sizeof(media_path), "video/%s_%i.jpg", start,l);
+                                                Com_sprintf(media_path, sizeof(media_path), "video/%s_%i", start,l);
                                                 if (!CG_TouchPic(media_path)) {
                                                         l = 0;
                                                 }
@@ -2630,17 +2631,17 @@ static void CG_DrawCenterString(void) {
                 }
                 y = 0;
                 /// check for close caption sub gfx
-                ccgfx = strchr(start,'/');
+                ccgfx = strchr(cg.centerPrint,'/');
                 if (ccgfx) {
-                        Q_strncpyz(start, cg.centerPrint+3,(int)(ccgfx-cg.centerPrint)-2);
-                        ccgfx++;
-                        CG_Printf("start: %s ccgfx: %s\n", start, ccgfx );
+                        Q_strncpyz(ccgfp, cg.centerPrint+3,(int)(ccgfx-cg.centerPrint)-2);
+                } else {
+                        Q_strncpyz(ccgfp, cg.centerPrint+3,sizeof(ccgfp));
                 }
                 ///////
                 if (cgs.clientinfo[ cg.predictedPlayerState.clientNum ].gender == GENDER_FEMALE) {
                         for( l = 1; l < 3; l++ ) {
-                                cgs.media.scoreboardScore = trap_R_RegisterShaderNoMip(va("video/%sf%s",start,COM_Localize(l)));
-                                if (cgs.media.scoreboardScore) {
+                                Com_sprintf(media_path, sizeof(media_path), "video/%sf%s",ccgfp,COM_Localize(l));
+                                if (CG_TouchPic(media_path)) {
                                         y = 1;
                                         break;
                                 }
@@ -2648,16 +2649,43 @@ static void CG_DrawCenterString(void) {
                 }
                 if (y == 0) {
                         for( l = 1; l < 3; l++ ) {
-                                cgs.media.scoreboardScore = trap_R_RegisterShaderNoMip(va("video/%s%s",start,COM_Localize(l)));
-                                if (cgs.media.scoreboardScore) {
+                                Com_sprintf(media_path, sizeof(media_path), "video/%s%s",ccgfp,COM_Localize(l));
+                                if (CG_TouchPic(media_path)) {
+                                        y = 1;
                                         break;
                                 }
                         }
                 }
-                trap_R_DrawStretchPic(0,0,cgs.glconfig.vidWidth, cgs.glconfig.vidHeight, 0, 0, 1, 1, cgs.media.scoreboardScore);
-                ////// add substring for close caption gfx
-
-                //////
+                if (y == 1) {
+                        trap_R_DrawStretchPic(0,0,cgs.glconfig.vidWidth, cgs.glconfig.vidHeight, 0, 0, 1, 1, trap_R_RegisterShaderNoMip(media_path));
+                }
+                // add substring for close caption gfx
+                if (ccgfx) {
+                        y = 0;
+                        Q_strncpyz(ccgfp, ccgfx+1,sizeof(ccgfp));
+                        if (cgs.clientinfo[ cg.predictedPlayerState.clientNum ].gender == GENDER_FEMALE) {
+                                for( l = 1; l < 3; l++ ) {
+                                        Com_sprintf(media_path, sizeof(media_path), "video/%sf%s",ccgfp,COM_Localize(l));
+                                        if (CG_TouchPic(media_path)) {
+                                                y = 1;
+                                                break;
+                                        }
+                                }
+                        }
+                        if (y == 0) {
+                                for( l = 1; l < 3; l++ ) {
+                                        Com_sprintf(media_path, sizeof(media_path), "video/%s%s",ccgfp,COM_Localize(l));
+                                        if (CG_TouchPic(media_path)) {
+                                                y = 1;
+                                                break;
+                                        }
+                                }
+                        }
+                        if (y == 1) {
+                                trap_R_DrawStretchPic(0,0,cgs.glconfig.vidWidth, cgs.glconfig.vidHeight, 0, 0, 1, 1, trap_R_RegisterShaderNoMip(media_path));
+                        }
+                }
+                // cc gfx ends
                 if (start[0] == '_') {
                         trap_R_DrawStretchPic( 0,0,cgs.glconfig.vidWidth, cgs.glconfig.vidHeight, 0, 0, 1, 1, trap_R_RegisterShaderNoMip( "gfx/misc/mma_storyteller_scratches" ) );
                 }
