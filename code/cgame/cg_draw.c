@@ -2555,7 +2555,6 @@ static void CG_DrawCenterString(void) {
         if (cg.centerPrint[0] == '#' && cg.centerPrint[1] == '_') {
                 char *ccgfx;
                 char media_path[MAX_QPATH];
-                char ccgfp[MAX_QPATH];
                 start = cg.centerPrint+3;
                 if (cg.centerPrintLines > 0) {
                         if (cg.centerPrint[2] == 'c') {
@@ -2631,16 +2630,16 @@ static void CG_DrawCenterString(void) {
                 }
                 y = 0;
                 /// check for close caption sub gfx
-                ccgfx = strchr(cg.centerPrint,'/');
+                ccgfx = strrchr(cg.centerPrint,'/');
                 if (ccgfx) {
-                        Q_strncpyz(ccgfp, cg.centerPrint+3,(int)(ccgfx-cg.centerPrint)-2);
-                } else {
-                        Q_strncpyz(ccgfp, cg.centerPrint+3,sizeof(ccgfp));
+                        *ccgfx = 0;
+                        ccgfx++;
+                        //CG_Printf("start: %s ccgfx: %s \n", start, ccgfx );
                 }
                 ///////
                 if (cgs.clientinfo[ cg.predictedPlayerState.clientNum ].gender == GENDER_FEMALE) {
                         for( l = 1; l < 3; l++ ) {
-                                Com_sprintf(media_path, sizeof(media_path), "video/%sf%s",ccgfp,COM_Localize(l));
+                                Com_sprintf(media_path, sizeof(media_path), "video/%sf%s",start,COM_Localize(l));
                                 if (CG_TouchPic(media_path)) {
                                         y = 1;
                                         break;
@@ -2649,7 +2648,7 @@ static void CG_DrawCenterString(void) {
                 }
                 if (y == 0) {
                         for( l = 1; l < 3; l++ ) {
-                                Com_sprintf(media_path, sizeof(media_path), "video/%s%s",ccgfp,COM_Localize(l));
+                                Com_sprintf(media_path, sizeof(media_path), "video/%s%s",start,COM_Localize(l));
                                 if (CG_TouchPic(media_path)) {
                                         y = 1;
                                         break;
@@ -2662,10 +2661,9 @@ static void CG_DrawCenterString(void) {
                 // add substring for close caption gfx
                 if (ccgfx) {
                         y = 0;
-                        Q_strncpyz(ccgfp, ccgfx+1,sizeof(ccgfp));
                         if (cgs.clientinfo[ cg.predictedPlayerState.clientNum ].gender == GENDER_FEMALE) {
                                 for( l = 1; l < 3; l++ ) {
-                                        Com_sprintf(media_path, sizeof(media_path), "video/%sf%s",ccgfp,COM_Localize(l));
+                                        Com_sprintf(media_path, sizeof(media_path), "video/%sf%s",ccgfx,COM_Localize(l));
                                         if (CG_TouchPic(media_path)) {
                                                 y = 1;
                                                 break;
@@ -2674,7 +2672,7 @@ static void CG_DrawCenterString(void) {
                         }
                         if (y == 0) {
                                 for( l = 1; l < 3; l++ ) {
-                                        Com_sprintf(media_path, sizeof(media_path), "video/%s%s",ccgfp,COM_Localize(l));
+                                        Com_sprintf(media_path, sizeof(media_path), "video/%s%s",ccgfx,COM_Localize(l));
                                         if (CG_TouchPic(media_path)) {
                                                 y = 1;
                                                 break;
@@ -2684,6 +2682,8 @@ static void CG_DrawCenterString(void) {
                         if (y == 1) {
                                 trap_R_DrawStretchPic(0,0,cgs.glconfig.vidWidth, cgs.glconfig.vidHeight, 0, 0, 1, 1, trap_R_RegisterShaderNoMip(media_path));
                         }
+                        ccgfx--;
+                        *ccgfx = '/';
                 }
                 // cc gfx ends
                 if (start[0] == '_') {
