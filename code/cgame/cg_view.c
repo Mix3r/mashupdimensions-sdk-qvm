@@ -698,17 +698,10 @@ CG_DamageBlendBlob
 ===============
 */
 static void CG_DamageBlendBlob( void ) {
-	int			t;
+	if ( cg.damageValue ) {
+        int			t;
 	int			maxTime;
 	refEntity_t		ent;
-
-	if ( !cg.damageValue ) {
-		return;
-	}
-
-	//if (cg.cameraMode) {
-	//	return;
-	//}
 
 	// ragePro systems can't fade blends, so don't obscure the screen
 	if ( cgs.glconfig.hardwareType == GLHW_RAGEPRO ) {
@@ -737,6 +730,7 @@ static void CG_DamageBlendBlob( void ) {
 	ent.shaderRGBA[2] = 255;
 	ent.shaderRGBA[3] = 200 * ( 1.0 - ((float)t / maxTime) );
 	trap_R_AddRefEntityToScene( &ent );
+        }
 }
 
 

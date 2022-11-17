@@ -636,8 +636,11 @@ void G_UpdateCvars( void )
 				}
 
 				if ( cv->trackChange ) {
-					trap_SendServerCommand( -1, va("print \"Server: %s changed to %s\n\"",
-					                               cv->cvarName, cv->vmCvar->string ) );
+                                        if (cv->cvarName[0] == 'f' && cv->cvarName[1] == 'r' && cv->cvarName[2] == 'a') {
+                                                // Mix3r_Durachok: skip fraglimit changed print
+                                        } else {
+					        trap_SendServerCommand( -1, va("print \"Server: %s changed to %s\n\"",cv->cvarName, cv->vmCvar->string ) );
+                                        }
 				}
 
 				if ( cv->vmCvar == &g_votecustom )
