@@ -380,7 +380,7 @@ char *strings_en[] = {
 " connecting %s",
 " Spec %3i %4i %s",
 "Skull Trumpet",
-"Scammerleg",
+"Galahustler",
 "Kompot",
 "Sokolov",
 "Xen",
@@ -1357,10 +1357,13 @@ static void CG_RegisterGraphics(void) {
 
 
 	for (i = 0; i < NUM_CROSSHAIRS; i++) {
-		if (i < 10)
+		if (i < 10) {
 			cgs.media.crosshairShader[i] = trap_R_RegisterShader(va("gfx/2d/crosshair%c", 'a' + i));
-		else
+                        cgs.media.crosshairSh3d[i] = trap_R_RegisterShader(va("gfx/3d/crosshair%c", 'a' + i));
+		} else {
 			cgs.media.crosshairShader[i] = trap_R_RegisterShader(va("gfx/2d/crosshair%02d", i - 10));
+			cgs.media.crosshairSh3d[i] = trap_R_RegisterShader(va("gfx/3d/crosshair%02d", i - 10));
+                }
 	}
 
 	cgs.media.backTileShader = trap_R_RegisterShader("gfx/2d/backtile");

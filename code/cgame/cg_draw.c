@@ -2936,8 +2936,7 @@ static void CG_DrawCrosshair(void) {
 	// set color based on health
 	if (cg_crosshairHealth.integer) {
 		vec4_t hcolor;
-
-		CG_ColorForHealth(hcolor);
+		CG_GetColorForHealth( cg.snap->ps.stats[STAT_HEALTH],cg.snap->ps.stats[STAT_ARMOR], hcolor );
 		trap_R_SetColor(hcolor);
 	} else {
 		vec4_t color;
@@ -3090,10 +3089,10 @@ static void CG_DrawCrosshair3D(float *f) {
 	if (ca < 0) {
 		ca = 0;
 	}
-	hShader = cgs.media.crosshairShader[ ca % NUM_CROSSHAIRS ];
+	hShader = cgs.media.crosshairSh3d[ ca % NUM_CROSSHAIRS ];
 
 	if (!hShader)
-		hShader = cgs.media.crosshairShader[ ca % 10 ];
+		hShader = cgs.media.crosshairSh3d[ ca % 10 ];
 
 	// Use a different method rendering the crosshair so players don't see two of them when
 	// focusing their eyes at distant objects with high stereo separation
@@ -3124,7 +3123,18 @@ static void CG_DrawCrosshair3D(float *f) {
 	// scale the crosshair so it appears the same size for all distances
 	ent.radius = w / 800 * zProj * tan(cg.refdef.fov_x * M_PI / 360.0f) * trace.fraction * maxdist / zProj;
 	ent.customShader = hShader;
-
+        if (cg_crosshairHealth.integer) {
+	        vec4_t hcolor;
+		CG_GetColorForHealth( cg.snap->ps.stats[STAT_HEALTH], cg.snap->ps.stats[STAT_ARMOR], hcolor );
+                ent.shaderRGBA[0] = hcolor[0] * 255;
+	        ent.shaderRGBA[1] = hcolor[1] * 255;
+	        ent.shaderRGBA[2] = hcolor[2] * 255;
+        } else {
+                ent.shaderRGBA[0] = cg_crosshairColorRed.value * 255;
+	        ent.shaderRGBA[1] = cg_crosshairColorGreen.value * 255;
+	        ent.shaderRGBA[2] = cg_crosshairColorBlue.value * 255;
+        }
+        ent.shaderRGBA[3] = 255;
 	trap_R_AddRefEntityToScene(&ent);
 }
 
