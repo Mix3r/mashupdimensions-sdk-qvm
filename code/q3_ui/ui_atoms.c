@@ -355,16 +355,6 @@ static void UI_DrawBannerString2( int x, int y, const char* str, vec4_t color )
         int charw = 20;
         int charh = 20;
 
-        float alignstate = 0;
-        if (x < 0) {
-           x = -x;
-           alignstate = 0.5; //center_align
-        }
-        if (y < 0) {
-           y = -y;
-           alignstate = 1; //right_align
-        }
-
 	// draw the colored text
 	trap_R_SetColor( color );
 
@@ -373,14 +363,6 @@ static void UI_DrawBannerString2( int x, int y, const char* str, vec4_t color )
 	aw = charw * uis.xscale * 1;
 	ah = charh * uis.yscale * 1;
 
-	s = str;
-        while ( *s )
-        {
-           if ((*s == -48) || (*s == -47)) {
-              ax = ax+aw*alignstate;
-           }
-           s++;
-        }
         s = str;
 	while ( *s )
 	{
@@ -480,24 +462,24 @@ void UI_DrawBannerString( int x, int y, const char* str, int style, vec4_t color
 int UI_ProportionalStringWidth( const char* str ) {
 	const char *	s;
 	int				ch;
-	int				charWidth;
-	int				width;
+	//int				charWidth;
+	int				width = 0;
 
 	s = str;
-	width = 0;
 	while ( *s ) {
                 if ( Q_IsColorString( s ) )
 		{
 			s += 2;
 			continue;
 		}
-		ch = *s & 127;
+		//ch = *s & 127;
+                ch = *s;
 		// charWidth = propMap[ch][2];
-                charWidth = 16;
-		if ( charWidth != -1 ) {
-			width += charWidth;
-			//width += PROP_GAP_WIDTH;
-		}
+                //charWidth = 16;
+                if ((ch == -48) || (ch == -47)) {
+                } else {
+                        width += 16;
+                }
 		s++;
 	}
 
@@ -522,16 +504,6 @@ static void UI_DrawProportionalString2( int x, int y, const char* str, vec4_t co
         int charw = 16;
         int charh = 16;
 
-        float alignstate = 0;
-        if (x < 0) {
-           x = -x;
-           alignstate = 0.5; //center_align
-        }
-        if (y < 0) {
-           y = -y;
-           alignstate = 1; //right_align
-        }
-
 	// draw the colored text
 	trap_R_SetColor( color );
 
@@ -540,14 +512,6 @@ static void UI_DrawProportionalString2( int x, int y, const char* str, vec4_t co
 	aw = charw * uis.xscale * sizeScale;
 	ah = charh * uis.yscale * sizeScale;
 
-	s = str;
-        while ( *s )
-        {
-           if ((*s == -48) || (*s == -47)) {
-              ax = ax+aw*alignstate;
-           }
-           s++;
-        }
         s = str;
 	while ( *s )
 	{
@@ -618,7 +582,7 @@ UI_DrawProportionalString
 */
 void UI_DrawProportionalString( int x, int y, const char* str, int style, vec4_t color ) {
 	vec4_t	drawcolor;
-	int		width;
+	int	width;
 	float	sizeScale;
 
 	sizeScale = UI_ProportionalSizeScale( style );
@@ -627,14 +591,11 @@ void UI_DrawProportionalString( int x, int y, const char* str, int style, vec4_t
 		case UI_CENTER:
 			width = UI_ProportionalStringWidth( str ) * sizeScale;
 			x -= width / 2;
-                        x = -x;
 			break;
 
 		case UI_RIGHT:
 			width = UI_ProportionalStringWidth( str ) * sizeScale;
 			x -= width;
-                        x = -x;
-                        y = -y;
 			break;
 
 		case UI_LEFT:
@@ -760,15 +721,6 @@ static void UI_DrawString2( int x, int y, const char* str, vec4_t color, int cha
 	//if (y < -charh)
 		// offscreen
 		//return;
-        float alignstate = 0;
-        if (charw < 0) {
-           charw = -charw;
-           alignstate = 0.5; //center_align
-        }
-        if (charh < 0) {
-           charh = -charh;
-           alignstate = 1; //right_align
-        }
 
 	// draw the colored text
 	trap_R_SetColor( color );
@@ -778,14 +730,6 @@ static void UI_DrawString2( int x, int y, const char* str, vec4_t color, int cha
 	aw = charw * uis.xscale;
 	ah = charh * uis.yscale;
 
-	s = str;
-        while ( *s )
-        {
-           if ((*s == -48) || (*s == -47)) {
-              ax = ax+aw*alignstate;
-           }
-           s++;
-        }
         s = str;
 	while ( *s )
 	{
@@ -892,17 +836,14 @@ void UI_DrawString( int x, int y, const char* str, int style, vec4_t color )
 	{
 		case UI_CENTER:
 			// center justify at x
-			len = strlen(str);
+			len = UI_ProportionalStringWidth( str )/16;
 			x   = x - len*charw/2;
-                        charw = -charw; //Mix3r - sly way to transfer align to drawstring2
 			break;
 
 		case UI_RIGHT:
 			// right justify at x
-			len = strlen(str);
+			len = UI_ProportionalStringWidth( str )/16;
 			x   = x - len*charw;
-                        charw = -charw; //Mix3r - sly way to transfer align to drawstring2
-                        charh = -charh;
 			break;
 
 		default:

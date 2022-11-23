@@ -579,13 +579,25 @@ Slider_Init
 */
 static void Slider_Init( menuslider_s *s )
 {
-	int len;
-
+	int len = 0;
 	// calculate bounds
-	if (s->generic.name)
-		len = strlen(s->generic.name);
-	else
-		len = 0;
+	if (s->generic.name) {
+                const char *slidername;
+                slidername = s->generic.name;
+                while ( *slidername ) {
+                      if ( Q_IsColorString( slidername ) )
+		      {
+		               slidername += 2;
+			       continue;
+		      }
+                      if ((*slidername == -48) || (*slidername == -47)) {
+                      } else {
+                               len++;
+                      }
+                      slidername++;
+                }
+		//len = strlen(s->generic.name);
+        }
 
 	s->generic.left   = s->generic.x - (len+1)*SMALLCHAR_WIDTH; 
 	s->generic.right  = s->generic.x + (SLIDER_RANGE+2+1)*SMALLCHAR_WIDTH;
