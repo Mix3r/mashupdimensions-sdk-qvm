@@ -55,7 +55,7 @@ GAME OPTIONS MENU
 #define ID_CROSSHAIRHEALTH      144
 #define ID_CHATBEEP             145
 #define ID_TEAMCHATBEEP         146
-#define ID_COMMAXFPS            147
+#define ID_SCOREPLUMS            147
 
 #undef NUM_CROSSHAIRS
 #define	NUM_CROSSHAIRS			99
@@ -75,6 +75,7 @@ typedef struct {
 	menuslider_s            crosshairColorBlue;
 
 	menuradiobutton_s	simpleitems;
+        menuradiobutton_s	scoreplums;
 	menuradiobutton_s	alwaysweaponbar;
 	menuradiobutton_s	brass;
 	menuradiobutton_s	wallmarks;
@@ -84,7 +85,7 @@ typedef struct {
 	menuradiobutton_s	synceveryframe;
 	menuradiobutton_s	forcemodel;
 	menulist_s		drawteamoverlay;
-        menulist_s              fps_performance;
+        //menulist_s              fps_performance;
 	menuradiobutton_s       chatbeep;
 	menuradiobutton_s       teamchatbeep;
 	menubitmap_s		back;
@@ -102,12 +103,12 @@ static const char *teamoverlay_names[] =
 	"",
 	NULL
 };
-static const char *fps_performance_names[] =
-{
-	"125",
-	"250",
-	NULL
-};
+//static const char *fps_performance_names[] =
+//{
+//	"125",
+//	"250",
+//	NULL
+//};
 
 static void Preferences_SetMenuItems( void ) {
 	s_preferences.crosshair.curvalue		= (int)trap_Cvar_VariableValue( "cg_drawCrosshair" ) % NUM_CROSSHAIRS;
@@ -115,12 +116,13 @@ static void Preferences_SetMenuItems( void ) {
 	s_preferences.crosshairColorRed.curvalue        = trap_Cvar_VariableValue( "cg_crosshairColorRed")*255.0f;
 	s_preferences.crosshairColorGreen.curvalue      = trap_Cvar_VariableValue( "cg_crosshairColorGreen")*255.0f;
 	s_preferences.crosshairColorBlue.curvalue       = trap_Cvar_VariableValue( "cg_crosshairColorBlue")*255.0f;
-        if ((int)trap_Cvar_VariableValue( "com_maxfps" ) >= 250) {
-                s_preferences.fps_performance.curvalue = 1;
-        } else {
-                s_preferences.fps_performance.curvalue = 0;
-        }
+        //if ((int)trap_Cvar_VariableValue( "com_maxfps" ) >= 250) {
+        //        s_preferences.fps_performance.curvalue = 1;
+        //} else {
+        //        s_preferences.fps_performance.curvalue = 0;
+        //}
 	s_preferences.simpleitems.curvalue	= trap_Cvar_VariableValue( "cg_simpleItems" ) != 0;
+        s_preferences.scoreplums.curvalue	= trap_Cvar_VariableValue( "cg_ScorePlums" ) != 0;
 	s_preferences.alwaysweaponbar.curvalue	= trap_Cvar_VariableValue( "cg_alwaysWeaponBar" ) != 0;
 	s_preferences.brass.curvalue		= trap_Cvar_VariableValue( "cg_brassTime" ) != 0;
 	s_preferences.wallmarks.curvalue	= trap_Cvar_VariableValue( "cg_marks" ) != 0;
@@ -175,9 +177,8 @@ static void Preferences_Event( void* ptr, int notification ) {
 		trap_Cvar_SetValue( "cg_crosshairColorBlue", ((float)s_preferences.crosshairColorBlue.curvalue)/255.f );
 		break;
 
-        case ID_COMMAXFPS:
-                trap_Cvar_SetValue( "com_maxfps", (s_preferences.fps_performance.curvalue*125.0)+125.0 ); //125 if 0, or 250 if 1
-                trap_Cvar_SetValue( "pmove_fixed", s_preferences.fps_performance.curvalue);
+        case ID_SCOREPLUMS:
+                trap_Cvar_SetValue( "cg_ScorePlums", s_preferences.scoreplums.curvalue );
                 break;
 
 	case ID_SIMPLEITEMS:
@@ -329,13 +330,13 @@ static void Preferences_MenuInit( void ) {
 	y = 82;
 	s_preferences.crosshair.generic.type		= MTYPE_TEXT;
 	s_preferences.crosshair.generic.flags		= QMF_PULSEIFFOCUS|QMF_SMALLFONT|QMF_NODEFAULTINIT|QMF_OWNERDRAW;
-	s_preferences.crosshair.generic.x			= PREFERENCES_X_POS;
-	s_preferences.crosshair.generic.y			= y;
+	s_preferences.crosshair.generic.x		= PREFERENCES_X_POS;
+	s_preferences.crosshair.generic.y		= y;
 	s_preferences.crosshair.generic.name		= COM_Localize(181);
 	s_preferences.crosshair.generic.callback	= Preferences_Event;
 	s_preferences.crosshair.generic.ownerdraw	= Crosshair_Draw;
-	s_preferences.crosshair.generic.id			= ID_CROSSHAIR;
-	s_preferences.crosshair.generic.top			= y - 4;
+	s_preferences.crosshair.generic.id		= ID_CROSSHAIR;
+	s_preferences.crosshair.generic.top		= y - 4;
 	s_preferences.crosshair.generic.bottom		= y + 20;
 	s_preferences.crosshair.generic.left		= PREFERENCES_X_POS - ( ( strlen(s_preferences.crosshair.generic.name) + 1 ) * SMALLCHAR_WIDTH );
 	s_preferences.crosshair.generic.right		= PREFERENCES_X_POS + 48;
@@ -389,16 +390,17 @@ static void Preferences_MenuInit( void ) {
 		s_preferences.crosshairColorBlue.generic.flags       |= QMF_INACTIVE;
 	}
         y += BIGCHAR_HEIGHT+2;
-        s_preferences.fps_performance.generic.type     = MTYPE_SPINCONTROL;
-	s_preferences.fps_performance.generic.name     = COM_Localize(324);
-	s_preferences.fps_performance.generic.flags    = QMF_PULSEIFFOCUS|QMF_SMALLFONT;
-	s_preferences.fps_performance.generic.callback = Preferences_Event;
-	s_preferences.fps_performance.generic.id       = ID_COMMAXFPS;
-	s_preferences.fps_performance.generic.x	       = PREFERENCES_X_POS;
-	s_preferences.fps_performance.generic.y	       = y;
-	s_preferences.fps_performance.itemnames	       = fps_performance_names;
+        //s_preferences.fps_performance.generic.type     = MTYPE_SPINCONTROL;
+	//s_preferences.fps_performance.generic.name     = COM_Localize(324);
+	//s_preferences.fps_performance.generic.flags    = QMF_PULSEIFFOCUS|QMF_SMALLFONT;
+	//s_preferences.fps_performance.generic.callback = Preferences_Event;
+	//s_preferences.fps_performance.generic.id       = ID_COMMAXFPS;
+	//s_preferences.fps_performance.generic.x	 = PREFERENCES_X_POS;
+	//s_preferences.fps_performance.generic.y	 = y;
+	//s_preferences.fps_performance.itemnames	 = fps_performance_names;
 
 	y += BIGCHAR_HEIGHT+2+4;
+        Preferences_Menu_AddBoolean(&s_preferences.scoreplums, &y, ID_SCOREPLUMS, COM_Localize(330));
 	Preferences_Menu_AddBoolean(&s_preferences.simpleitems, &y, ID_SIMPLEITEMS, COM_Localize(186));
 	Preferences_Menu_AddBoolean(&s_preferences.alwaysweaponbar, &y, ID_WEAPONBAR, COM_Localize(187));
 	Preferences_Menu_AddBoolean(&s_preferences.wallmarks, &y, ID_WALLMARKS, COM_Localize(188));
@@ -445,6 +447,7 @@ static void Preferences_MenuInit( void ) {
 	Menu_AddItem( &s_preferences.menu, &s_preferences.crosshairColorGreen );
 	Menu_AddItem( &s_preferences.menu, &s_preferences.crosshairColorBlue );
 	//Menu_AddItem( &s_preferences.menu, &s_preferences.fps_performance );
+        Menu_AddItem( &s_preferences.menu, &s_preferences.scoreplums );
         Menu_AddItem( &s_preferences.menu, &s_preferences.simpleitems );
 	Menu_AddItem( &s_preferences.menu, &s_preferences.alwaysweaponbar );
 	Menu_AddItem( &s_preferences.menu, &s_preferences.wallmarks );

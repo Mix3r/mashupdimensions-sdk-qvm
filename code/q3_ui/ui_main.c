@@ -152,6 +152,7 @@ vmCvar_t ui_brassTime;
 vmCvar_t ui_drawCrosshair;
 vmCvar_t ui_drawCrosshairNames;
 vmCvar_t ui_DrawGun; // Mix3r to save draw gun client game cvar
+vmCvar_t ui_scoreplums; // Mix3r_Durachok: to save draw gun client game cvar
 vmCvar_t ui_marks;
 vmCvar_t ui_server1;
 vmCvar_t ui_server2;
@@ -179,7 +180,6 @@ vmCvar_t cl_language;
 vmCvar_t pmove_fixed;
 vmCvar_t pmove_msec;
 vmCvar_t cg_delag;
-
 
 
 void UI_DrawBlackHole( int *px, int *py ) {
@@ -527,6 +527,7 @@ char *strings_en[] = {
 "Mix3r_Durachok & e-sport community of N.Tura.",
 "MULTIPLAYER",
 "Desktop",
+"Popup damage points",
 NULL
 };
 char *strings_ru[] = {
@@ -859,6 +860,7 @@ char *strings_ru[] = {
 "Mix3r_Durachok и Тайное общество киберспортсменов.",
 "ИГРА С ДРУГИМИ",
 "Рабочий стол",
+"Выпадающие числа урона",
 NULL
 };
 
@@ -933,6 +935,7 @@ static cvarTable_t cvarTable[] = {
 	{ &ui_drawCrosshair, "cg_drawCrosshair", "4", CVAR_ARCHIVE },
 	{ &ui_drawCrosshairNames, "cg_drawCrosshairNames", "1", CVAR_ARCHIVE },
         { &ui_DrawGun, "cg_DrawGun", "1", CVAR_ARCHIVE },
+        { &ui_scoreplums, "cg_ScorePlums", "1", CVAR_ARCHIVE },
 	{ &ui_marks, "cg_marks", "1", CVAR_ARCHIVE },
 
 	{ &ui_server1, "server1", "", CVAR_ARCHIVE },

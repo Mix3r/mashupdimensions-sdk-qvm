@@ -1239,7 +1239,8 @@ static void Controls_InitWeapons( void ) {
 
 static void Controls_Menu_AddPText (menutext_s* menutext, int* y, int id, char* text ) {
 	menutext->generic.type		= MTYPE_PTEXT;
-	menutext->generic.flags	= QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
+	//menutext->generic.flags	= QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
+        menutext->generic.flags	= QMF_PULSEIFFOCUS;
 	menutext->generic.callback	= Controls_MenuEvent;
 	menutext->generic.id		= id;
 	menutext->generic.x		= 67;
