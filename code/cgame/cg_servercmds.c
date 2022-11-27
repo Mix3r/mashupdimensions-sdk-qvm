@@ -363,7 +363,18 @@ void CG_ParseServerinfo( void ) {
 	cgs.maxclients = atoi( Info_ValueForKey( info, "sv_maxclients" ) );
 	cgs.roundtime = atoi( Info_ValueForKey( info, "elimination_roundtime" ) );
 	cgs.nopickup = atoi( Info_ValueForKey( info, "g_rockets" ) ) + atoi( Info_ValueForKey( info, "g_instantgib" ) ) + atoi( Info_ValueForKey( info, "g_elimination" ) );
-	cgs.lms_mode = atoi( Info_ValueForKey( info, "g_lms_mode" ) );
+
+        // Mix3r_Durachok: special popup fx for missions
+        if (cgs.gametype != GT_LMS) {
+                if (cgs.lms_mode != cgs.fraglimit) {
+                        cgs.lms_mode = cgs.fraglimit;
+                        cg.headEndTime = cg.time+333;
+                        cg.headYaw = cg.time-333;
+                }
+        } else {
+                cgs.lms_mode = atoi( Info_ValueForKey( info, "g_lms_mode" ) );
+        }
+
 	cgs.altExcellent = atoi( Info_ValueForKey( info, "g_altExcellent" ) );
 	mapname = Info_ValueForKey( info, "mapname" );
 	Com_sprintf( cgs.mapname, sizeof( cgs.mapname ), "maps/%s.bsp", mapname );
@@ -514,7 +525,15 @@ static void CG_ConfigStringModified( void ) {
                                 }
                         } else if (cgs.scores1 > cgs.scores2) {
                                 if (cgs.scores1 - cgs.scores2 == 1) {
-                                        CG_AddBufferedSound(cgs.media.redLeadsSound);
+                                        if (cgs.clientinfo[ cg.predictedPlayerState.clientNum ].teamTask == 9) {
+                                                if (cgs.clientinfo[ cg.predictedPlayerState.clientNum ].team == TEAM_RED) {
+                                                        CG_AddBufferedSound(cgs.media.takenLeadSound);
+                                                } else {
+                                                        CG_AddBufferedSound(cgs.media.lostLeadSound);
+                                                }
+                                        } else {
+                                                CG_AddBufferedSound(cgs.media.redLeadsSound);
+                                        }
                                 }
                         }
                 }
@@ -534,7 +553,15 @@ static void CG_ConfigStringModified( void ) {
                                 }
                         } else if (cgs.scores2 > cgs.scores1) {
                                 if (cgs.scores2 - cgs.scores1 == 1) {
-                                        CG_AddBufferedSound(cgs.media.blueLeadsSound);
+                                        if (cgs.clientinfo[ cg.predictedPlayerState.clientNum ].teamTask == 9) {
+                                                if (cgs.clientinfo[ cg.predictedPlayerState.clientNum ].team == TEAM_BLUE) {
+                                                        CG_AddBufferedSound(cgs.media.takenLeadSound);
+                                                } else {
+                                                        CG_AddBufferedSound(cgs.media.lostLeadSound);
+                                                }
+                                        } else {
+                                                CG_AddBufferedSound(cgs.media.blueLeadsSound);
+                                        }
                                 }
                         }
                 }

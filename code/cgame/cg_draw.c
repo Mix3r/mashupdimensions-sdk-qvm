@@ -2603,7 +2603,8 @@ static void CG_DrawCenterString(void) {
                                                                 }
                                                         }
                                                 }
-                                                trap_SendConsoleCommand(va("music %s video/v\n",media_path));
+                                                //trap_SendConsoleCommand(va("music %s video/v\n",media_path));
+                                                trap_S_StartBackgroundTrack(media_path, "video/v");
                                         }
                                         l = cg.time - cg.centerPrintY;
                                         l = (int)((l/33.33333)+1.0f);

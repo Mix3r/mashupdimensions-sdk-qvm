@@ -1715,7 +1715,59 @@ const char *CG_ConfigString(int index) {
 CG_StartMusic
 
 ======================
+
+void CG_StartMusic(void) {
+	char *s;
+        char *scnd;
+        sfxHandle_t imgseq_snd = 0;
+	char media_path[MAX_QPATH];
+        int l;
+	// start the background music
+	if (*cg_music.string && !Q_strequal(cg_music.string, "none")) {
+		s = (char *) cg_music.string;
+	} else {
+		s = (char *) CG_ConfigString(CS_MUSIC);
+        }
+	//Q_strncpyz(parm1, COM_Parse(&s), sizeof (parm1));
+        //Q_strncpyz(parm2, COM_Parse(&s), sizeof (parm2));
+        scnd = strrchr(s,' ');
+        if (scnd) {
+                *scnd = 0;
+                scnd++;
+        }
+
+        if (cgs.clientinfo[ cg.predictedPlayerState.clientNum ].gender == GENDER_FEMALE) {
+                // pov player has female model, let's find clipnamef_lang, clipnamef
+                for( l = 1; l < 3; l++ ) {
+                        // l is small L, not ONE
+                        Com_sprintf(media_path, sizeof(media_path), "%sf%s", s, COM_Localize(l));
+                        imgseq_snd = trap_S_RegisterSound(media_path, qfalse);
+                        if (imgseq_snd) break;
+                }
+        }
+        if (!imgseq_snd) {
+                // pov player hasn't female model, or it is nevermind for this particular clip, so
+                // clipnamef isn't present
+                // look for generic sound for the clip, clipname_lang, clipname
+                for( l = 1; l < 3; l++ ) {
+                        // l is small L, not ONE
+                        Com_sprintf(media_path, sizeof(media_path), "%s%s", s, COM_Localize(l));
+                        imgseq_snd = trap_S_RegisterSound(media_path, qfalse);
+                        if (imgseq_snd) break;
+                }
+        }
+        if (scnd) {
+                scnd--;
+                *scnd = ' ';
+                scnd++;
+                trap_S_StartBackgroundTrack(media_path, scnd);
+
+        } else {
+                trap_S_StartBackgroundTrack(media_path, NULL);
+        }
+}
  */
+
 void CG_StartMusic(void) {
 	char *s;
 	char parm1[MAX_QPATH], parm2[MAX_QPATH];
@@ -1725,12 +1777,13 @@ void CG_StartMusic(void) {
 		s = (char *) cg_music.string;
 	} else {
 		s = (char *) CG_ConfigString(CS_MUSIC);
-		Q_strncpyz(parm1, COM_Parse(&s), sizeof ( parm1));
-		Q_strncpyz(parm2, COM_Parse(&s), sizeof ( parm2));
+        }
 
-		trap_S_StartBackgroundTrack(parm1, parm2);
-	}
+	Q_strncpyz(parm1, COM_Parse(&s), sizeof ( parm1));
+	Q_strncpyz(parm2, COM_Parse(&s), sizeof ( parm2));
+	trap_S_StartBackgroundTrack(parm1, parm2);
 }
+
 #ifdef MISSIONPACK
 
 char *CG_GetMenuBuffer(const char *filename) {

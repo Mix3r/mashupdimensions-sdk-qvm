@@ -2627,7 +2627,7 @@ void CG_Player(centity_t *cent) {
                        if (torso.hModel) {
                                head.oldorigin[PITCH] = head.axis[0][0];
                                head.oldorigin[ROLL] = head.axis[0][1];
-                               head.oldorigin[YAW] = cg.refdefViewAngles[YAW];
+                               head.oldorigin[YAW] = cent->lerpAngles[YAW]; //cg.refdefViewAngles[YAW];
                                AnglesToAxis(head.oldorigin, legs.axis);
                        }
                 } else {

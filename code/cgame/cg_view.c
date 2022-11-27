@@ -335,18 +335,10 @@ static void CG_OffsetThirdPersonView( void ) {
         //CG_Printf("dist: %.2f \n", Distance( view, cg.refdef.vieworg ));
         //CG_Printf("pitch: %.2f \n", cg.refdefViewAngles[PITCH]);
 
-        if (sideScale == 0) {
-                if (Distance( view, cg.refdef.vieworg ) < 37 && cg.refdefViewAngles[PITCH] > -26) {
-                        cg.renderingThirdPerson = qfalse;
-                        cg.refdef.vieworg[2] = fOldz;
-                        return;
-                }
-        } else {
-                sideScale = Distance( view, cg.refdef.vieworg );
-                forwardScale = range * forwardScale * 0.5;
-                if (sideScale < forwardScale) {
-                        view[2] += (forwardScale - sideScale) * 0.58; //0.42;
-                }
+        sideScale = Distance( view, cg.refdef.vieworg );
+        forwardScale = range * forwardScale * 0.5;
+        if (sideScale < forwardScale) {
+                view[2] += (forwardScale - sideScale) * 0.58; //0.42;
         }
 
         // trace ceiling
@@ -356,7 +348,8 @@ static void CG_OffsetThirdPersonView( void ) {
         CG_Trace( &trace, cg.refdef.vieworg, mins, maxs, view, cg.predictedPlayerState.clientNum, MASK_SOLID );
         cg.refdef.vieworg[2] += 8;
         if ( trace.fraction != 1.0 ) {
-                if (cg.submerged && Distance( trace.endpos, cg.refdef.vieworg ) < 19) {
+                sideScale = Distance( trace.endpos, cg.refdef.vieworg );
+                if ((cg.predictedPlayerState.powerups[PW_FLIGHT] && sideScale < 45) || (cg.submerged && sideScale < 19)) {
                         cg.renderingThirdPerson = qfalse;
                         cg.refdef.vieworg[2] = fOldz;
                         return;
@@ -589,7 +582,7 @@ static int CG_CalcFov( void ) {
 	float	fov_x, fov_y;
 	float	zoomFov;
 	float	f;
-	int	inwater;
+	//int	inwater;
 
 	//if ( cg.predictedPlayerState.pm_type == PM_INTERMISSION ) {
         if (cg.centerPrintLines >= 999) {
@@ -668,10 +661,10 @@ static int CG_CalcFov( void ) {
 		v = WAVE_AMPLITUDE * sin( phase );
 		fov_x += v;
 		fov_y -= v;
-		inwater = qtrue;
+		//inwater = qtrue;
                 cg.submerged = qtrue;
 	} else {
-		inwater = qfalse;
+		//inwater = qfalse;
                 cg.submerged = qfalse;
 	}
 
@@ -686,7 +679,7 @@ static int CG_CalcFov( void ) {
 		cg.zoomSensitivity = cg.refdef.fov_y / 75.0;
 	}
 
-	return inwater;
+	return cg.submerged;
 }
 
 

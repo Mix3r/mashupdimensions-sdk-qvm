@@ -71,13 +71,16 @@ static void setupMenuInfo_menu_draw( void ) {
 }
 
 static void Setup_ResetDefaults_Action( qboolean result ) {
+        char buf[MAX_QPATH];
 	if( !result ) {
 		return;
 	}
+        trap_Cvar_VariableStringBuffer( "cl_renderer", buf, sizeof( buf ) );
 	trap_Cmd_ExecuteText( EXEC_APPEND, "cvar_restart\n");
         trap_Cmd_ExecuteText( EXEC_APPEND, "exec autoexec.cfg\n");
         trap_Cmd_ExecuteText( EXEC_APPEND, "exec default.cfg\n");
         trap_Cmd_ExecuteText( EXEC_APPEND, "exec desktop.cfg\n");
+        trap_Cmd_ExecuteText( EXEC_APPEND, va("cl_renderer %s\n",buf) );
 	trap_Cmd_ExecuteText( EXEC_APPEND, "vid_restart\n" );
 }
 
