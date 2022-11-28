@@ -758,17 +758,29 @@ void CG_RegisterCvars(void) {
 
 sfxHandle_t CG_CacheLocalizedSound(char *snd) {
         char *trysnd;
+        char *dotpos;
         fileHandle_t f;
         int n;
-        //trysnd = va("%s_%s",cl_language.string,snd);
+        dotpos = strrchr(snd,'.');
+        if (dotpos) {
+                *dotpos = 0;
+                dotpos++;
+        }
         for( n = 1; n < 3; n++ ) {
-                trysnd = va("%s%s",COM_Localize(n),snd);
-                if (trap_FS_FOpenFile(trysnd, &f, FS_READ) > 0) {
+                trysnd = COM_Localize(n);
+                if (trap_FS_FOpenFile(va("%s%s.ogg",trysnd,snd), &f, FS_READ) > 0) {
+                        trap_FS_FCloseFile(f);
+                        break;
+                } else if (trap_FS_FOpenFile(va("%s%s.wav",trysnd,snd), &f, FS_READ) > 0) {
                         trap_FS_FCloseFile(f);
                         break;
                 }
         }
-        return trap_S_RegisterSound(trysnd, regsnd_flag);
+        if (dotpos) {
+                dotpos--;
+                *dotpos = '.';
+        }
+        return trap_S_RegisterSound(va("%s%s",trysnd,snd), regsnd_flag);
 }
 
 /*																																			
