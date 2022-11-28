@@ -711,9 +711,6 @@ typedef struct {
 	float		xyspeed;
 	int     nextOrbitTime;
 
-	qboolean cameraMode;		// if rendering from a loaded camera
-
-
 	// development tool
 	refEntity_t		testModelEntity;
 	char			testModelName[MAX_QPATH];
@@ -1394,7 +1391,6 @@ extern vmCvar_t cg_cameraOrbitDelay;
 extern vmCvar_t cg_timescaleFadeEnd;
 extern vmCvar_t cg_timescaleFadeSpeed;
 extern vmCvar_t cg_timescale;
-//extern vmCvar_t cg_cameraMode;
 extern vmCvar_t cg_smallFont;
 extern vmCvar_t cg_bigFont;
 extern vmCvar_t cg_noTaunt;
@@ -1407,13 +1403,6 @@ extern vmCvar_t cg_leiBrassNoise;			// LEILEI'S LINE!
 extern vmCvar_t cg_leiSuperGoreyAwesome;	// LEILEI'S LINE!
 extern vmCvar_t cg_muzzleflashStyle;		// Leilei
 extern vmCvar_t cg_leiDebug;
-extern vmCvar_t cg_cameramode;
-extern vmCvar_t cg_cameraEyes;
-extern vmCvar_t cg_cameraEyes_Fwd;
-extern vmCvar_t cg_cameraEyes_Up;
-extern vmCvar_t cg_modelEyes_Up;
-extern vmCvar_t cg_modelEyes_Right;
-extern vmCvar_t cg_modelEyes_Fwd;
 extern vmCvar_t cg_oldPlasma;
 extern vmCvar_t cg_trueLightning;
 extern vmCvar_t cg_music;

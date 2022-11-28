@@ -645,11 +645,6 @@ static int CG_CalcFov( void ) {
 		}
 	}
 
-	//if (cg_cameramode.integer == 1 && cg_thirdPerson.integer){
-	//	// fov scaling for the modern third person view
-	//	fov_x = fov_x * 0.93 * (cg.xyspeed * (0.0006) + 1);
-	//}
-
 	x = cg.refdef.width / tan( fov_x / 360 * M_PI );
 	fov_y = atan2( cg.refdef.height, x );
 	fov_y = fov_y * 360 / M_PI;
@@ -856,30 +851,6 @@ static int CG_CalcViewValues( void ) {
 		// offset for local bobbing and kicks
 		CG_OffsetFirstPersonView();
 	}
-
-	// leilei - View-from-the-model-eyes feature, aka "fullbody awareness" lol
-	//if (cg_cameraEyes.integer && !cg.renderingThirdPerson){
-	//	vec3_t		forward, up;	
-	//	cg.refdefViewAngles[ROLL] = headang[ROLL];
-	//	cg.refdefViewAngles[PITCH] = headang[PITCH];
-	//	cg.refdefViewAngles[YAW] = headang[YAW];
-
-	//	AngleVectors( headang, forward, NULL, up );
-	//	if (cg_cameraEyes.integer == 2){
-	//		VectorMA( headpos, 0, forward, headpos );
-	//		VectorMA( headpos, 4, up, headpos );
-	//	}
-	//	else
-	//	{
-	//		VectorMA( headpos, cg_cameraEyes_Fwd.value, forward, headpos );
-	//		VectorMA( headpos, cg_cameraEyes_Up.value, up, headpos );
-	//	}
-        //
-	//	cg.refdef.vieworg[0] = ps->origin[0] + headpos[0];
-	//	cg.refdef.vieworg[1] = ps->origin[1] + headpos[1];
-	//	cg.refdef.vieworg[2] = ps->origin[2] + headpos[2];
-		
-	//}
 
 	// position eye reletive to origin
 	AnglesToAxis( cg.refdefViewAngles, cg.refdef.viewaxis );

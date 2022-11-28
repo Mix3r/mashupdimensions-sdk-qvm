@@ -1755,21 +1755,12 @@ static void CG_PlayerAngles(centity_t *cent, vec3_t legs[3], vec3_t torso[3], ve
         //legsAngles[YAW] = headAngles[YAW];
 	torsoAngles[YAW] = headAngles[YAW] + 0.25 * movementOffsets[ dir ];
 
-
 	// torso
-	if (cg_cameramode.integer == 1) {
-		CG_SwingAngles(torsoAngles[YAW], 180, 90, cg_swingSpeed.value, &cent->pe.torso.yawAngle, &cent->pe.torso.yawing);
-		CG_SwingAngles(legsAngles[YAW], 180, 90, cg_swingSpeed.value, &cent->pe.legs.yawAngle, &cent->pe.legs.yawing);
-	} else {
-		CG_SwingAngles(torsoAngles[YAW], 25, 90, cg_swingSpeed.value, &cent->pe.torso.yawAngle, &cent->pe.torso.yawing);
-		CG_SwingAngles(legsAngles[YAW], 40, 90, cg_swingSpeed.value, &cent->pe.legs.yawAngle, &cent->pe.legs.yawing);
-	}
-
-
+	CG_SwingAngles(torsoAngles[YAW], 25, 90, cg_swingSpeed.value, &cent->pe.torso.yawAngle, &cent->pe.torso.yawing);
+	CG_SwingAngles(legsAngles[YAW], 40, 90, cg_swingSpeed.value, &cent->pe.legs.yawAngle, &cent->pe.legs.yawing);
 
 	torsoAngles[YAW] = cent->pe.torso.yawAngle;
 	legsAngles[YAW] = cent->pe.legs.yawAngle;
-
 
 	// --------- pitch -------------
 	// turn head if reached the eye tolerance limit
@@ -1783,19 +1774,8 @@ static void CG_PlayerAngles(centity_t *cent, vec3_t legs[3], vec3_t torso[3], ve
 			dest = headAngles[PITCH] * 0.75f;
 		}
 	}
-	if (cg_cameramode.integer == 1) {
-		CG_SwingAngles(dest, 15, 30, 0.1f, &cent->pe.torso.pitchAngle, &cent->pe.torso.pitching);
-
-		headAngles[PITCH] = cent->pe.torso.pitchAngle;
-		//headAngles[YAW] = cent->pe.torso.yawAngle;
-
-		headAngles[YAW] = torsoAngles[YAW] + 0.25 * movementOffsets[ dir ];
-		torsoAngles[PITCH] = cent->pe.torso.pitchAngle;
-	} else {
-		CG_SwingAngles(dest, 15, 30, 0.1f, &cent->pe.torso.pitchAngle, &cent->pe.torso.pitching);
-
-		torsoAngles[PITCH] = cent->pe.torso.pitchAngle;
-	}
+	CG_SwingAngles(dest, 15, 30, 0.1f, &cent->pe.torso.pitchAngle, &cent->pe.torso.pitching);
+	torsoAngles[PITCH] = cent->pe.torso.pitchAngle;
 
 	//
 	clientNum = cent->currentState.clientNum;
