@@ -1,0 +1,29 @@
+// TNT with 500 hit points and bound kamikaze blast
+// copy via Ctrl+A, then Ctrl+C and paste the brush between floor and "goto ceiling" in Trenchbroom window via Ctrl+V
+{
+"classname" "func_button"
+"health" "-500"
+"angle" "-2"
+"lip" "3"
+"speed" "10000"
+"target" "tnt_1"
+"wait" "99999"
+// brush 0
+{
+( -688 1016 40 ) ( -688 968 40 ) ( -688 968 8 ) cstrike/dobrykot_explosives 83 85 0 -0.09375 0.09375 0 0 0
+( -688 968 40 ) ( -648 968 40 ) ( -648 968 8 ) cstrike/dobrykot_explosives 5798.2227 85.33332 0 0.093811065 0.09375 0 0 0
+( -648 1016 8 ) ( -688 1016 8 ) ( -688 968 8 ) common/caulk 0 0 0 0.5 0.5 0 4 0
+( -688 968 56 ) ( -688 1016 56 ) ( -648 1016 56 ) cstrike/dobrykot_explosives 542.52155 1566.9521 0 0.31947672 0.319477 0 0 0
+( -648 1016 40 ) ( -688 1016 40 ) ( -688 1016 8 ) cstrike/dobrykot_explosives -170 85 0 -0.09375 0.09375 0 0 0
+( -640 968 40 ) ( -640 1016 40 ) ( -640 1016 8 ) cstrike/dobrykot_explosives -8789.328 85.33332 0 0.093750045 0.09375 0 0 0
+}
+}
+// entity 1
+{
+"classname" "target_relay"
+"origin" "-664 992 57"
+"targetname" "tnt_1"
+"target" "tnt_counter"
+"wait" "108"
+}
+

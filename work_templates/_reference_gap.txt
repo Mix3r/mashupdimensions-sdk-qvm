@@ -1,5 +1,5 @@
 // Gap (temporary measure brush to setup distance between floor and ceiling to use "goto ceiling" for cutscene maps):
-// copy via Ctrl+A, then Ctrl+C and paste the brush between floor and "goto ceiling" in Trenchbroom window
+// copy via Ctrl+A, then Ctrl+C and paste the brush between floor and "goto ceiling" in Trenchbroom window via Ctrl+V
 {
 "classname" "worldspawn"
 {
