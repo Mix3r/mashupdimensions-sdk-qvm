@@ -163,10 +163,18 @@ static void UI_SPPostgameMenu_NextEvent( void* ptr, int event ) {
         // Mix3r_Durachok: multi-mission map support (several maps during one mission)
         // check for goto [mapname] parameter in just finished level data from scripts/arenas.txt
         // open the map immediately if found
+        // if goto is * then execute "nextmap" variable value (example: if nextmap is "spmap q3dm17", run q3dm17 in singleplayer
+        // to do the trick, set nextmap prior to exit to intermission, via target_relay with [wait] 103 parameter and desired
+        // nextmap variable content as [message] parameter of the relay.
+
         arenaInfo = UI_GetArenaInfoByNumber( postgameMenuInfo.level );
         sf = Info_ValueForKey( arenaInfo, "goto" );
         if ( sf[0] ) {
-                trap_Cmd_ExecuteText( EXEC_APPEND, va( "spmap %s\n", sf ) );
+                if (sf[0]=='*') {
+                        trap_Cmd_ExecuteText( EXEC_APPEND, "vstr nextmap" );
+                } else {
+                        trap_Cmd_ExecuteText( EXEC_APPEND, va( "spmap %s\n", sf ) );
+                }
                 return;
         }
 

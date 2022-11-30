@@ -1,0 +1,13 @@
+// Airdrop crate for item placement
+// copy via Ctrl+A, then Ctrl+C and paste the brush between floor and "goto ceiling" in Trenchbroom window via Ctrl+V
+{
+"classname" "worldspawn"
+{
+( -64 -16 40 ) ( -64 -64 40 ) ( -64 -64 8 ) cstrike/dust/mltrycrtesd -170 85 0 -0.09375 0.09375 0 0 0
+( -64 -64 40 ) ( -24 -64 40 ) ( -24 -64 8 ) cstrike/dust/mltrycrtesd2 168 85 0 0.094 0.09375 0 0 0
+( -24 -16 8 ) ( -64 -16 8 ) ( -64 -64 8 ) common/caulk 0 0 0 0.5 0.5 0 4 0
+( -64 -64 56 ) ( -64 -16 56 ) ( -24 -16 56 ) cstrike/dust/mltrycrtetp -341 -170 0 0.09375 0.09375 0 0 0
+( -24 -16 40 ) ( -64 -16 40 ) ( -64 -16 8 ) cstrike/dust/mltrycrtesd -170 85 0 -0.09375 0.09375 0 0 0
+( -16 -64 40 ) ( -16 -16 40 ) ( -16 -16 8 ) cstrike/dust/mltrycrtesd -170 85 0 -0.09375 0.09375 0 0 0
+}
+}
