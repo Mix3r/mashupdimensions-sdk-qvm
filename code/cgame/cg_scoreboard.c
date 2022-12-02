@@ -232,13 +232,13 @@ static int CG_TeamScoreboard(int y, team_t team, float fade, int maxClients, int
 	int i;
 	score_t *score;
 	float color[4];
-	int count;
+	int count = 0;
 	clientInfo_t *ci;
+        qboolean skill_drawn = qfalse; //Mix3r_Durachok: draw NPC skill pic once for missions
 
 	color[0] = color[1] = color[2] = 1.0;
 	color[3] = fade;
 
-	count = 0;
 	for (i = 0; i < cg.numScores && count < maxClients; i++) {
 		score = &cg.scores[i];
 		ci = &cgs.clientinfo[ score->client ];
@@ -249,6 +249,10 @@ static int CG_TeamScoreboard(int y, team_t team, float fade, int maxClients, int
 			        continue;
                         }
 		} else if (cgs.fraglimit > 9999 && ci->botSkill > 0 && ci->botSkill <= 5) {
+                        if (!skill_drawn) {
+                                CG_DrawPic(10, 10, 32, 32, cgs.media.botSkillShaders[ ci->botSkill - 1 ]);
+                                skill_drawn = qtrue;
+                        }
                         continue;
                 }
 
