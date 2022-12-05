@@ -55,7 +55,8 @@ GAME OPTIONS MENU
 #define ID_CROSSHAIRHEALTH      144
 #define ID_CHATBEEP             145
 #define ID_TEAMCHATBEEP         146
-#define ID_SCOREPLUMS            147
+#define ID_SCOREPLUMS           147
+#define ID_GUNBOB               148
 
 #undef NUM_CROSSHAIRS
 #define	NUM_CROSSHAIRS			99
@@ -88,9 +89,10 @@ typedef struct {
         //menulist_s              fps_performance;
 	menuradiobutton_s       chatbeep;
 	menuradiobutton_s       teamchatbeep;
+        menulist_s              gunbob;
 	menubitmap_s		back;
 
-	qhandle_t			crosshairShader[NUM_CROSSHAIRS];
+	qhandle_t		crosshairShader[NUM_CROSSHAIRS];
 } preferences_t;
 
 static preferences_t s_preferences;
@@ -101,6 +103,15 @@ static const char *teamoverlay_names[] =
 	"",
 	"",
 	"",
+	NULL
+};
+static const char *gunbob_names[] =
+{
+	"",
+	"",
+	"",
+	"",
+        "",
 	NULL
 };
 //static const char *fps_performance_names[] =
@@ -132,6 +143,7 @@ static void Preferences_SetMenuItems( void ) {
 	s_preferences.synceveryframe.curvalue	= trap_Cvar_VariableValue( "r_finish" ) != 0;
 	s_preferences.forcemodel.curvalue	= trap_Cvar_VariableValue( "cg_forcemodel" ) != 0;
 	s_preferences.drawteamoverlay.curvalue	= Com_Clamp( 0, 3, trap_Cvar_VariableValue( "cg_drawTeamOverlay" ) );
+        s_preferences.gunbob.curvalue	        = Com_Clamp( 0, 4, trap_Cvar_VariableValue( "cg_bobmodel" ) );
 	s_preferences.chatbeep.curvalue         = trap_Cvar_VariableValue( "cg_chatBeep" ) != 0;
 	s_preferences.teamchatbeep.curvalue     = trap_Cvar_VariableValue( "cg_teamChatBeep" ) != 0;
 }
@@ -222,6 +234,10 @@ static void Preferences_Event( void* ptr, int notification ) {
 
 	case ID_DRAWTEAMOVERLAY:
 		trap_Cvar_SetValue( "cg_drawTeamOverlay", s_preferences.drawteamoverlay.curvalue );
+		break;
+
+        case ID_GUNBOB:
+		trap_Cvar_SetValue( "cg_bobmodel", s_preferences.gunbob.curvalue );
 		break;
 
 	case ID_CHATBEEP:
@@ -327,7 +343,7 @@ static void Preferences_MenuInit( void ) {
 	s_preferences.banner.color         = color_white;
 	s_preferences.banner.style         = UI_CENTER;
 
-	y = 82;
+	y = 82 - BIGCHAR_HEIGHT;
 	s_preferences.crosshair.generic.type		= MTYPE_TEXT;
 	s_preferences.crosshair.generic.flags		= QMF_PULSEIFFOCUS|QMF_SMALLFONT|QMF_NODEFAULTINIT|QMF_OWNERDRAW;
 	s_preferences.crosshair.generic.x		= PREFERENCES_X_POS;
@@ -428,6 +444,20 @@ static void Preferences_MenuInit( void ) {
 
 	Preferences_Menu_AddBoolean(&s_preferences.chatbeep, &y, ID_CHATBEEP, COM_Localize(196));
 	Preferences_Menu_AddBoolean(&s_preferences.teamchatbeep, &y, ID_TEAMCHATBEEP, COM_Localize(197));
+
+        s_preferences.gunbob.generic.type = MTYPE_SPINCONTROL;
+	s_preferences.gunbob.generic.name = COM_Localize(331);
+	s_preferences.gunbob.generic.flags = QMF_PULSEIFFOCUS|QMF_SMALLFONT;
+	s_preferences.gunbob.generic.callback = Preferences_Event;
+	s_preferences.gunbob.generic.id   = ID_GUNBOB;
+	s_preferences.gunbob.generic.x	  = PREFERENCES_X_POS;
+	s_preferences.gunbob.generic.y	  = y;
+	s_preferences.gunbob.itemnames	  = gunbob_names;
+        s_preferences.gunbob.itemnames[0] = COM_Localize(332);
+        s_preferences.gunbob.itemnames[1] = COM_Localize(333);
+        s_preferences.gunbob.itemnames[2] = COM_Localize(334);
+        s_preferences.gunbob.itemnames[3] = COM_Localize(335);
+        s_preferences.gunbob.itemnames[4] = COM_Localize(154);
 	
 	s_preferences.back.generic.type	    = MTYPE_BITMAP;
 	s_preferences.back.generic.name     = ART_BACK0;
@@ -460,6 +490,7 @@ static void Preferences_MenuInit( void ) {
 	Menu_AddItem( &s_preferences.menu, &s_preferences.drawteamoverlay );
 	Menu_AddItem( &s_preferences.menu, &s_preferences.chatbeep );
 	Menu_AddItem( &s_preferences.menu, &s_preferences.teamchatbeep );
+        Menu_AddItem( &s_preferences.menu, &s_preferences.gunbob );
 
 	Menu_AddItem( &s_preferences.menu, &s_preferences.back );
 

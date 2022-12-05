@@ -152,6 +152,7 @@ vmCvar_t ui_brassTime;
 vmCvar_t ui_drawCrosshair;
 vmCvar_t ui_drawCrosshairNames;
 vmCvar_t ui_DrawGun; // Mix3r to save draw gun client game cvar
+vmCvar_t ui_BobModel; // Mix3r to save draw gun client game cvar
 vmCvar_t ui_scoreplums; // Mix3r_Durachok: to save draw gun client game cvar
 vmCvar_t ui_marks;
 vmCvar_t ui_server1;
@@ -185,7 +186,6 @@ vmCvar_t cg_delag;
 void UI_DrawBlackHole( int *px, int *py ) {
         UI_DrawHandlePic( *px, *py, 128, 64, trap_R_RegisterShaderNoMip("menu/art_blueish/back_blackhole") );
 }
-
 
 
 
@@ -449,7 +449,7 @@ char *strings_en[] = {
 "Say to team",
 "Say to target",
 "Say to attacker",
-"Voice chat",
+"Switch camera view",
 "Show accuracy",
 "Best weapon",
 "NEVER",
@@ -527,7 +527,12 @@ char *strings_en[] = {
 "Mix3r_Durachok & e-sport community of N.Tura.",
 "MULTIPLAYER",
 "Desktop",
-"Popup damage points",
+"Popup damage points:",
+"Weapon bob shape:",
+"pull",
+"arc",
+"thrust",
+"8-shape",
 NULL
 };
 char *strings_ru[] = {
@@ -782,7 +787,7 @@ char *strings_ru[] = {
 "Сказать команде",
 "Сказать цели",
 "Сказать напавшему",
-"Голосовая связь",
+"Смена вида камеры",
 "Показать точность",
 "Лучшее оружие",
 "НИКОГДА",
@@ -860,7 +865,12 @@ char *strings_ru[] = {
 "Mix3r_Durachok и Тайное общество киберспортсменов.",
 "ИГРА С ДРУГИМИ",
 "Рабочий стол",
-"Выпадающие числа урона",
+"Выпадающие числа урона:",
+"Вид качания оружия:",
+"к себе",
+"дуга",
+"вдоль",
+"цифра 8",
 NULL
 };
 
@@ -935,6 +945,7 @@ static cvarTable_t cvarTable[] = {
 	{ &ui_drawCrosshair, "cg_drawCrosshair", "4", CVAR_ARCHIVE },
 	{ &ui_drawCrosshairNames, "cg_drawCrosshairNames", "1", CVAR_ARCHIVE },
         { &ui_DrawGun, "cg_DrawGun", "1", CVAR_ARCHIVE },
+        { &ui_BobModel, "cg_bobmodel", "0", CVAR_ARCHIVE },
         { &ui_scoreplums, "cg_ScorePlums", "1", CVAR_ARCHIVE },
 	{ &ui_marks, "cg_marks", "1", CVAR_ARCHIVE },
 

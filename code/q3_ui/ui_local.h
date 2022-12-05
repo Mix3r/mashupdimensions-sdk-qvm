@@ -91,6 +91,7 @@ extern vmCvar_t ui_brassTime;
 extern vmCvar_t ui_drawCrosshair;
 extern vmCvar_t ui_drawCrosshairNames;
 extern vmCvar_t ui_DrawGun; // Mix3r_Durachok: to save draw gun client game cvar
+extern vmCvar_t ui_BobModel; // Mix3r_Durachok: to save gun bob shape
 extern vmCvar_t ui_scoreplums; // Mix3r_Durachok: to show popup damage points
 extern vmCvar_t ui_marks;
 extern vmCvar_t ui_server1;

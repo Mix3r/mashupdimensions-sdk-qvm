@@ -1,0 +1,19 @@
+// pair of end relays, used to end the level for both single and coop game modes
+// copy via Ctrl+A, then Ctrl+C and paste the brush between floor and "goto ceiling" in Trenchbroom window via Ctrl+V
+{
+"classname" "target_relay"
+"origin" "0 0 96"
+"targetname" "theend0"
+"message" "vstr nextmap"
+"wait" "103"
+"exclude" "single"
+}
+{
+"classname" "target_relay"
+"origin" "0 0 79"
+"targetname" "theend0"
+"message" "oa_box4box"
+"wait" "104"
+"exclude" "team"
+}
+

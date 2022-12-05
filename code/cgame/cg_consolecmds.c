@@ -125,6 +125,15 @@ static void CG_ScoresUp_f(void) {
 	}
 }
 
+static void CG_TpvToggle_f(void) {
+        int tpv = 0;
+        if (!cg_thirdPerson.integer) {
+                tpv = 1;
+        }
+        trap_Cvar_Set("cg_thirdPerson", va("%i",tpv));
+        trap_S_StartLocalSound( cgs.media.talkSound, CHAN_LOCAL_SOUND );
+}
+
 static void CG_AccDown_f(void) {
 
 	if (cg.accRequestTime + 2000 < cg.time) {
@@ -581,6 +590,8 @@ static consoleCommand_t commands[] = {
 	{ "loaddeferred", CG_LoadDeferredPlayers},
 	{ "+acc", CG_AccDown_f},
 	{ "-acc", CG_AccUp_f},
+        { "+tpvcam", CG_ScoresUp_f},
+        { "-tpvcam", CG_TpvToggle_f},
 	{ "clients", CG_PrintClientNumbers}
 };
 

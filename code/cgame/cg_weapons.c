@@ -1211,46 +1211,34 @@ static void CG_CalculateWeaponPosition( vec3_t origin, vec3_t angles )
 
 	// gun angles from bobbing
 
-
-
 	// Engoo bobbing port
-	if (cg_bobmodel.integer || cg.predictedPlayerState.powerups[PW_FLIGHT]) {
-		vec3_t		forward, right, up;
-		float		bob;
-
-                fracsin = 999;
+        // Mix3r_Durachok: refactoring, added airhog-held gun and angle-gun-on-run anim
+        if (cg.predictedPlayerState.powerups[PW_FLIGHT]) {
+                delta = 0;
+        } else if (cg_bobmodel.integer) {
+		vec3_t forward, right, up;
 		AngleVectors (angles, forward, right, up);
 
-
-		// Arc 1
-		if (cg_bobmodel.integer == 1) {
-			bob = scale * 2 * 0.05 * cg.bobfracsin * 0.04;
-			VectorMA (origin, bob, right, origin);
-
-			bob = cos(scale * 0.07 * cg.bobfracsin * 0.05) - cos(scale * 0.07 * cg.bobfracsin * 0.1);
-			VectorMA (origin, bob, up, origin);
-		}
-
-		// Thrust
-		if (cg_bobmodel.integer == 2) {
-
-			bob = scale * 2 * 0.05 * cg.bobfracsin * 0.04;
-			VectorMA (origin, bob, forward, origin);
-
-
-		}
-
-
-		// figure 8
-		if (cg_bobmodel.integer == 3) {
-			float thebob = (  cg.bobcycle2 ) * (1.0f / 41.0f);
-			float scale2 =  0.001f * scale;
-			if (scale2 < 0) scale2 *= -1;
-
-			VectorMA (origin, (sin(thebob) * 1.5) * scale2, right, origin);
-			VectorMA (origin, (sin(thebob * 2) * 0.5) * scale2, up, origin);
-		}
-
+                switch (cg_bobmodel.integer) {
+                case 1:
+                        forward[0] = scale * 2 * 0.05 * cg.bobfracsin * 0.04;
+			VectorMA (origin, forward[0], right, origin);
+			forward[0] = cos(scale * 0.07 * cg.bobfracsin * 0.05) - cos(scale * 0.07 * cg.bobfracsin * 0.1);
+			VectorMA (origin, forward[0], up, origin);
+                break;
+                case 2:
+                        up[0] = scale * 2 * 0.05 * cg.bobfracsin * 0.04;
+			VectorMA (origin, up[0], forward, origin);
+                break;
+                case 3:
+                        forward[1] = ( cg.bobcycle2 ) * (1.0f / 41.0f);
+			forward[2] =  0.001f * scale;
+			if (forward[2] < 0) forward[2] *= -1;
+			VectorMA (origin, (sin(forward[1]) * 1.5) * forward[2], right, origin);
+			VectorMA (origin, (sin(forward[1] * 2) * 0.5) * forward[2], up, origin);
+                break;
+                }
+                delta = 1;
 	} else {
                 //vec3_t forward, right, dest_point;
                 //AngleVectors( angles, forward, right, NULL );
@@ -1259,57 +1247,33 @@ static void CG_CalculateWeaponPosition( vec3_t origin, vec3_t angles )
                 //VectorSubtract( dest_point, origin, dest_point );
                 //vectoangles(dest_point, angles);
 
-                fracsin = 0;
-
 		angles[ROLL] += scale * cg.bobfracsin * 0.005;
 		angles[YAW] += scale * cg.bobfracsin * 0.01;
 		angles[PITCH] += cg.xyspeed * cg.bobfracsin * 0.005;
+                delta = 2;
 	}
 
 	// leilei - fudgeweapon ported directly from quake :D  cg_leiDebug.value
 
 	if (cg_viewnudge.integer) {
-
-		if (cg_viewsize.integer== 110)
-			origin[2] += 1;
-		else if (cg_viewsize.integer == 100)
-			origin[2] += 2;
-		else if (cg_viewsize.integer == 90)
-			origin[2] += 1;
-		else if (cg_viewsize.integer == 80)
-			origin[2] += 0.5;
-
-	}
-
-
-	// drop the weapon when landing
-	delta = cg.time - cg.landTime;
-	if ( delta < LAND_DEFLECT_TIME ) {
-		origin[2] += cg.landChange*0.25 * delta / LAND_DEFLECT_TIME;
-	} else if ( delta < LAND_DEFLECT_TIME + LAND_RETURN_TIME ) {
-		origin[2] += cg.landChange*0.25 *
-		             (LAND_DEFLECT_TIME + LAND_RETURN_TIME - delta) / LAND_RETURN_TIME;
-	} else {
-                // Mix3r_Durachok simulate pickup movement
-                delta = cg.time - cg.itemPickupTime;
-                if (delta < 800) {
-                        origin[0] -= (800-delta) * 0.005;
+                switch (cg_viewsize.integer) {
+                case 110:
+                        origin[2] += 1;
+                break;
+                case 100:
+                        origin[2] += 2;
+                break;
+                case 90:
+                        origin[2] += 1;
+                break;
+                case 80:
+                        origin[2] += 0.5;
+                break;
                 }
-        }
-
-#if 0			// leilei - this may be dead pre-q3 1.01 code
-	// drop the weapon when stair climbing
-	delta = cg.time - cg.stepTime;
-	if ( delta < STEP_TIME/2 ) {
-		origin[2] -= cg.stepChange*0.25 * delta / (STEP_TIME/2);
 	}
-	else if ( delta < STEP_TIME ) {
-		origin[2] -= cg.stepChange*0.25 * (STEP_TIME - delta) / (STEP_TIME/2);
-	}
-#endif
 
 	// idle drift
-	if (fracsin == 0) {
+	if (delta) {
 		scale = cg.xyspeed + 40;
 		//fracsin = sin( cg.time * 0.001 );
                 fracsin = sin( cg.time * 0.0021 );
@@ -1321,7 +1285,7 @@ static void CG_CalculateWeaponPosition( vec3_t origin, vec3_t angles )
                 if ( cg.predictedPlayerState.eFlags & EF_FIRING ) {
                         cg.headEndYaw = cg.time;
                         //CG_Printf("aangleF: %.4f \n", cg.autoAnglesFast[0] );
-                } else {
+                } else if (delta > 1) {
                         fracsin = cg.xyspeed * 0.09;
                         if (fracsin > 55) {
                                 fracsin = 55;
@@ -1351,13 +1315,13 @@ static void CG_CalculateWeaponPosition( vec3_t origin, vec3_t angles )
                         //angles[ROLL] += fracsin * cg_leiDebug.value * sin(cg.refdefViewAngles[PITCH] / 180 * M_PI);
 
                         switch ( cg_drawGun.integer ) {
-                                case 2:
-                                        scale = -scale;
-                                break;
-                                case 3:
-                                        scale = scale * 0.25;
-                                        delta = 0; // PITCH
-                                break;
+                        case 2:
+                                scale = -scale;
+                        break;
+                        case 3:
+                                scale = scale * 0.25;
+                                delta = 0; // PITCH
+                        break;
                         }
 
                         angles[delta] += fracsin * scale * cos(cg.refdefViewAngles[PITCH] / 180 * M_PI);
@@ -1369,10 +1333,31 @@ static void CG_CalculateWeaponPosition( vec3_t origin, vec3_t angles )
                 }
 	}
 
+	// drop the weapon when landing
+	delta = cg.time - cg.landTime;
+	if ( delta < LAND_DEFLECT_TIME ) {
+		origin[2] += cg.landChange*0.25 * delta / LAND_DEFLECT_TIME;
+	} else if ( delta < LAND_DEFLECT_TIME + LAND_RETURN_TIME ) {
+		origin[2] += cg.landChange*0.25 *
+		             (LAND_DEFLECT_TIME + LAND_RETURN_TIME - delta) / LAND_RETURN_TIME;
+	} else {
+                // Mix3r_Durachok simulate pickup movement
+                delta = cg.time - cg.itemPickupTime;
+                if (delta < 800) {
+                        origin[0] -= (800-delta) * 0.005;
+                }
+        }
 
-
-
-
+#if 0	// leilei - this may be dead pre-q3 1.01 code
+	// drop the weapon when stair climbing
+	delta = cg.time - cg.stepTime;
+	if ( delta < STEP_TIME/2 ) {
+		origin[2] -= cg.stepChange*0.25 * delta / (STEP_TIME/2);
+	}
+	else if ( delta < STEP_TIME ) {
+		origin[2] -= cg.stepChange*0.25 * (STEP_TIME - delta) / (STEP_TIME/2);
+	}
+#endif
 }
 
 

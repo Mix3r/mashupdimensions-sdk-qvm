@@ -1016,18 +1016,16 @@ static void PM_CrashLand( void )
 	if ( !(pml.groundTrace.surfaceFlags & SURF_NODAMAGE) )  {
 		if ( delta > 60 ) {
 			PM_AddEvent( EV_FALL_FAR );
-		}
-		else if ( delta > 40 ) {
+		} else if ( delta > 40 ) {
 			// this is a pain grunt, so don't play it if dead
 			if ( pm->ps->stats[STAT_HEALTH] > 0 ) {
 				PM_AddEvent( EV_FALL_MEDIUM );
 			}
-		}
-		else if ( delta > 7 ) {
-			PM_AddEvent( EV_FALL_SHORT );
-		}
-		else {
-			PM_AddEvent( PM_FootstepForSurface() );
+		} else if ( delta > 7 ) {
+                        PM_AddEvent( EV_FALL_SHORT );
+		} else {
+
+		        PM_AddEvent( PM_FootstepForSurface() );
 		}
 	}
 
@@ -1425,7 +1423,8 @@ static void PM_Footsteps( void )
 	if ( ( ( old + 64 ) ^ ( pm->ps->bobCycle + 64 ) ) & 128 ) {
 		if ( pm->waterlevel == 0 ) {
 			// on ground will only play sounds if running
-			if ( footstep && !pm->noFootsteps ) {
+                        // Mix3r_Durachok: flight item (airhog) mustn't send footsteps :)
+			if (footstep && !pm->noFootsteps && !pm->ps->powerups[PW_FLIGHT]) {
 				PM_AddEvent( PM_FootstepForSurface() );
 			}
 		}

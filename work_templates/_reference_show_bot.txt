@@ -1,0 +1,60 @@
+// Set of brushes and entities to show close up of some bot/boss during cutscene
+// copy via Ctrl+A, then Ctrl+C and paste the brush between floor and "goto ceiling" in Trenchbroom window via Ctrl+V
+{
+"classname" "worldspawn"
+
+{
+( 392 -901 8 ) ( 392 -900 8 ) ( 392 -901 9 ) common/weapclip 74 0 0 0.5 0.5 134217728 0 0
+( 384 -901 8 ) ( 384 -901 9 ) ( 385 -901 8 ) common/weapclip -64 0 0 0.5 0.5 134217728 0 0
+( 384 -901 8 ) ( 385 -901 8 ) ( 384 -900 8 ) common/weapclip -64 -74 0 0.5 0.5 134217728 0 0
+( 416 -893 224 ) ( 416 -892 224 ) ( 417 -893 224 ) common/weapclip -64 -74 0 0.5 0.5 134217728 0 0
+( 416 -885 16 ) ( 417 -885 16 ) ( 416 -885 17 ) common/weapclip -64 0 0 0.5 0.5 134217728 0 0
+( 408 -893 16 ) ( 408 -893 17 ) ( 408 -892 16 ) common/weapclip 74 0 0 0.5 0.5 134217728 0 0
+}
+
+{
+( 392 -861 8 ) ( 392 -860 8 ) ( 392 -861 9 ) common/weapclip 74 0 0 0.5 0.5 134217728 0 0
+( 384 -869 8 ) ( 384 -869 9 ) ( 385 -869 8 ) common/weapclip -64 0 0 0.5 0.5 134217728 0 0
+( 384 -861 8 ) ( 385 -861 8 ) ( 384 -860 8 ) common/weapclip -64 -74 0 0.5 0.5 134217728 0 0
+( 416 -853 224 ) ( 416 -852 224 ) ( 417 -853 224 ) common/weapclip -64 -74 0 0.5 0.5 134217728 0 0
+( 416 -853 16 ) ( 417 -853 16 ) ( 416 -853 17 ) common/weapclip -64 0 0 0.5 0.5 134217728 0 0
+( 408 -853 16 ) ( 408 -853 17 ) ( 408 -852 16 ) common/weapclip 74 0 0 0.5 0.5 134217728 0 0
+}
+
+{
+( 408 -893 8 ) ( 408 -892 8 ) ( 408 -893 9 ) common/weapclip 74 0 0 0.5 0.5
+( 409 -885 8 ) ( 409 -885 9 ) ( 410 -885 8 ) common/weapclip -74 0 0 0.5 0.5
+( 409 -893 8 ) ( 410 -893 8 ) ( 409 -892 8 ) common/weapclip -74 -74 0 0.5 0.5
+( 417 -861 96 ) ( 417 -860 96 ) ( 418 -861 96 ) common/weapclip -74 -74 0 0.5 0.5
+( 417 -869 9 ) ( 418 -869 9 ) ( 417 -869 10 ) common/weapclip -74 0 0 0.5 0.5
+( 416 -861 9 ) ( 416 -861 10 ) ( 416 -860 9 ) common/weapclip 74 0 0 0.5 0.5
+}
+
+{
+( 384 -893 8 ) ( 384 -892 8 ) ( 384 -893 9 ) common/weapclip 74 0 0 0.5 0.5
+( 384 -885 8 ) ( 384 -885 9 ) ( 385 -885 8 ) common/weapclip -24 0 0 0.5 0.5
+( 384 -893 8 ) ( 385 -893 8 ) ( 384 -892 8 ) common/weapclip -24 -74 0 0.5 0.5
+( 392 -861 96 ) ( 392 -860 96 ) ( 393 -861 96 ) common/weapclip -24 -74 0 0.5 0.5
+( 392 -869 9 ) ( 393 -869 9 ) ( 392 -869 10 ) common/weapclip -24 0 0 0.5 0.5
+( 392 -861 9 ) ( 392 -861 10 ) ( 392 -860 9 ) common/weapclip 74 0 0 0.5 0.5
+}
+}
+
+{
+"classname" "target_print"
+"origin" "482 -877 26"
+"message" "#_C9xyz 28 180"
+"targetname" "look_bot"
+"wait" "999"
+}
+
+{
+"classname" "target_relay"
+"origin" "400 -877 32"
+"wait" "105"
+"message" "-90"
+"angle" "180"
+"random" "-1"
+"target" ""
+"targetname" "beam_bot"
+}

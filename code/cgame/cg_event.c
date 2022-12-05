@@ -765,7 +765,9 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 
 		case EV_FALL_SHORT:
 			//DEBUGNAME("EV_FALL_SHORT");
-                        if (cgs.media.landbSound && cg.time%2 == 0) {
+                        if (cent->currentState.powerups & (1 << PW_FLIGHT)) {
+                                trap_S_StartSound(NULL, es->number, CHAN_BODY,cgs.media.footsteps[ FOOTSTEP_METAL ][rand()&3]);
+                        } else if (cgs.media.landbSound && cg.time%2 == 0) {
 			        trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.landbSound);
                         } else {
 			        trap_S_StartSound(NULL, es->number, CHAN_AUTO, cgs.media.landSound);
