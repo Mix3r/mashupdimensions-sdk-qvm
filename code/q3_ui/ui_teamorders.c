@@ -76,10 +76,10 @@ static const char *ctfOrders[] = {
 };
 static const char *ctfMessages[] = {
 	"i am the leader",
-	"%s defend the base",
+	"%s defend the base forever",
 	"%s follow me",
 	"%s get the enemy flag",
-	"%s camp here",
+	"%s camp here forever",
 	"%s report",
 	"i stop being the leader",
 	NULL
@@ -99,10 +99,10 @@ static const char *ctfMessages[] = {
 
 static const char *ctf1fMessages[] = {
 	"i am the leader",
-	"%s defend the base",
+	"%s defend the base forever",
 	"%s follow me",
 	"%s get the flag",
-	"%s camp here",
+	"%s camp here forever",
 	"%s report",
 	"i stop being the leader",
 	NULL
@@ -122,9 +122,9 @@ static const char *ctf1fMessages[] = {
 
 static const char *baseMessages[] = {
 	"i am the leader",
-	"%s defend the base",
+	"%s defend the base forever",
 	"%s follow me",
-	"%s attack the base",
+	"%s attack the base forever",
 	"%s camp here",
 	"%s report",
 	"i stop being the leader",
@@ -145,7 +145,7 @@ static const char *teamMessages[] = {
 	"i am the leader",
 	"%s follow me",
 	"%s roam",
-	"%s camp here",
+	"%s camp here forever",
 	"%s report",
 	"i stop being the leader",
 	NULL

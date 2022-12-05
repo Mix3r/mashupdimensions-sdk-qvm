@@ -1244,6 +1244,11 @@ void Touch_Button(gentity_t *ent, gentity_t *other, trace_t *trace )
 	}
 
 	if ( ent->moverState == MOVER_POS1 ) {
+                // Mix3r_Durachok: prevent airhog pilot to pick another
+                // hangar-stationed airhog while already driving airhog
+                if ( ent->speed == 500 && other->client->ps.powerups[PW_FLIGHT]) {
+                        return;
+                }
 		Use_BinaryMover( ent, other, other );
 	}
 }

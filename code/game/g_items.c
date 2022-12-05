@@ -464,7 +464,7 @@ void Touch_Item (gentity_t *ent, gentity_t *other, trace_t *trace)
 	qboolean	predict;
 
 	//instant gib
-        if (ent->item->giTag == WP_GRAPPLING_HOOK) {
+        if (ent->item->giTag == WP_GRAPPLING_HOOK || ent->item->giTag == PW_FLIGHT) {
 	} else if ((g_instantgib.integer || g_rockets.integer || g_gametype.integer == GT_CTF_ELIMINATION || g_elimination_allgametypes.integer)
 	        && ent->item->giType != IT_TEAM)
 		return;

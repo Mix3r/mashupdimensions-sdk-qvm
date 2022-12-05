@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "g_local.h"
 
 #define MAXIMUM_SHOTGUN_COUNT 32
+#define MEDKIT_INSTANT_GIFT 27
 
 static	float	s_quadFactor;
 static	vec3_t	forward, right, up;
@@ -568,16 +569,14 @@ void weapon_railgun_fire (gentity_t *ent)
 	trace_t		trace;
 	gentity_t	*tent;
 	gentity_t	*traceEnt;
-	int			damage;
-	int			i;
-	int			hits;
-	int			unlinked;
-	int			passent;
+	int		damage;
+	int		i;
+	int		hits;
+	int		unlinked;
+	int		passent;
 	gentity_t	*unlinkedEntities[MAX_RAIL_HITS];
 
 	damage = 100 * s_quadFactor;
-	if(g_instantgib.integer)
-		damage = 800;
 
 	VectorMA (muzzle, 8192, forward, end);
 
@@ -621,6 +620,17 @@ void weapon_railgun_fire (gentity_t *ent)
 				if( LogAccuracyHit( traceEnt, ent ) ) {
 					hits++;
 				}
+                                if (g_instantgib.integer) {
+                                        if (traceEnt->client && g_fraglimit.integer > 9999 && !(traceEnt->r.svFlags & SVF_BOT)) {
+                                                // Mix3r_Durachok: special case for missions, where players have 1 life only
+                                                // player can survive 1 instant hit if full health, and every hit gives them
+                                                // a chance to heal themself by giving the medkit holdable item on each hit.
+                                                damage = traceEnt->client->pers.maxHealth * 0.63;
+                                                traceEnt->client->ps.stats[STAT_HOLDABLE_ITEM] = MEDKIT_INSTANT_GIFT;
+                                        } else {
+                                                damage = 800;
+                                        }
+                                }
 				G_Damage (traceEnt, ent, ent, forward, trace.endpos, damage, 0, MOD_RAILGUN);
 			}
 		}
