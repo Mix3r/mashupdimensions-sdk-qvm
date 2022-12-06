@@ -551,32 +551,33 @@ static void CG_DrawStatusBar(void) {
 	if (cent->currentState.weapon) {
 		value = ps->ammo[cent->currentState.weapon];
 		if (value > -1) {
-			if (cg.predictedPlayerState.weaponstate == WEAPON_FIRING && cg.predictedPlayerState.weaponTime > 100) {
-				// draw as dark grey when reloading
-				color = 2; // dark grey
-			} else {
-				if (value >= 0) {
-					color = 0; // green
-				} else {
-					color = 1; // red
-				}
-			}
-			trap_R_SetColor(colors[color]);
-
                         if (value != 999) {
+			        if (cg.predictedPlayerState.weaponstate == WEAPON_FIRING && cg.predictedPlayerState.weaponTime > 100) {
+				        // draw as dark grey when reloading
+				        color = 2; // dark grey
+			        } else if (value > 0) {
+				        color = 0; // yel
+				} else {
+				        color = 1; // red
+			        }
+			        trap_R_SetColor(colors[color]);
 			        CG_DrawField(0, 432, 3, value);
 			        trap_R_SetColor(NULL);
-                        } else if (color == 0) {
-                                trap_R_SetColor(NULL);
                         }
+                        // Mix3r_Durachok: let's use hcolor array to calculate blowup
+                        // for ammo icon
+                        hcolor[0] = cg.predictedPlayerState.weaponTime / 1500.0f;
+                        hcolor[1] = ICON_SIZE * 0.25;
+                        hcolor[2] = hcolor[1] * hcolor[0] * 2;
+                        hcolor[3] = hcolor[2] * 2.0;
 
 			// if we didn't draw a 3D icon, draw a 2D icon for ammo
 			if (cg_drawIcons.integer) {
 				qhandle_t icon;
-
 				icon = cg_weapons[ cg.predictedPlayerState.weapon ].ammoIcon;
 				if (icon) {
-				  CG_DrawPic(CHAR_WIDTH * 3 + TEXT_ICON_SPACE + ICON_SIZE*0.25, 432+ICON_SIZE*0.25, ICON_SIZE*0.5, ICON_SIZE*0.5, icon);
+				  //CG_DrawPic(CHAR_WIDTH * 3 + TEXT_ICON_SPACE + ICON_SIZE*0.25, 432+ICON_SIZE*0.25, ICON_SIZE*0.5, ICON_SIZE*0.5, icon);
+                                  CG_DrawPic(CHAR_WIDTH * 3 + TEXT_ICON_SPACE + hcolor[1]+hcolor[2], 432+hcolor[1]+hcolor[2], ICON_SIZE*0.5-hcolor[3], ICON_SIZE*0.5-hcolor[3], icon);
 				}
 			}
 		}
