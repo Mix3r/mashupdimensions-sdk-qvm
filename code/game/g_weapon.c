@@ -26,7 +26,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "g_local.h"
 
 #define MAXIMUM_SHOTGUN_COUNT 32
-#define MEDKIT_INSTANT_GIFT 27
 
 static	float	s_quadFactor;
 static	vec3_t	forward, right, up;

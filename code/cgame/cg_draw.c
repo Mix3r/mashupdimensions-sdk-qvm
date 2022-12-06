@@ -551,8 +551,7 @@ static void CG_DrawStatusBar(void) {
 	if (cent->currentState.weapon) {
 		value = ps->ammo[cent->currentState.weapon];
 		if (value > -1) {
-			if (cg.predictedPlayerState.weaponstate == WEAPON_FIRING
-					&& cg.predictedPlayerState.weaponTime > 100) {
+			if (cg.predictedPlayerState.weaponstate == WEAPON_FIRING && cg.predictedPlayerState.weaponTime > 100) {
 				// draw as dark grey when reloading
 				color = 2; // dark grey
 			} else {
@@ -564,8 +563,12 @@ static void CG_DrawStatusBar(void) {
 			}
 			trap_R_SetColor(colors[color]);
 
-			CG_DrawField(0, 432, 3, value);
-			trap_R_SetColor(NULL);
+                        if (value != 999) {
+			        CG_DrawField(0, 432, 3, value);
+			        trap_R_SetColor(NULL);
+                        } else if (color == 0) {
+                                trap_R_SetColor(NULL);
+                        }
 
 			// if we didn't draw a 3D icon, draw a 2D icon for ammo
 			if (cg_drawIcons.integer) {

@@ -1904,10 +1904,12 @@ void ClientSpawn(gentity_t *ent) {
 		ent->health = client->ps.stats[STAT_HEALTH] = g_elimination_startHealth.integer; //client->ps.stats[STAT_MAX_HEALTH]*2;	
 	}
 
-	if(g_instantgib.integer)
-	{
+	if (g_instantgib.integer) {
 		client->ps.stats[STAT_WEAPONS] = ( 1 << WP_RAILGUN );
 		client->ps.ammo[WP_RAILGUN] = 999; //Don't display any ammo
+                if (g_fraglimit.integer > 9999) {
+                        client->ps.stats[STAT_HOLDABLE_ITEM] = MEDKIT_INSTANT_GIFT;
+                }
 		if (g_instantgib.integer>1) {
 			client->ps.stats[STAT_WEAPONS] |= ( 1 << WP_GAUNTLET );
 			client->ps.ammo[WP_GAUNTLET] = -1;
