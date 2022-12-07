@@ -1285,7 +1285,7 @@ static void CG_CalculateWeaponPosition( vec3_t origin, vec3_t angles )
                 if ( cg.predictedPlayerState.eFlags & EF_FIRING ) {
                         cg.headEndYaw = cg.time;
                         //CG_Printf("aangleF: %.4f \n", cg.autoAnglesFast[0] );
-                } else if (delta > 1) {
+                } else if (delta > 1 || cg.landChange > 0) {
                         fracsin = cg.xyspeed * 0.09;
                         if (fracsin > 55) {
                                 fracsin = 55;

@@ -203,9 +203,8 @@ Draws large numbers for status bar and powerups
 #ifndef MISSIONPACK
 
 static void CG_DrawField(int x, int y, int width, int value) {
-	char num[16], *ptr;
-	int l;
-	int frame;
+	char num[6], *ptr;
+	int l, frame;
 
 	if (width < 1) {
 		return;
@@ -243,10 +242,7 @@ static void CG_DrawField(int x, int y, int width, int value) {
 
 	ptr = num;
 	while (*ptr && l) {
-		if (*ptr == '-')
-			frame = STAT_MINUS;
-		else
-			frame = *ptr - '0';
+		if (*ptr == '-') frame = STAT_MINUS; else frame = *ptr - '0';
 
 		CG_DrawPic(x, y, CHAR_WIDTH, CHAR_HEIGHT, cgs.media.numberShaders[frame]);
 		x += CHAR_WIDTH;
@@ -562,13 +558,16 @@ static void CG_DrawStatusBar(void) {
 			        }
 			        trap_R_SetColor(colors[color]);
 			        CG_DrawField(0, 432, 3, value);
-			        trap_R_SetColor(NULL);
+			        //trap_R_SetColor(NULL);
                         }
                         // Mix3r_Durachok: let's use hcolor array to calculate blowup
                         // for ammo icon
-                        hcolor[0] = cg.predictedPlayerState.weaponTime / 1500.0f;
+                        hcolor[0] = cg.predictedPlayerState.weaponTime / 200.0f;
+                        if (hcolor[0] > 1) {
+                                hcolor[0] = cg.predictedPlayerState.weaponTime / 1500.0f;
+                        }
                         hcolor[1] = ICON_SIZE * 0.25;
-                        hcolor[2] = hcolor[1] * hcolor[0] * 2;
+                        hcolor[2] = hcolor[1] * hcolor[0];
                         hcolor[3] = hcolor[2] * 2.0;
 
 			// if we didn't draw a 3D icon, draw a 2D icon for ammo
@@ -577,7 +576,7 @@ static void CG_DrawStatusBar(void) {
 				icon = cg_weapons[ cg.predictedPlayerState.weapon ].ammoIcon;
 				if (icon) {
 				  //CG_DrawPic(CHAR_WIDTH * 3 + TEXT_ICON_SPACE + ICON_SIZE*0.25, 432+ICON_SIZE*0.25, ICON_SIZE*0.5, ICON_SIZE*0.5, icon);
-                                  CG_DrawPic(CHAR_WIDTH * 3 + TEXT_ICON_SPACE + hcolor[1]+hcolor[2], 432+hcolor[1]+hcolor[2], ICON_SIZE*0.5-hcolor[3], ICON_SIZE*0.5-hcolor[3], icon);
+                                  CG_DrawPic(CHAR_WIDTH * 3 + TEXT_ICON_SPACE + hcolor[1]-hcolor[2], 432+hcolor[1]-hcolor[2], ICON_SIZE*0.5+hcolor[3], ICON_SIZE*0.5+hcolor[3], icon);
 				}
 			}
 		}
@@ -588,20 +587,20 @@ static void CG_DrawStatusBar(void) {
 	//
 	value = ps->stats[STAT_HEALTH];
 	if (value > 100) {
-		trap_R_SetColor(colors[3]); // white
+                color = 3; // white
 	} else if (value > 25) {
-		trap_R_SetColor(colors[0]); // green
+		color = 0; // green
 	} else if (value > 0) {
 		color = (cg.time >> 8) & 1; // flash
-		trap_R_SetColor(colors[color]);
 	} else {
-		trap_R_SetColor(colors[1]); // red
+	        color = 1; // red
 	}
+        trap_R_SetColor(colors[color]);
 
 	// stretch the health up when taking damage
 	CG_DrawField(320-CHAR_WIDTH*4, 432, 3, value);
-	CG_ColorForHealth(hcolor);
-	trap_R_SetColor(hcolor);
+	//CG_ColorForHealth(hcolor);
+	//trap_R_SetColor(hcolor);
 
         //
 	// armor
