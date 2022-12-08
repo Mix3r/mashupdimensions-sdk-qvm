@@ -195,10 +195,8 @@ vmCvar_t cg_noTaunt;
 vmCvar_t cg_noProjectileTrail;
 vmCvar_t cg_oldRail;
 vmCvar_t cg_oldRocket;
-vmCvar_t cg_leiEnhancement; // ANOTHER LEILEI LINE!!!
 vmCvar_t cg_leiBrassNoise; // ANOTHER LEILEI LINE!!!
 vmCvar_t cg_leiGoreNoise; // ANOTHER LEILEI LINE!!!
-vmCvar_t cg_leiSuperGoreyAwesome; // ANOTHER LEILEI LINE!!!
 vmCvar_t cg_leiDebug; // ANOTHER LEILEI LINE!!!
 vmCvar_t cg_oldPlasma;
 vmCvar_t cg_trueLightning;
@@ -621,10 +619,8 @@ static cvarTable_t cvarTable[] = {// bk001129
 	{ &cg_bigFont, "ui_bigFont", "0.4", CVAR_ARCHIVE},
 	{ &cg_oldRail, "cg_oldRail", "1", CVAR_ARCHIVE},
 	{ &cg_oldRocket, "cg_oldRocket", "1", CVAR_ARCHIVE},
-	{ &cg_leiEnhancement, "cg_leiEnhancement", "0", CVAR_ARCHIVE}, // LEILEI default off (in case of whiner)
 	{ &cg_leiGoreNoise, "cg_leiGoreNoise", "0", CVAR_ARCHIVE}, // LEILEI 
-	{ &cg_leiBrassNoise, "cg_leiBrassNoise", "0", CVAR_ARCHIVE}, // LEILEI 
-	{ &cg_leiSuperGoreyAwesome, "cg_leiSuperGoreyAwesome", "0", CVAR_ARCHIVE}, // LEILEI 
+	{ &cg_leiBrassNoise, "cg_leiBrassNoise", "0", CVAR_ARCHIVE}, // LEILEI
 	{ &cg_leiDebug, "cg_leiDebug", "0", CVAR_ARCHIVE}, // LEILEI
 	{ &cg_leiWidescreen, "cg_leiWidescreen", "1", CVAR_ARCHIVE}, // LEILEI
 

@@ -619,13 +619,10 @@ static void CG_AddScaleFade( localEntity_t *le ) {
 	// so it doesn't add too much overdraw
 	VectorSubtract( re->origin, cg.refdef.vieworg, delta );
 	len = VectorLength( delta );
-	// LEILEI
-	if (!cg_leiEnhancement.integer) {
 	if ( len < le->radius ) {
 		CG_FreeLocalEntity( le );
 		return;
 	}
-		}
 	trap_R_AddRefEntityToScene( re );
 }
 
@@ -661,13 +658,9 @@ static void CG_AddFallScaleFade( localEntity_t *le ) {
 	// so it doesn't add too much overdraw
 	VectorSubtract( re->origin, cg.refdef.vieworg, delta );
 	len = VectorLength( delta );
-	
-	// LEILEI
-if (!cg_leiEnhancement.integer) {
 	if ( len < le->radius ) {
 		CG_FreeLocalEntity( le );
 		return;
-	}
 	}
 	trap_R_AddRefEntityToScene( re );
 }

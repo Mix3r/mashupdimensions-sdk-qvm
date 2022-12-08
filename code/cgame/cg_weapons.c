@@ -486,14 +486,6 @@ static void CG_LeiSmokeTrail( centity_t *ent, const weaponInfo_t *wi )
 		}
 		return;
 	}
-
-	for ( ; t <= ent->trailTime ; t += step ) {
-
-		if (cg_leiEnhancement.integer) {
-			trap_R_LFX_ParticleEffect(1, origin, up); // that was easy.
-		}
-	}
-
 }
 
 
@@ -758,24 +750,14 @@ CG_GrenadeTrail
 // LEILEI enhancment
 static void CG_RocketTrail( centity_t *ent, const weaponInfo_t *wi )
 {
-
-	if (cg_leiEnhancement.integer) {
-		CG_LeiSmokeTrail( ent, wi );
-	}
-	else {
-		CG_OldRocketTrail( ent, wi );
-	}
+        //CG_LeiSmokeTrail( ent, wi );
+        CG_OldRocketTrail( ent, wi );
 }
 
 static void CG_PlasmaTrail( centity_t *ent, const weaponInfo_t *wi )
 {
-
-	if (cg_leiEnhancement.integer) {
-		CG_LeiPlasmaTrail( ent, wi );
-	}
-	else {
-		CG_OldPlasmaTrail( ent, wi );
-	}
+        //CG_LeiPlasmaTrail( ent, wi );
+	CG_OldPlasmaTrail( ent, wi );
 }
 
 
@@ -3306,9 +3288,6 @@ void CG_MissileHitWall( int weapon, int clientNum, vec3_t origin, vec3_t dir, im
 		}
 		mark = cgs.media.holeMarkShader;
 		radius = 12;
-		if (cg_leiEnhancement.integer) {
-			trap_R_LFX_ParticleEffect(10, origin, dir); // that was easy.
-		}
 		break;
 //#endif
 	case WP_LIGHTNING:
@@ -3335,12 +3314,6 @@ void CG_MissileHitWall( int weapon, int clientNum, vec3_t origin, vec3_t dir, im
 		radius = 64;
 		light = 300;
 		isSprite = qtrue;
-		if (cg_leiEnhancement.integer) {
-			duration = 10;
-			trap_R_LFX_ParticleEffect(11, origin, dir); // that was easy.
-		}
-		// LEILEI END enhancement
-
 		break;
 //#endif
 	case WP_GRENADE_LAUNCHER:
@@ -3351,11 +3324,6 @@ void CG_MissileHitWall( int weapon, int clientNum, vec3_t origin, vec3_t dir, im
 		radius = 64;
 		light = 300;
 		isSprite = qtrue;
-		if (cg_leiEnhancement.integer) {
-			duration = 10;
-			trap_R_LFX_ParticleEffect(4, origin, dir); // that was easy.
-		}
-		// LEILEI END enhancement
 		break;
 	case WP_ROCKET_LAUNCHER:
 		mod = cgs.media.dishFlashModel;
@@ -3369,12 +3337,6 @@ void CG_MissileHitWall( int weapon, int clientNum, vec3_t origin, vec3_t dir, im
 		lightColor[0] = 1;
 		lightColor[1] = 0.75;
 		lightColor[2] = 0.0;
-
-		if (cg_leiEnhancement.integer) {
-			duration = 10;
-			trap_R_LFX_ParticleEffect(5, origin, dir); // that was easy.
-		}
-		// LEILEI END enhancement
 		break;
 	case WP_RAILGUN:
 		mod = cgs.media.ringFlashModel;
@@ -3382,10 +3344,6 @@ void CG_MissileHitWall( int weapon, int clientNum, vec3_t origin, vec3_t dir, im
 		sfx = cgs.media.sfx_plasmaexp;
 		mark = cgs.media.energyMarkShader;
 		radius = 24;
-		if (cg_leiEnhancement.integer) {
-			duration = 10;
-			trap_R_LFX_ParticleEffect(30, origin, dir); // that was easy.
-		}
 		break;
 	case WP_PLASMAGUN:
 		mod = cgs.media.ringFlashModel;
@@ -3393,11 +3351,6 @@ void CG_MissileHitWall( int weapon, int clientNum, vec3_t origin, vec3_t dir, im
 		sfx = cgs.media.sfx_plasmaexp;
 		mark = cgs.media.energyMarkShader;
 		radius = 16;
-		if (cg_leiEnhancement.integer) {
-			duration = 10;
-			trap_R_LFX_ParticleEffect(6, origin, dir); // that was easy.
-		}
-
 		break;
 	case WP_BFG:
 		mod = cgs.media.dishFlashModel;
@@ -3406,10 +3359,6 @@ void CG_MissileHitWall( int weapon, int clientNum, vec3_t origin, vec3_t dir, im
 		mark = cgs.media.burnMarkShader;
 		radius = 32;
 		isSprite = qtrue;
-		if (cg_leiEnhancement.integer) {
-			duration = 10;
-			trap_R_LFX_ParticleEffect(9, origin, dir); // that was easy.
-		}
 		break;
 	case WP_SHOTGUN:
 		mod = cgs.media.bulletFlashModel;
@@ -3422,20 +3371,10 @@ void CG_MissileHitWall( int weapon, int clientNum, vec3_t origin, vec3_t dir, im
                 }
 		radius = 4;
                 duration = 300;
-		if (cg_leiEnhancement.integer) {
-			duration = 10;
-			trap_R_LFX_ParticleEffect(3, origin, dir); // that was easy.
-		}
 		break;
 
 	case WP_CHAINGUN:
 		mod = cgs.media.bulletFlashModel;
-		if (cg_leiEnhancement.integer == 1996) {	// leilei - q effects
-			light = 0;
-			radius = 1;
-			duration = 1;	// bit more instant
-			break;
-		}
 
 		if( soundType == IMPACTSOUND_FLESH ) {
 			sfx = cgs.media.sfx_chghitflesh;
@@ -3481,10 +3420,6 @@ void CG_MissileHitWall( int weapon, int clientNum, vec3_t origin, vec3_t dir, im
 
 		radius = 8;
                 duration = 300;
-		if (cg_leiEnhancement.integer) {
-			duration = 10;
-			trap_R_LFX_ParticleEffect(2, origin, dir); // that was easy.
-		}
 		break;
 	}
 
@@ -3495,7 +3430,6 @@ void CG_MissileHitWall( int weapon, int clientNum, vec3_t origin, vec3_t dir, im
 	//
 	// create the explosion
 	//
-		if (!cg_leiEnhancement.integer) 	// don't make it when particles are enabled
 	if ( mod ) {
 		le = CG_MakeExplosion( origin, dir,
 		                       mod,	shader,
@@ -3592,28 +3526,12 @@ static void CG_ShotgunPellet( vec3_t start, vec3_t end, int skipNum )
 
 		trap_CM_BoxTrace( &trace, end, start, NULL, NULL, 0, CONTENTS_WATER );
 		CG_BubbleTrail( start, trace.endpos, 32 );
-
-// LEILEI ENHANCEMENT
-		if (cg_leiEnhancement.integer) {
-			// Water Splash
-			VectorCopy( trace.plane.normal, kapow );
-			trap_R_LFX_ParticleEffect(19, trace.endpos, kapow); // that was easy.
-		}
-// END LEIHANCMENET
 	}
 	else if ( destContentType & CONTENTS_WATER ) {
 		trace_t trace;
 
 		trap_CM_BoxTrace( &trace, start, end, NULL, NULL, 0, CONTENTS_WATER );
 		CG_BubbleTrail( tr.endpos, trace.endpos, 32 );
-
-// LEILEI ENHANCEMENT
-		if (cg_leiEnhancement.integer) {
-			// Water Splash
-			VectorCopy( trace.plane.normal, kapow );
-			trap_R_LFX_ParticleEffect(19, trace.endpos, kapow); // that was easy.
-		}
-// END LEIHANCMENET
 	}
 
 	if (  tr.surfaceFlags & SURF_NOIMPACT ) {
@@ -3846,12 +3764,7 @@ void CG_Bullet( vec3_t end, int sourceEntityNum, vec3_t normal, qboolean flesh, 
 {
 	trace_t trace;
 	int sourceContentType, destContentType;
-	vec3_t		start;
-// LEILEI ENHACNEMENT
-	vec3_t  kapow;
-
-
-
+	vec3_t	start;
 
 	// if the shooter is currently valid, calc a source point and possibly
 	// do trail effects
@@ -3868,30 +3781,11 @@ void CG_Bullet( vec3_t end, int sourceEntityNum, vec3_t normal, qboolean flesh, 
 			else if ( ( sourceContentType & CONTENTS_WATER ) ) {
 				trap_CM_BoxTrace( &trace, end, start, NULL, NULL, 0, CONTENTS_WATER );
 				CG_BubbleTrail( start, trace.endpos, 32 );
-
-
-// LEILEI ENHANCEMENT
-				if (cg_leiEnhancement.integer) {
-					// Water Splash
-					VectorCopy( trace.plane.normal, kapow );
-					trap_R_LFX_ParticleEffect(19, trace.endpos, kapow); // that was easy.
-				}
-// END LEIHANCMENET
-
-
 			}
 			// bubble trail from air into water
 			else if ( ( destContentType & CONTENTS_WATER ) ) {
 				trap_CM_BoxTrace( &trace, start, end, NULL, NULL, 0, CONTENTS_WATER );
 				CG_BubbleTrail( trace.endpos, end, 32 );
-
-// LEILEI ENHANCEMENT
-				if (cg_leiEnhancement.integer) {
-					// Water Splash
-					VectorCopy( trace.plane.normal, kapow );
-					trap_R_LFX_ParticleEffect(19, trace.endpos, kapow); // that was easy.
-				}
-// END LEIHANCMENET
 			}
 
 			// draw a tracer
@@ -3900,19 +3794,10 @@ void CG_Bullet( vec3_t end, int sourceEntityNum, vec3_t normal, qboolean flesh, 
 			}
 		}
 	}
-
 	// impact splash and mark
 	if ( flesh ) {
-// LEILEI ENHANCEMENT
-		if (cg_leiEnhancement.integer) {
-
-			trap_R_LFX_ParticleEffect(14, end, normal); // that was easy.
-
-		} else CG_Bleed( end, fleshEntityNum );
-	}
-	else {
+                CG_Bleed( end, fleshEntityNum );
+	} else {
 		CG_MissileHitWall( WP_MACHINEGUN, 0, end, normal, IMPACTSOUND_DEFAULT );
-
 	}
-
 }
