@@ -575,17 +575,14 @@ Fixed fov at intermissions, otherwise account for fov variable and zooms.
 #define	WAVE_FREQUENCY	0.4
 
 static int CG_CalcFov( void ) {
-	float	x;
-	float	phase;
-	float	v;
-	int		contents;
+	int	contents;
 	float	fov_x, fov_y;
 	float	zoomFov;
-	float	f;
 	//int	inwater;
 
-	//if ( cg.predictedPlayerState.pm_type == PM_INTERMISSION ) {
-        if (cg.centerPrintLines >= 999) {
+	if ( cg.predictedPlayerState.pm_type == PM_INTERMISSION ) {
+                fov_x = 90;
+        } else if (cg.centerPrintLines >= 999) {
 		// if in intermission, use a fixed value
 		fov_x = 115;
 	} else {
@@ -625,37 +622,33 @@ static int CG_CalcFov( void ) {
 				zoomFov = 140;
 			}
 		}
-
+                fov_y = ( cg.time - cg.zoomTime ) / (float)ZOOM_TIME;
 		if ( cg.zoomed ) {
-			f = ( cg.time - cg.zoomTime ) / (float)ZOOM_TIME;
-			if ( f > 1.0 ) {
+
+			if ( fov_y > 1.0 ) {
 				fov_x = zoomFov;
-			} 
-			else {
-				fov_x = fov_x + f * ( zoomFov - fov_x );
+			} else {
+				fov_x = fov_x + fov_y * ( zoomFov - fov_x );
 			}
-		}
-		else {
-			f = ( cg.time - cg.zoomTime ) / (float)ZOOM_TIME;
-			if ( f > 1.0 ) {
-			} 
-			else {
-				fov_x = zoomFov + f * ( fov_x - zoomFov );
+		} else {
+			if ( fov_y > 1.0 ) {
+			} else {
+				fov_x = zoomFov + fov_y * ( fov_x - zoomFov );
 			}
 		}
 	}
 
-	x = cg.refdef.width / tan( fov_x / 360 * M_PI );
-	fov_y = atan2( cg.refdef.height, x );
+	zoomFov = cg.refdef.width / tan( fov_x / 360 * M_PI );
+	fov_y = atan2( cg.refdef.height, zoomFov );
 	fov_y = fov_y * 360 / M_PI;
 
 	// warp if underwater
 	contents = CG_PointContents( cg.refdef.vieworg, -1 );
 	if ( contents & ( CONTENTS_WATER | CONTENTS_SLIME | CONTENTS_LAVA ) ){
-		phase = cg.time / 1000.0 * WAVE_FREQUENCY * M_PI * 2;
-		v = WAVE_AMPLITUDE * sin( phase );
-		fov_x += v;
-		fov_y -= v;
+		zoomFov = cg.time / 1000.0 * WAVE_FREQUENCY * M_PI * 2;
+		zoomFov = WAVE_AMPLITUDE * sin( zoomFov );
+		fov_x += zoomFov;
+		fov_y -= zoomFov;
 		//inwater = qtrue;
                 cg.submerged = qtrue;
 	} else {

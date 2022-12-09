@@ -261,7 +261,7 @@ static char com_parsename[MAX_TOKEN_CHARS];
 static int com_lines;
 
 char *COM_Localize(int txt_id) {
-        if (Q_strequal(cl_language.string, "ru")) {
+        if (cl_language.string[0] == 'r') {
                 return strings_ru[txt_id-1];
         } else {
                 return strings_en[txt_id-1];

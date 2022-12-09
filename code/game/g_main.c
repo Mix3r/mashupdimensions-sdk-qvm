@@ -270,8 +270,8 @@ static cvarTable_t gameCvarTable[] = {
 	{ &g_motdfile, "g_motdfile", "motd.cfg", 0, 0, qfalse },
 	{ &g_blood, "com_blood", "1", 0, 0, qfalse },
 
-	{ &g_podiumDist, "g_podiumDist", "90", 0, 0, qfalse },
-	{ &g_podiumDrop, "g_podiumDrop", "62", 0, 0, qfalse },
+	{ &g_podiumDist, "g_podiumDist", "150", 0, 0, qfalse },
+	{ &g_podiumDrop, "g_podiumDrop", "40", 0, 0, qfalse },
 
 	//Votes start:
 	{ &g_allowVote, "g_allowVote", "1", CVAR_SERVERINFO | CVAR_ARCHIVE, 0, qfalse },

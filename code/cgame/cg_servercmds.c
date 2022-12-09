@@ -470,6 +470,9 @@ void CG_ShaderStateChanged(void) {
 			t = strstr(n, ":");
 			if (t && *t) {
 				strncpy(newShader, n, t-n);
+                                if (newShader[t-n-1] == '*') {
+                                        newShader[t-n-1] = cl_language.string[0];
+                                }
 				newShader[t-n] = 0;
 			} else {
 				break;
