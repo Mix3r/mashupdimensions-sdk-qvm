@@ -90,7 +90,19 @@ qboolean CheckGauntletAttack( gentity_t *ent )
 
 	trap_Trace (&tr, muzzle, NULL, NULL, up, ent->s.number, MASK_SHOT);
 	if ( tr.surfaceFlags & SURF_NOIMPACT ) {
-		return qfalse;
+                // Mix3r_Durachok: try a bit right:
+                VectorMA (up, 15, right, up);
+                trap_Trace (&tr, muzzle, NULL, NULL, up, ent->s.number, MASK_SHOT);
+                if ( tr.surfaceFlags & SURF_NOIMPACT ) {
+                        // Mix3r_Durachok: nothing, try opposite (left):
+                        VectorMA (up, -30, right, up);
+                        trap_Trace (&tr, muzzle, NULL, NULL, up, ent->s.number, MASK_SHOT);
+                        if ( tr.surfaceFlags & SURF_NOIMPACT ) {
+                                // Mix3r_Durachok: nothing, give up
+                                return qfalse;
+                        }
+                }
+		//return qfalse;
 	}
 
 	if ( ent->client->noclip ) {
