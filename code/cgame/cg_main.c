@@ -232,7 +232,6 @@ vmCvar_t cg_optimizePrediction;
 vmCvar_t cl_timeNudge;
 //unlagged - client options
 //elimination addition
-vmCvar_t cg_alwaysWeaponBar;
 vmCvar_t cg_hitsound;
 vmCvar_t cg_voip_teamonly;
 vmCvar_t cg_voteflags;
@@ -284,6 +283,18 @@ vmCvar_t cg_missionpackChecks;
 /* Neon_Knight: Developer mode. */
 vmCvar_t cg_developer;
 /* /Neon_Knight */
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 char *strings_en[] = {
@@ -573,7 +584,6 @@ static cvarTable_t cvarTable[] = {// bk001129
 	{ &cg_buildScript, "com_buildScript", "0", 0}, // force loading of all possible data amd error on failures
 	{ &cg_paused, "cl_paused", "0", CVAR_ROM},
 	{ &cg_blood, "com_blood", "1", CVAR_ARCHIVE},
-	{ &cg_alwaysWeaponBar, "cg_alwaysWeaponBar", "0", CVAR_ARCHIVE}, //Elimination
 	{ &cg_hitsound, "cg_hitsound", "0", CVAR_ARCHIVE},
 	{ &cg_voip_teamonly, "cg_voipTeamOnly", "1", CVAR_ARCHIVE},
 	{ &cg_voteflags, "cg_voteflags", "*", CVAR_ROM},
@@ -678,7 +688,7 @@ static cvarTable_t cvarTable[] = {// bk001129
 	{ &cg_crosshairColorGreen, "cg_crosshairColorGreen", "1.0", CVAR_ARCHIVE},
 	{ &cg_crosshairColorBlue, "cg_crosshairColorBlue", "1.0", CVAR_ARCHIVE},
 
-	{ &cg_weaponBarStyle, "cg_weaponBarStyle", "0", CVAR_ARCHIVE},
+	{ &cg_weaponBarStyle, "cg_weaponBarStyle", "1", CVAR_ARCHIVE},
 	{ &cg_weaponOrder, "cg_weaponOrder", "/10/1/12/2/4/11/7/3/5/6/13/8/9/", CVAR_ARCHIVE},
 	{&cg_chatBeep, "cg_chatBeep", "1", CVAR_ARCHIVE},
 	{&cg_teamChatBeep, "cg_teamChatBeep", "1", CVAR_ARCHIVE},

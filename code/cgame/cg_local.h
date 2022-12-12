@@ -1434,7 +1434,6 @@ extern vmCvar_t cl_timeNudge;
 //extern vmCvar_t cg_plOut;
 //unlagged - client options
 //extra CVARS elimination
-extern vmCvar_t cg_alwaysWeaponBar;
 extern vmCvar_t cg_hitsound;
 extern vmCvar_t cg_voip_teamonly;
 extern vmCvar_t cg_voteflags;

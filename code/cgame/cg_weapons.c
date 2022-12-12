@@ -1978,27 +1978,25 @@ void CG_DrawWeaponSelect( void )
 	float		*color;
 	vec4_t		realColor;
 
-
-
 	// don't display if dead
 	if ( cg.predictedPlayerState.stats[STAT_HEALTH] <= 0 ) {
 		return;
 	}
 
-	color = CG_FadeColor( cg.weaponSelectTime, WEAPON_SELECT_TIME );
-
 	//Elimination: Always show weapon bar
-	if(cg_alwaysWeaponBar.integer) {
+	if (cg_weaponBarStyle.integer < 0) {
 		realColor[0] = 1.0;
 		realColor[1] = 1.0;
 		realColor[2] = 1.0;
 		realColor[3] = 1.0;
 		color = realColor;
-	}
+	} else {
+                color = CG_FadeColor( cg.weaponSelectTime, WEAPON_SELECT_TIME );
+                if ( !color ) {
+		        return;
+	        }
+        }
 
-	if ( !color ) {
-		return;
-	}
 	trap_R_SetColor( color );
 
 	// showing weapon select clears pickup item display, but not the blend blob
@@ -2007,6 +2005,7 @@ void CG_DrawWeaponSelect( void )
 	// count the number of weapons owned
 	bits = cg.snap->ps.stats[ STAT_WEAPONS ];
 	count = 0;
+
 	for ( i = 1 ; i < MAX_WEAPONS ; i++ ) {
 		if ( bits & ( 1 << i ) ) {
 			count++;
@@ -2014,28 +2013,36 @@ void CG_DrawWeaponSelect( void )
 	}
 
 	switch(cg_weaponBarStyle.integer) {
-	case 0:
+	case 1:
+        case -1:
 		CG_DrawWeaponBar0(count,bits, color);
 		break;
-	case 1:
+	case 2:
+        case -2:
 		CG_DrawWeaponBar1(count,bits);
 		break;
-	case 2:
+	case 3:
+        case -3:
 		CG_DrawWeaponBar2(count,bits, color);
 		break;
-	case 3:
+	case 4:
+        case -4:
 		CG_DrawWeaponBar3(count,bits, color);
 		break;
-	case 4:
+	case 5:
+        case -5:
 		CG_DrawWeaponBar4(count,bits, color);
 		break;
-	case 5:
+	case 6:
+        case -6:
 		CG_DrawWeaponBar5(count,bits, color);
 		break;
-	case 6:
+	case 7:
+        case -7:
 		CG_DrawWeaponBar6(count,bits, color);
 		break;
-	case 7:
+	case 8:
+        case -8:
 		CG_DrawWeaponBar7(count,bits);
 		break;
 	}

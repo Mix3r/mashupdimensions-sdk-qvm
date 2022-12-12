@@ -30,6 +30,7 @@ GAME OPTIONS MENU
 
 
 #include "ui_local.h"
+#define MAX_WEAPON_BAR_STYLES           8
 
 #define ART_BACK0				"menu/" MENU_ART_DIR "/back_0"
 #define ART_BACK1				"menu/" MENU_ART_DIR "/back_1"
@@ -77,7 +78,7 @@ typedef struct {
 
 	menuradiobutton_s	simpleitems;
         menuradiobutton_s	scoreplums;
-	menuradiobutton_s	alwaysweaponbar;
+	menulist_s	        alwaysweaponbar;
 	menuradiobutton_s	brass;
 	menuradiobutton_s	wallmarks;
 	menuradiobutton_s	dynamiclights;
@@ -114,6 +115,28 @@ static const char *gunbob_names[] =
         "",
 	NULL
 };
+static const char *weaponbarstyle_names[] =
+{
+	"8 +",
+	"7 +",
+	"6 +",
+	"5 +",
+        "4 +",
+        "3 +",
+	"2 +",
+	"1 +",
+	"",
+	"1",
+        "2",
+        "3",
+	"4",
+        "5",
+        "6",
+	"7",
+        "8",
+	NULL
+};
+
 //static const char *fps_performance_names[] =
 //{
 //	"125",
@@ -130,11 +153,11 @@ static void Preferences_SetMenuItems( void ) {
         //if ((int)trap_Cvar_VariableValue( "com_maxfps" ) >= 250) {
         //        s_preferences.fps_performance.curvalue = 1;
         //} else {
-        //        s_preferences.fps_performance.curvalue = 0;
+        //        s_preferences.fps_performance.curvalue = 0;     // 465 176
         //}
 	s_preferences.simpleitems.curvalue	= trap_Cvar_VariableValue( "cg_simpleItems" ) != 0;
         s_preferences.scoreplums.curvalue	= trap_Cvar_VariableValue( "cg_ScorePlums" ) != 0;
-	s_preferences.alwaysweaponbar.curvalue	= trap_Cvar_VariableValue( "cg_alwaysWeaponBar" ) != 0;
+	s_preferences.alwaysweaponbar.curvalue	= Com_Clamp( -MAX_WEAPON_BAR_STYLES, MAX_WEAPON_BAR_STYLES, trap_Cvar_VariableValue( "cg_weaponBarStyle" ) )+MAX_WEAPON_BAR_STYLES;
 	s_preferences.brass.curvalue		= trap_Cvar_VariableValue( "cg_brassTime" ) != 0;
 	s_preferences.wallmarks.curvalue	= trap_Cvar_VariableValue( "cg_marks" ) != 0;
 	s_preferences.identifytarget.curvalue	= trap_Cvar_VariableValue( "cg_drawCrosshairNames" ) != 0;
@@ -198,7 +221,7 @@ static void Preferences_Event( void* ptr, int notification ) {
 		break;
                 
         case ID_WEAPONBAR:
-		trap_Cvar_SetValue( "cg_alwaysWeaponBar", s_preferences.alwaysweaponbar.curvalue );
+		trap_Cvar_SetValue( "cg_weaponBarStyle", s_preferences.alwaysweaponbar.curvalue - MAX_WEAPON_BAR_STYLES );
 		break;
 
 	case ID_HIGHQUALITYSKY:
@@ -267,6 +290,12 @@ static void Crosshair_Draw( void *self ) {
 	int			style;
 	qboolean	focus;
 	vec4_t          color4;
+
+        // Mix3r_Durachok: draw hud preview first
+        x = s_preferences.alwaysweaponbar.curvalue - MAX_WEAPON_BAR_STYLES;
+        if (x < 0) x = -x;
+        UI_DrawNamedPic( 465, 176, 175, 98.4375, va("gfx/2d/hudp_%i",x));
+        //
 
 	s = (menulist_s *)self;
 	x = s->generic.x;
@@ -418,7 +447,20 @@ static void Preferences_MenuInit( void ) {
 	y += BIGCHAR_HEIGHT+2+4;
         Preferences_Menu_AddBoolean(&s_preferences.scoreplums, &y, ID_SCOREPLUMS, COM_Localize(330));
 	Preferences_Menu_AddBoolean(&s_preferences.simpleitems, &y, ID_SIMPLEITEMS, COM_Localize(186));
-	Preferences_Menu_AddBoolean(&s_preferences.alwaysweaponbar, &y, ID_WEAPONBAR, COM_Localize(187));
+	//Preferences_Menu_AddBoolean(&s_preferences.alwaysweaponbar, &y, ID_WEAPONBAR, COM_Localize(187));
+
+        s_preferences.alwaysweaponbar.generic.type = MTYPE_SPINCONTROL;
+	s_preferences.alwaysweaponbar.generic.name = COM_Localize(187);
+	s_preferences.alwaysweaponbar.generic.flags = QMF_PULSEIFFOCUS|QMF_SMALLFONT;
+	s_preferences.alwaysweaponbar.generic.callback = Preferences_Event;
+	s_preferences.alwaysweaponbar.generic.id   = ID_WEAPONBAR;
+	s_preferences.alwaysweaponbar.itemnames	   = weaponbarstyle_names;
+        s_preferences.alwaysweaponbar.generic.x	   = PREFERENCES_X_POS;
+        s_preferences.alwaysweaponbar.generic.y	   = y;
+        s_preferences.alwaysweaponbar.itemnames[MAX_WEAPON_BAR_STYLES] = COM_Localize(154); // 0
+
+        y += BIGCHAR_HEIGHT+2;
+
 	Preferences_Menu_AddBoolean(&s_preferences.wallmarks, &y, ID_WALLMARKS, COM_Localize(188));
 	Preferences_Menu_AddBoolean(&s_preferences.brass, &y, ID_EJECTINGBRASS, COM_Localize(189));
 	Preferences_Menu_AddBoolean(&s_preferences.dynamiclights, &y, ID_DYNAMICLIGHTS, COM_Localize(190));
