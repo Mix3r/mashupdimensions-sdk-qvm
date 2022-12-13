@@ -31,15 +31,10 @@ CG_MachineGunEjectBrass
 static void CG_MachineGunEjectBrass( centity_t *cent )
 {
 	localEntity_t	*le;
-	refEntity_t		*re;
-	vec3_t			velocity, xvelocity;
-	vec3_t			offset, xoffset;
-	float			waterScale = 1.0f;
-	vec3_t			v[3];
-
-	if ( cg_brassTime.integer <= 0 ) {
-		return;
-	}
+	refEntity_t	*re;
+	vec3_t		 velocity, xvelocity;
+	float		 waterScale = 1.0f;
+	vec3_t		 v[3];
 
 	le = CG_AllocLocalEntity();
 	re = &le->refEntity;
@@ -57,16 +52,8 @@ static void CG_MachineGunEjectBrass( centity_t *cent )
 
 	AnglesToAxis( cent->lerpAngles, v );
 
-	offset[0] = 8;
-	offset[1] = -4;
-	offset[2] = 24;
-
-	xoffset[0] = offset[0] * v[0][0] + offset[1] * v[1][0] + offset[2] * v[2][0];
-	xoffset[1] = offset[0] * v[0][1] + offset[1] * v[1][1] + offset[2] * v[2][1];
-	xoffset[2] = offset[0] * v[0][2] + offset[1] * v[1][2] + offset[2] * v[2][2];
-	VectorAdd( cent->lerpOrigin, xoffset, re->origin );
-
-	VectorCopy( re->origin, le->pos.trBase );
+	VectorCopy( cgs.clientinfo[ cent->currentState.clientNum ].pGunPoint, re->origin );
+        VectorCopy( re->origin, le->pos.trBase );
 
 	if ( CG_PointContents( re->origin, -1 ) & CONTENTS_WATER ) {
 		waterScale = 0.10f;
@@ -109,15 +96,10 @@ CG_ShotgunEjectBrass
 static void CG_ShotgunEjectBrass( centity_t *cent )
 {
 	localEntity_t	*le;
-	refEntity_t		*re;
-	vec3_t			velocity, xvelocity;
-	vec3_t			offset, xoffset;
-	float			waterScale = 1.0f;
-	vec3_t			v[3];
-
-	if ( cg_brassTime.integer <= 0 ) {
-		return;
-	}
+	refEntity_t	*re;
+	vec3_t		 velocity, xvelocity;
+	float		 waterScale = 1.0f;
+	vec3_t		 v[3];
 
 	le = CG_AllocLocalEntity();
 	re = &le->refEntity;
@@ -135,16 +117,8 @@ static void CG_ShotgunEjectBrass( centity_t *cent )
 
 	AnglesToAxis( cent->lerpAngles, v );
 
-	offset[0] = 8;
-	offset[1] = -4;
-	offset[2] = 24;
-
-	xoffset[0] = offset[0] * v[0][0] + offset[1] * v[1][0] + offset[2] * v[2][0];
-	xoffset[1] = offset[0] * v[0][1] + offset[1] * v[1][1] + offset[2] * v[2][1];
-	xoffset[2] = offset[0] * v[0][2] + offset[1] * v[1][2] + offset[2] * v[2][2];
-	VectorAdd( cent->lerpOrigin, xoffset, re->origin );
-
-	VectorCopy( re->origin, le->pos.trBase );
+	VectorCopy( cgs.clientinfo[ cent->currentState.clientNum ].pGunPoint, re->origin );
+        VectorCopy( re->origin, le->pos.trBase );
 
 	if ( CG_PointContents( re->origin, -1 ) & CONTENTS_WATER ) {
 		waterScale = 0.10f;
@@ -187,22 +161,12 @@ CG_NailgunEjectBrass
 static void CG_NailgunEjectBrass( centity_t *cent )
 {
 	localEntity_t	*smoke;
-	vec3_t			origin;
-	vec3_t			v[3];
-	vec3_t			offset;
-	vec3_t			xoffset;
-	vec3_t			up;
+	vec3_t		 origin;
+	vec3_t		 up;
 
-	AnglesToAxis( cent->lerpAngles, v );
-
-	offset[0] = 0;
-	offset[1] = -12;
-	offset[2] = 24;
-
-	xoffset[0] = offset[0] * v[0][0] + offset[1] * v[1][0] + offset[2] * v[2][0];
-	xoffset[1] = offset[0] * v[0][1] + offset[1] * v[1][1] + offset[2] * v[2][1];
-	xoffset[2] = offset[0] * v[0][2] + offset[1] * v[1][2] + offset[2] * v[2][2];
-	VectorAdd( cent->lerpOrigin, xoffset, origin );
+        /////////////////////
+	VectorCopy( cgs.clientinfo[ cent->currentState.clientNum ].pGunPoint, origin );
+        ///////////////////////////
 
 	VectorSet( up, 0, 0, 64 );
 

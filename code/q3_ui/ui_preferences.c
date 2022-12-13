@@ -293,9 +293,14 @@ static void Crosshair_Draw( void *self ) {
 
         // Mix3r_Durachok: draw hud preview first
         x = s_preferences.alwaysweaponbar.curvalue - MAX_WEAPON_BAR_STYLES;
-        if (x < 0) x = -x;
+        if (x < 0) {
+                x = -x;
+                UI_DrawString( 465+175*0.5, 280, COM_Localize(256), UI_CENTER|UI_SMALLFONT, colorYellow );
+        }
         UI_DrawNamedPic( 465, 176, 175, 98.4375, va("gfx/2d/hudp_%i",x));
-        //
+        // then draw damage numbers
+        if (s_preferences.scoreplums.curvalue)
+        UI_DrawString( 465+175*0.5, 220, "50", UI_CENTER|UI_SMALLFONT, colorRed );
 
 	s = (menulist_s *)self;
 	x = s->generic.x;
