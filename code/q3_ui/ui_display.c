@@ -61,7 +61,11 @@ typedef struct {
 static displayOptionsInfo_t	displayOptionsInfo;
 
 static void displayOptionsInfo_menu_draw( void ) {
-	trap_R_DrawStretchPic( 0.0, 0.0, uis.glconfig.vidWidth, uis.glconfig.vidHeight, 0, 0, 1, 1, trap_R_RegisterShaderNoMip("menu/art_blueish/frame1_r_mma2") );
+        qhandle_t bg_hint;
+        bg_hint = trap_R_RegisterShaderNoMip("menu/art_blueish/frame1_r_mma2");
+	trap_R_DrawStretchPic( 0.0, 0.0, uis.glconfig.vidWidth, uis.glconfig.vidHeight, 0, 0, 1, 1, bg_hint);
+        bg_hint = trap_R_RegisterShaderNoMip(va("gfx/2d/gamma_hint%s",COM_Localize(1)));
+        trap_R_DrawStretchPic( 0.0, uis.glconfig.vidHeight*0.412, uis.glconfig.vidWidth*0.2583*0.86, uis.glconfig.vidHeight*0.207*0.86, 0, 0, 1, 1, bg_hint );
 	// standard menu drawing
 	Menu_Draw( &displayOptionsInfo.menu );
 }
@@ -97,7 +101,7 @@ static void UI_DisplayOptionsMenu_Event( void* ptr, int event ) {
 		break;
 
 	case ID_BRIGHTNESS:
-		trap_Cvar_SetValue( "r_gamma", displayOptionsInfo.brightness.curvalue / 10.0f );
+		trap_Cvar_SetValue( "r_gamma", displayOptionsInfo.brightness.curvalue / 20.0f );
 		break;
 	
 	case ID_SCREENSIZE:
@@ -176,8 +180,8 @@ static void UI_DisplayOptionsMenu_Init( void ) {
 	displayOptionsInfo.brightness.generic.id		= ID_BRIGHTNESS;
 	displayOptionsInfo.brightness.generic.x			= 400;
 	displayOptionsInfo.brightness.generic.y			= y;
-	displayOptionsInfo.brightness.minvalue			= 5;
-	displayOptionsInfo.brightness.maxvalue			= 20;
+	displayOptionsInfo.brightness.minvalue			= 10;
+	displayOptionsInfo.brightness.maxvalue			= 60;
 	//if( !uis.glconfig.deviceSupportsGamma ) {
 	//	displayOptionsInfo.brightness.generic.flags |= QMF_GRAYED;
 	//}
@@ -213,7 +217,7 @@ static void UI_DisplayOptionsMenu_Init( void ) {
 	Menu_AddItem( &displayOptionsInfo.menu, ( void * ) &displayOptionsInfo.screensize );
 	Menu_AddItem( &displayOptionsInfo.menu, ( void * ) &displayOptionsInfo.back );
 
-	displayOptionsInfo.brightness.curvalue  = trap_Cvar_VariableValue("r_gamma") * 10;
+	displayOptionsInfo.brightness.curvalue  = trap_Cvar_VariableValue("r_gamma") * 20;
 	displayOptionsInfo.screensize.curvalue  = trap_Cvar_VariableValue( "cg_viewsize")/10;
 }
 

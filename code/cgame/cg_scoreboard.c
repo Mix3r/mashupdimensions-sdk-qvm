@@ -227,14 +227,15 @@ static void CG_DrawClientScore(int y, score_t *score, float *color, float fade, 
 =================
 CG_TeamScoreboard
 =================
- */
+*/
 static int CG_TeamScoreboard(int y, team_t team, float fade, int maxClients, int lineHeight) {
 	int i;
 	score_t *score;
 	float color[4];
 	int count = 0;
 	clientInfo_t *ci;
-        qboolean skill_drawn = qfalse; //Mix3r_Durachok: draw NPC skill pic once for missions
+        qboolean bSkillPicDrawn = qfalse; //Mix3r_Durachok: draw NPC skill pic once for missions
+        qboolean bDrawThisPawn;
 
 	color[0] = color[1] = color[2] = 1.0;
 	color[3] = fade;
@@ -242,28 +243,43 @@ static int CG_TeamScoreboard(int y, team_t team, float fade, int maxClients, int
 	for (i = 0; i < cg.numScores && count < maxClients; i++) {
 		score = &cg.scores[i];
 		ci = &cgs.clientinfo[ score->client ];
+                bDrawThisPawn = qtrue;
 
-		if (team != ci->team) {
-                        if (cgs.fraglimit > 9999 && ci->team == TEAM_BLUE) {
-                        } else {
-			        continue;
+                if (cgs.fraglimit > 9999) {
+                        if (ci->botSkill > 0 && ci->botSkill <= 5) {
+                                if (ci->team == TEAM_FREE) {
+                                        bDrawThisPawn = qfalse;
+                                } else if (!(cg.snap->ps.pm_flags & PMF_FOLLOW)) {
+                                        if (ci->team != cg.snap->ps.persistant[PERS_TEAM]) {
+                                                bDrawThisPawn = qfalse;
+                                        }
+                                } else if (ci->team != cgs.clientinfo[ cg.snap->ps.clientNum ].team) {
+                                        bDrawThisPawn = qfalse;
+                                }
+                                if (!bSkillPicDrawn && !bDrawThisPawn) {
+                                        color[0] = color[1] = color[2] = 0.0;
+                                        color[3] = 0.77;
+                                        trap_R_SetColor(color);
+                                        color[0] = color[1] = color[2] = 1.0;
+                                        color[3] = fade;
+	                                CG_DrawPic(531-5, 63-5, 32, 32, cgs.media.teamStatusBar);
+                                        trap_R_SetColor(NULL);
+                                        CG_DrawPic(531-3, 63-3, 28, 28, cgs.media.botSkillShaders[ ci->botSkill - 1 ]);
+                                        bSkillPicDrawn = qtrue;
+                                }
                         }
-		} else if (cgs.fraglimit > 9999 && ci->botSkill > 0 && ci->botSkill <= 5) {
-                        if (!skill_drawn) {
-                                CG_DrawPic(10, 10, 32, 32, cgs.media.botSkillShaders[ ci->botSkill - 1 ]);
-                                skill_drawn = qtrue;
-                        }
-                        continue;
+                } else if ( team != ci->team ) {
+			bDrawThisPawn = qfalse;
+		}
+
+                if (bDrawThisPawn) {
+		        CG_DrawClientScore(y + lineHeight * count, score, color, fade, lineHeight == SB_NORMAL_HEIGHT);
+		        count++;
                 }
-
-		CG_DrawClientScore(y + lineHeight * count, score, color, fade, lineHeight == SB_NORMAL_HEIGHT);
-
-		count++;
 	}
 
 	return count;
 }
-
 /*
 =================
 CG_DrawScoreboard
