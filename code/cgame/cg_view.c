@@ -827,9 +827,17 @@ static int CG_CalcViewValues( void ) {
                                         vLookangle[PITCH] = 90; // crane down
                                         vLookangle[YAW] = 0;
                                         // use W or another letter to dolly forward
+                                } else if (token[0] == 'P') {
+                                        // followcam (fixed look angle) feature
+                                        vViewpos[0]+=cg.refdef.vieworg[0];
+                                        vViewpos[1]+=cg.refdef.vieworg[1];
+                                        vViewpos[2]+=cg.refdef.vieworg[2];
+                                        i = 0;
                                 }
-                                AngleVectors( vLookangle, cg.refdef.vieworg, NULL, NULL );
-                                VectorMA( vViewpos, i*((cg.time - cg.centerPrintY)*0.001), cg.refdef.vieworg, vViewpos );
+                                if (i) {
+                                        AngleVectors( vLookangle, cg.refdef.vieworg, NULL, NULL );
+                                        VectorMA( vViewpos, i*((cg.time - cg.centerPrintY)*0.001), cg.refdef.vieworg, vViewpos );
+                                }
                         }
                 }
 
