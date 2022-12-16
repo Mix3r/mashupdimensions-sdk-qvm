@@ -833,6 +833,7 @@ static int CG_CalcViewValues( void ) {
                                         vViewpos[1]+=cg.refdef.vieworg[1];
                                         vViewpos[2]+=cg.refdef.vieworg[2];
                                         i = 0;
+                                        trap_SendConsoleCommand("centerview\n");
                                 }
                                 if (i) {
                                         AngleVectors( vLookangle, cg.refdef.vieworg, NULL, NULL );

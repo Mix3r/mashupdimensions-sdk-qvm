@@ -40,6 +40,7 @@ SINGLE PLAYER POSTGAME MENU
 #define ART_REPLAY1		"menu/" MENU_ART_DIR "/replay_1"
 #define ART_NEXT0		"menu/" MENU_ART_DIR "/next_0"
 #define ART_NEXT1		"menu/" MENU_ART_DIR "/next_1"
+#define ART_DENIED0             "menu/art/denied_g"
 
 #define ID_AGAIN		10
 #define ID_NEXT			11
@@ -280,24 +281,24 @@ UI_SPPostgameMenu_MenuKey
 =================
 */
 static sfxHandle_t UI_SPPostgameMenu_MenuKey( int key ) {
-	if ( uis.realtime < postgameMenuInfo.ignoreKeysTime ) {
-		return 0;
-	}
+	//if ( uis.realtime < postgameMenuInfo.ignoreKeysTime ) {
+		//return 0;
+	//}
 
-	if( postgameMenuInfo.phase == 1 ) {
-		trap_Cmd_ExecuteText( EXEC_APPEND, "abort_podium\n" );
-		postgameMenuInfo.phase = 2;
-		postgameMenuInfo.starttime = uis.realtime;
-		postgameMenuInfo.ignoreKeysTime	= uis.realtime + 250;
-		return 0;
-	}
+	//if( postgameMenuInfo.phase == 1 ) {
+	//	trap_Cmd_ExecuteText( EXEC_APPEND, "abort_podium\n" );
+	//	postgameMenuInfo.phase = 2;
+	//	postgameMenuInfo.starttime = uis.realtime;
+	//	postgameMenuInfo.ignoreKeysTime	= uis.realtime + 50;
+	//	return 0;
+	//}
 
-	if( postgameMenuInfo.phase == 2 ) {
-		postgameMenuInfo.phase = 3;
-		postgameMenuInfo.starttime = uis.realtime;
-		postgameMenuInfo.ignoreKeysTime	= uis.realtime + 250;
-		return 0;
-	}
+	//if( postgameMenuInfo.phase == 2 ) {
+	//	postgameMenuInfo.phase = 3;
+	//	postgameMenuInfo.starttime = uis.realtime;
+	//	postgameMenuInfo.ignoreKeysTime	= uis.realtime + 50;
+	//	return 0;
+	//}
 
 	if( key == K_ESCAPE || key == K_MOUSE2 ) {
 		return 0;
@@ -422,6 +423,22 @@ static void UI_SPPostgameMenu_MenuDraw( void ) {
 	UI_DrawProportionalString( 320, 480 - 64 - 2 * PROP_HEIGHT, postgameMenuInfo.placeNames[0], UI_CENTER, color_white );
         UI_DrawNamedPic( 465, 433, 32, 32, ui_skillPics[postgameMenuInfo.skillsp-1] );
 
+        /////
+        postgameMenuInfo.item_again.generic.flags &= ~QMF_INACTIVE;
+	postgameMenuInfo.item_next.generic.flags &= ~QMF_INACTIVE;
+	postgameMenuInfo.item_menu.generic.flags &= ~QMF_INACTIVE;
+        blackholecolor[0] = blackholecolor[1] = blackholecolor[2] = 0.0;
+        blackholecolor[3] = 0.5;
+        trap_R_SetColor(blackholecolor);
+        UI_DrawBlackHole( &postgameMenuInfo.item_menu.generic.x, &postgameMenuInfo.item_menu.generic.y );
+        n = postgameMenuInfo.item_again.generic.x - postgameMenuInfo.item_again.width * 0.5;
+        UI_DrawBlackHole( &n, &postgameMenuInfo.item_again.generic.y );
+        n = postgameMenuInfo.item_next.generic.x - postgameMenuInfo.item_next.width;
+        UI_DrawBlackHole( &n, &postgameMenuInfo.item_next.generic.y );
+        trap_R_SetColor(NULL);
+	Menu_Draw( &postgameMenuInfo.menu );
+        /////
+
 	if( postgameMenuInfo.phase == 1 ) {
 		timer = uis.realtime - postgameMenuInfo.starttime;
 
@@ -456,25 +473,9 @@ static void UI_SPPostgameMenu_MenuDraw( void ) {
 
 	// phase 3
 	if( postgameMenuInfo.phase == 3 ) {
-                //Com_Printf( "u______won '%i'\n", postgameMenuInfo.won );
-		postgameMenuInfo.item_again.generic.flags &= ~QMF_INACTIVE;
-                //if (postgameMenuInfo.won != -1) {
-		        postgameMenuInfo.item_next.generic.flags &= ~QMF_INACTIVE;
-               // }
-		postgameMenuInfo.item_menu.generic.flags &= ~QMF_INACTIVE;
-
-		UI_SPPostgameMenu_DrawAwardsMedals( postgameMenuInfo.numAwards );
-                blackholecolor[0] = blackholecolor[1] = blackholecolor[2] = 0.0;
-                blackholecolor[3] = 0.5;
-                trap_R_SetColor(blackholecolor);
-                UI_DrawBlackHole( &postgameMenuInfo.item_menu.generic.x, &postgameMenuInfo.item_menu.generic.y );
-                n = postgameMenuInfo.item_again.generic.x - postgameMenuInfo.item_again.width * 0.5;
-                UI_DrawBlackHole( &n, &postgameMenuInfo.item_again.generic.y );
-                n = postgameMenuInfo.item_next.generic.x - postgameMenuInfo.item_next.width;
-                UI_DrawBlackHole( &n, &postgameMenuInfo.item_next.generic.y );
-                trap_R_SetColor(NULL);
-		Menu_Draw( &postgameMenuInfo.menu );
-	}
+                UI_SPPostgameMenu_DrawAwardsMedals( postgameMenuInfo.numAwards );
+        }
+        //Com_Printf( "u______won '%i'\n", postgameMenuInfo.won );
 
 	// draw the scoreboard
 	if( !trap_Cvar_VariableValue( "ui_spScoreboard" ) ) {
@@ -532,9 +533,9 @@ UI_SPPostgameMenu_Init
 */
 static void UI_SPPostgameMenu_Init( void ) {
 	postgameMenuInfo.menu.wrapAround	= qtrue;
-	postgameMenuInfo.menu.key			= UI_SPPostgameMenu_MenuKey;
-	postgameMenuInfo.menu.draw			= UI_SPPostgameMenu_MenuDraw;
-	postgameMenuInfo.ignoreKeysTime		= uis.realtime + 1500;
+	postgameMenuInfo.menu.key		= UI_SPPostgameMenu_MenuKey;
+	postgameMenuInfo.menu.draw		= UI_SPPostgameMenu_MenuDraw;
+	postgameMenuInfo.ignoreKeysTime		= uis.realtime + 250;
 
 	UI_SPPostgameMenu_Cache();
 
@@ -723,6 +724,7 @@ void UI_SPPostgameMenu_f( void ) {
 		Menu_SetCursorToItem( &postgameMenuInfo.menu, &postgameMenuInfo.item_next );
 	} else {
                 postgameMenuInfo.item_next.generic.flags |= QMF_INACTIVE|QMF_GRAYED;
+                postgameMenuInfo.item_next.shader = trap_R_RegisterShaderNoMip( ART_DENIED0 );
 		Menu_SetCursorToItem( &postgameMenuInfo.menu, &postgameMenuInfo.item_again );
 	}
 
