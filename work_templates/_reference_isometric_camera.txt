@@ -1,0 +1,10 @@
+// camera, top view. cover some area with [trigger_multiple] brush and set it's target as "top_cam0" to make the camera work.
+// copy via Ctrl+A, then Ctrl+C and paste  in Trenchbroom window via Ctrl+V
+// here is: 500 is height above player in units. 45 means camera looks 45 down relative to horizon. 1 means nothing, but must be present.
+// second 45 means 45 Z-axis (around top-bottom axis) angle relative default view. P means "player-following camera"
+{
+"classname" "target_print"
+"origin" "0 0 0"
+"targetname" "top_cam0"
+"message" "#_c9 -250 -250 500 45 45 1 P"
+}

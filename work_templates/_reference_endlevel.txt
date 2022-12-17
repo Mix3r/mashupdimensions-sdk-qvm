@@ -1,5 +1,5 @@
 // pair of end relays, used to end the level for both single and coop game modes
-// copy via Ctrl+A, then Ctrl+C and paste the brush between floor and "goto ceiling" in Trenchbroom window via Ctrl+V
+// copy via Ctrl+A, then Ctrl+C and paste in Trenchbroom window via Ctrl+V
 {
 "classname" "target_relay"
 "origin" "0 0 96"

@@ -1,5 +1,5 @@
 // TNT with 500 hit points and bound kamikaze blast
-// copy via Ctrl+A, then Ctrl+C and paste the brush between floor and "goto ceiling" in Trenchbroom window via Ctrl+V
+// copy via Ctrl+A, then Ctrl+C and paste  in Trenchbroom window via Ctrl+V
 {
 "classname" "func_button"
 "health" "-500"
