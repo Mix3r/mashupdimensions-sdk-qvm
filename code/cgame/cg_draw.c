@@ -2465,7 +2465,8 @@ void CG_CenterPrint(const char *str, int y, int charWidth) {
                         cg.centerPrintTime = cg.time + ((cg.centerPrint[3] - '0') * 1000);
                         // reset image sequence counter by using different [message] string length for this camera
                         // hint: add/remove spaces to the message tail to achieve seamless switching between sequences
-                        if (cg.centerPrintCharWidth != -nStrlen) {
+                        if (cg.centerPrintCharWidth != nStrlen) {
+                                // minus sign used to switch state of sound check
                                 cg.centerPrintCharWidth = -nStrlen;
                                 cg.centerPrintY = cg.time;
                         }
@@ -2574,13 +2575,14 @@ static void CG_DrawCenterString(void) {
                                         cg.centerPrintCharWidth = -strlen(cg.centerPrint);
                                         cg.centerPrintTime = cg.time + l;
                                         cg.centerPrintY = cg.time;
-                                        l = -999; // flag to choose and start clipname sound
+                                        //l = -999; // flag to choose and start clipname sound
                                 }
                                 start = strchr(start,'#');
                                 if (start) {
                                         qhandle_t imgseq_frame = 0;
                                         start++;
-                                        if (l == -999) {
+                                        //if (l == -999) {
+                                        if (cg.centerPrintCharWidth < 0) {
                                                 sfxHandle_t imgseq_snd = 0;
                                                 if (cgs.clientinfo[ cg.predictedPlayerState.clientNum ].gender == GENDER_FEMALE) {
                                                         // pov player has female model, let's find clipnamef_lang, clipnamef
@@ -2624,6 +2626,9 @@ static void CG_DrawCenterString(void) {
                                                 imgseq_frame = trap_R_RegisterShaderNoMip(media_path);
                                                 trap_R_DrawStretchPic(0,0,cgs.glconfig.vidWidth, cgs.glconfig.vidHeight, 0, 0, 1, 1, imgseq_frame);
                                         }
+                                }
+                                if (cg.centerPrintCharWidth < 0) {
+                                        cg.centerPrintCharWidth = -cg.centerPrintCharWidth;
                                 }
                                 return;
                         }

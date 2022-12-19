@@ -537,9 +537,8 @@ static void CG_OffsetFirstPersonView( void ) {
 void CG_ZoomDown_f( void ) { 
 	if ( cg.zoomed ) {
 		return;
-	}
-        //Mix3r_Durachok gauntlet block stuff
-        if (cg.predictedPlayerState.weapon == 1) {
+	} else if (cg.predictedPlayerState.weapon == 1) {
+                //Mix3r_Durachok gauntlet block stuff
                 if (cg.time - cg.landTime > (LAND_DEFLECT_TIME + LAND_RETURN_TIME)) {
                         cg.landChange = 10;
                         cg.landTime = CG_CrosshairPlayer();
@@ -549,6 +548,8 @@ void CG_ZoomDown_f( void ) {
 	                }
 		        cg.landTime = cg.time;
                 }
+                return;
+        } else if (cg.centerPrintLines >= 999) {
                 return;
         }
 	cg.zoomed = qtrue;
