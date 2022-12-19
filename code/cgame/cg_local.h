@@ -733,6 +733,7 @@ typedef struct {
 	float		bobfraccos;
 	float		bobfracsin2;
         // Mix3r_Durachok: substitute cache
+        char*         lg_subst;
         char*         mg_subst;
 
 // loadingscreen

@@ -1067,13 +1067,19 @@ void CG_RegisterItemVisuals( int itemNum )
 	itemInfo->registered = qtrue;
 
         // Mix3r_Durachok: surrogates support - model replacement, specify for each weapon:
-        if ( item->giTag == WP_MACHINEGUN && item->giType == IT_WEAPON ) {
-                item->world_model[0] = va("models/weapons2/%s/%s.md3",cg.mg_subst,cg.mg_subst);
+        if ( item->giType == IT_WEAPON ) {
+                if (item->giTag == WP_MACHINEGUN) {
+                        item->world_model[0] = va("models/weapons2/%s/%s.md3",cg.mg_subst,cg.mg_subst);
+                } else if ( item->giTag == WP_LIGHTNING ) {
+                        if (cg.lg_subst[0] == 'f') {
+                                item->pickup_name = COM_Localize(97);
+                        }
+                } else if ( item->giTag == WP_GRAPPLING_HOOK ) {
+                        // Mix3r_Durachok: surrogates support - map dependent mission pickup items as grapple pickup substitute:
+                        item->world_model[0] = va("models/mission/%s_pickup.md3",strchr(cgs.mapname,'/')+1);
+                }
         }
-        // Mix3r_Durachok: surrogates support - map dependent mission pickup items as grapple pickup substitute:
-        if ( item->giTag == WP_GRAPPLING_HOOK && item->giType == IT_WEAPON ) {
-                item->world_model[0] = va("models/mission/%s_pickup.md3",strchr(cgs.mapname,'/')+1);
-        }
+
 
         itemInfo->models[0] = trap_R_RegisterModel( item->world_model[0] );
 

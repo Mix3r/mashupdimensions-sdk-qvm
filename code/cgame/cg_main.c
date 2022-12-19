@@ -394,6 +394,7 @@ char *strings_en[] = {
 "No items.",
 "Used %s",
 "Time: %i:%i%i",
+"Fog Nozzle",
 NULL
 };
 char *strings_ru[] = {
@@ -493,6 +494,7 @@ char *strings_ru[] = {
 "Нет предмета.",
 "Исп. %s",
 "Время: %i:%i%i",
+"Пож. ствол",
 NULL
 };
 

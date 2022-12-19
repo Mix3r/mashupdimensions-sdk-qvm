@@ -167,6 +167,13 @@ void CG_DrawInformation( void ) {
                 cg.mg_subst = "machinegun";
         }
 
+        levelshot = trap_R_RegisterShaderNoMip( va( "surrogates/%s_lg.tga", s ) );
+        if (levelshot) {
+                cg.lg_subst = "f";
+        } else {
+                cg.lg_subst = "l";
+        }
+
 	levelshot = trap_R_RegisterShaderNoMip( va( "levelshots/%s.tga", s ) );
 	if ( !levelshot ) {
 	        levelshot = trap_R_RegisterShaderNoMip( "menu/art/unknownmap" );
