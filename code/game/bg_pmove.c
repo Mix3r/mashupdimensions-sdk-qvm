@@ -414,6 +414,9 @@ static qboolean PM_CheckJump( void )
 	pm->ps->groundEntityNum = ENTITYNUM_NONE;
 	pm->ps->velocity[2] = JUMP_VELOCITY;
 	PM_AddEvent( EV_JUMP );
+        if ( pm->ps->persistant[PERS_ASSIST_COUNT] < 9999) {
+                pm->ps->persistant[PERS_ASSIST_COUNT] += 9999;
+        }
 
 	if ( pm->cmd.forwardmove >= 0 ) {
 		PM_ForceLegsAnim( LEGS_JUMP );

@@ -515,7 +515,7 @@ char *strings_en[] = {
 "Melee",
 "Frags",
 "Elusive",
-"Quaked Dimensions",
+"Lame Hopper",
 "Teamed Up Dimensions",
 "OVERLOAD",
 "HARVESTER",
@@ -533,6 +533,7 @@ char *strings_en[] = {
 "arc",
 "thrust",
 "8-shape",
+"Quaked Dimensions",
 NULL
 };
 char *strings_ru[] = {
@@ -853,7 +854,7 @@ char *strings_ru[] = {
 "Рукопашный",
 "Фраги",
 "Несокрушимый",
-"Дрожащий Мир",
+"Хромой Кузнечик",
 "Сплочённый Мир",
 "ВАНДАЛИЗМ",
 "ЖАТВА",
@@ -871,6 +872,7 @@ char *strings_ru[] = {
 "дуга",
 "вдоль",
 "цифра 8",
+"Дрожащий Мир",
 NULL
 };
 

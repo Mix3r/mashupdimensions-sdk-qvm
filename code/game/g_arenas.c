@@ -114,6 +114,15 @@ void UpdateTournamentInfo( void ) {
 
 #else
 		perfect = ( level.clients[playerClientNum].ps.persistant[PERS_RANK] == 0 && player->client->ps.persistant[PERS_KILLED] == 0 ) ? 1 : 0;
+                if ( player->client->ps.persistant[PERS_ASSIST_COUNT] >= 9999 ) {
+                        // Mix3r_Durachok: if it is, then player jumped at least once
+                } else {
+                        if (accuracy > 0) {
+                                accuracy = -accuracy;
+                        } else {
+                                accuracy = -333;
+                        };
+                }
 		Com_sprintf( msg, sizeof(msg), "postgame %i %i %i %i %i %i %i %i", level.numNonSpectatorClients, playerClientNum, accuracy,
 			player->client->ps.persistant[PERS_IMPRESSIVE_COUNT], player->client->ps.persistant[PERS_EXCELLENT_COUNT],
 			player->client->ps.persistant[PERS_GAUNTLET_FRAG_COUNT], player->client->ps.persistant[PERS_SCORE],

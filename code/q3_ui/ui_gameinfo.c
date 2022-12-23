@@ -534,7 +534,7 @@ void UI_LogAwardData( int award, int data ) {
 		return;
 	}
 
-	if( award > AWARD_PERFECT ) {
+	if( award > AWARD_ANTIHOP ) {
 		trap_Print( va( S_COLOR_RED "Bad award %i in UI_LogAwardData\n", award ) );
 		return;
 	}

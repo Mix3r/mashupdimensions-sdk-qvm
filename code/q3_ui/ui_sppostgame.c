@@ -68,9 +68,9 @@ typedef struct {
 	int			numClients;
 	int			won;
 	int			numAwards;
-	int			awardsEarned[6];
-	int			awardsLevels[6];
-	qboolean		playedSound[6];
+	int			awardsEarned[7];
+	int			awardsLevels[7];
+	qboolean		playedSound[7];
 	int			lastTier;
 	sfxHandle_t		winnerSound;
 } postgameMenuInfo_t;
@@ -654,6 +654,16 @@ void UI_SPPostgameMenu_f( void ) {
 	awardValues[AWARD_GAUNTLET] = atoi( UI_Argv( 6 ) );
 	awardValues[AWARD_FRAGS] = atoi( UI_Argv( 7 ) );
 	awardValues[AWARD_PERFECT] = atoi( UI_Argv( 8 ) );
+        if (awardValues[AWARD_ACCURACY] < 0) {
+                awardValues[AWARD_ANTIHOP] = 1;
+                if (awardValues[AWARD_ACCURACY] == -333) {
+                        awardValues[AWARD_ACCURACY] = 0;
+                } else {
+                        awardValues[AWARD_ACCURACY] = -awardValues[AWARD_ACCURACY];
+                }
+        } else {
+                awardValues[AWARD_ANTIHOP] = 0;
+        }
 
 	postgameMenuInfo.numAwards = 0;
 
@@ -700,6 +710,13 @@ void UI_SPPostgameMenu_f( void ) {
 		postgameMenuInfo.awardsLevels[postgameMenuInfo.numAwards] = 1;
 		postgameMenuInfo.numAwards++;
 	}
+
+	if( awardValues[AWARD_ANTIHOP] ) {
+                UI_LogAwardData( AWARD_ANTIHOP, 1 );
+                postgameMenuInfo.awardsEarned[postgameMenuInfo.numAwards] = AWARD_ANTIHOP;
+		postgameMenuInfo.awardsLevels[postgameMenuInfo.numAwards] = 1;
+                postgameMenuInfo.numAwards++;
+        }
 
         postgameMenuInfo.skillsp = Com_Clamp( 1, 10000, trap_Cvar_VariableValue( "fraglimit" ) );
 

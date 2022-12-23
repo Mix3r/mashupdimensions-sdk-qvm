@@ -394,8 +394,10 @@ void CG_CheckLocalSounds( playerState_t *ps, playerState_t *ops ) {
 		//Com_Printf("defend\n");
 	}
 	if (ps->persistant[PERS_ASSIST_COUNT] != ops->persistant[PERS_ASSIST_COUNT]) {
-		pushReward(cgs.media.assistSound, cgs.media.medalAssist, ps->persistant[PERS_ASSIST_COUNT]);
-		reward = qtrue;
+                if (ps->persistant[PERS_ASSIST_COUNT] - ops->persistant[PERS_ASSIST_COUNT] < 9999) {
+		        pushReward(cgs.media.assistSound, cgs.media.medalAssist, ps->persistant[PERS_ASSIST_COUNT]);
+		        reward = qtrue;
+                }
 		//Com_Printf("assist\n");
 	}
 	// if any of the player event bits changed

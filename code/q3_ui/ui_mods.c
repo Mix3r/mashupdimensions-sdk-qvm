@@ -95,7 +95,7 @@ static void UI_Mods_ParseInfos( char *modDir, char *modDesc ) {
 	Q_strncpyz( s_mods.descriptionPtr, modDesc, 48 );
 	s_mods.list.itemnames[s_mods.list.numitems] = s_mods.descriptionPtr;
         if ( Q_strequal(s_mods.fs_gamePtr,"baseq3_pk3")) {
-                s_mods.list.itemnames[s_mods.list.numitems] = COM_Localize(318);
+                s_mods.list.itemnames[s_mods.list.numitems] = COM_Localize(336);
         }
         if ( Q_strequal(s_mods.fs_gamePtr,"missionpack_pk3")) {
                 s_mods.list.itemnames[s_mods.list.numitems] = COM_Localize(319);

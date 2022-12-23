@@ -857,30 +857,30 @@ void CG_EntityEvent(centity_t *cent, vec3_t position) {
 		case EV_JUMP:
 			//DEBUGNAME("EV_JUMP");
                         if (cgs.media.jumpbSound && cg.time%3 != 0) {
-			        trap_S_StartSound(NULL, es->number, CHAN_VOICE, cgs.media.jumpbSound);
+                                trap_S_StartSound(NULL, es->number, CHAN_VOICE, cgs.media.jumpbSound);
                         } else {
-			        trap_S_StartSound(NULL, es->number, CHAN_VOICE, CG_CustomSound(es->number, "*jump1.wav"));
+                                trap_S_StartSound(NULL, es->number, CHAN_VOICE, CG_CustomSound(es->number, "*jump1.wav"));
                         }
 			break;
 		case EV_TAUNT:
-			DEBUGNAME("EV_TAUNT");
+			//DEBUGNAME("EV_TAUNT");
 			trap_S_StartSound(NULL, es->number, CHAN_VOICE, CG_CustomSound(es->number, "*taunt.wav"));
 			break;
 #ifdef MISSIONPACK
 		case EV_TAUNT_YES:
-			DEBUGNAME("EV_TAUNT_YES");
+			//DEBUGNAME("EV_TAUNT_YES");
 			CG_VoiceChatLocal(SAY_TEAM, qfalse, es->number, COLOR_CYAN, VOICECHAT_YES);
 			break;
 		case EV_TAUNT_NO:
-			DEBUGNAME("EV_TAUNT_NO");
+			//DEBUGNAME("EV_TAUNT_NO");
 			CG_VoiceChatLocal(SAY_TEAM, qfalse, es->number, COLOR_CYAN, VOICECHAT_NO);
 			break;
 		case EV_TAUNT_FOLLOWME:
-			DEBUGNAME("EV_TAUNT_FOLLOWME");
+			//DEBUGNAME("EV_TAUNT_FOLLOWME");
 			CG_VoiceChatLocal(SAY_TEAM, qfalse, es->number, COLOR_CYAN, VOICECHAT_FOLLOWME);
 			break;
 		case EV_TAUNT_GETFLAG:
-			DEBUGNAME("EV_TAUNT_GETFLAG");
+			//DEBUGNAME("EV_TAUNT_GETFLAG");
 			CG_VoiceChatLocal(SAY_TEAM, qfalse, es->number, COLOR_CYAN, VOICECHAT_ONGETFLAG);
 			break;
 		case EV_TAUNT_GUARDBASE:
