@@ -115,7 +115,10 @@ void UpdateTournamentInfo( void ) {
 #else
 		perfect = ( level.clients[playerClientNum].ps.persistant[PERS_RANK] == 0 && player->client->ps.persistant[PERS_KILLED] == 0 ) ? 1 : 0;
                 if ( player->client->ps.persistant[PERS_ASSIST_COUNT] >= 9999 ) {
-                        // Mix3r_Durachok: if it is, then player jumped at least once
+                        // Mix3r_Durachok: high probability. if it is, then player jumped at least once, no lazy hopper for him
+                } else if ( level.clients[playerClientNum].ps.persistant[PERS_RANK] > 0 && g_fraglimit.integer <= 9999 ) {
+                        // Mix3r_Durachok: previous statement met, player kept self from jumping during this match, ok, but the
+                        // player didn't deserved a lazy hopper, because isn't first in score-based session.
                 } else {
                         if (accuracy > 0) {
                                 accuracy = -accuracy;
