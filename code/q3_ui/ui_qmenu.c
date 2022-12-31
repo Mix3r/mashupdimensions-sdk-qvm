@@ -1818,6 +1818,7 @@ Menu_Cache
 */
 void Menu_Cache( void )
 {
+        int n = 2;
 	uis.charset		= trap_R_RegisterShaderNoMip( "gfx/2d/bigchar2" );
 	uis.charsetProp		= trap_R_RegisterShaderNoMip( "menu/art/font1_prop.tga" );
 	uis.charsetPropGlow	= trap_R_RegisterShaderNoMip( "menu/art/font1_prop_glo.tga" );
@@ -1836,6 +1837,7 @@ void Menu_Cache( void )
                 uis.menuBackShader = trap_R_RegisterShaderNoMip( va("textures/sfx/logo512_tatribute%s",COM_Localize(1)) );
         } else if (trap_R_RegisterShaderNoMip("levelshots/Q3DM0.jpg")) {
                 uis.menuBackShader = trap_R_RegisterShaderNoMip( va("textures/sfx/logo512_qtribute%s",COM_Localize(1)) );
+                n = 5;
         } else if (trap_R_RegisterShaderNoMip("levelshots/delta.jpg")) {
                 uis.menuBackShader = trap_R_RegisterShaderNoMip( va("textures/sfx/logo512_oatribute%s",COM_Localize(1)) );
         } else {
@@ -1844,9 +1846,8 @@ void Menu_Cache( void )
 
 	//}
 	uis.menuBackNoLogoShader = trap_R_RegisterShaderNoMip( "menubacknologo" );
-
 	menu_in_sound	= trap_S_RegisterSound( "sound/misc/menu1.wav", qfalse );
-	menu_move_sound	= trap_S_RegisterSound( "sound/misc/menu2.wav", qfalse );
+	menu_move_sound	= trap_S_RegisterSound( va("sound/misc/menu%i.wav",n), qfalse );
 	menu_out_sound	= trap_S_RegisterSound( "sound/misc/menu3.wav", qfalse );
 	menu_buzz_sound	= trap_S_RegisterSound( "sound/misc/menu4.wav", qfalse );
 	weaponChangeSound = trap_S_RegisterSound( "sound/weapons/change.wav", qfalse );

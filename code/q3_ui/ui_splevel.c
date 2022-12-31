@@ -705,7 +705,7 @@ static void UI_SPLevelMenu_MenuDraw( void ) {
 	// draw player award levels
 	y = AWARDS_Y;
 	i = 0;
-	for( n = 0; n < 6; n++ ) {
+	for( n = 0; n < 7; n++ ) {
 		level = levelMenuInfo.awardLevels[n];
 		if( level > 0 ) {
 			if( i & 1 ) {
