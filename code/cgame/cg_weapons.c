@@ -1073,6 +1073,7 @@ void CG_RegisterItemVisuals( int itemNum )
                 } else if ( item->giTag == WP_LIGHTNING ) {
                         if (cg.lg_subst[0] == 'f') {
                                 item->pickup_name = COM_Localize(97);
+                                item->icon = "icons/iconw_fnozzle";
                         }
                 } else if ( item->giTag == WP_GRAPPLING_HOOK ) {
                         // Mix3r_Durachok: surrogates support - map dependent mission pickup items as grapple pickup substitute:

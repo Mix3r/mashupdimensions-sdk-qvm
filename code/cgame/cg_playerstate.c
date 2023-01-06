@@ -395,7 +395,9 @@ void CG_CheckLocalSounds( playerState_t *ps, playerState_t *ops ) {
 	}
 	if (ps->persistant[PERS_ASSIST_COUNT] != ops->persistant[PERS_ASSIST_COUNT]) {
                 if (ps->persistant[PERS_ASSIST_COUNT] - ops->persistant[PERS_ASSIST_COUNT] < 9999) {
-		        pushReward(cgs.media.assistSound, cgs.media.medalAssist, ps->persistant[PERS_ASSIST_COUNT]);
+                        reward = ps->persistant[PERS_ASSIST_COUNT];
+                        if ( reward > 9999 ) reward -= 10000;
+		        pushReward(cgs.media.assistSound, cgs.media.medalAssist, reward);
 		        reward = qtrue;
                 }
 		//Com_Printf("assist\n");
