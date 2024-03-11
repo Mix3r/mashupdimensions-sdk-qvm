@@ -1420,7 +1420,10 @@ static void PM_Footsteps( void )
 
 	// check for footstep / splash sounds
 	old = pm->ps->bobCycle;
-	pm->ps->bobCycle = (int)( old + bobmove * pml.msec ) & 255;
+
+	//pm->ps->bobCycle = (int)( old + bobmove * pml.msec ) & 255;
+        // Mix3r_Durachok: let's make running footsteps a bit often
+        pm->ps->bobCycle = (int)( old + bobmove * pml.msec * 1.25) & 255;
 
 	// if we just crossed a cycle boundary, play an apropriate footstep event
 	if ( ( ( old + 64 ) ^ ( pm->ps->bobCycle + 64 ) ) & 128 ) {

@@ -96,12 +96,12 @@ static void UI_Mods_ParseInfos( char *modDir, char *modDesc ) {
 	s_mods.list.itemnames[s_mods.list.numitems] = s_mods.descriptionPtr;
         if ( Q_strequal(s_mods.fs_gamePtr,"baseq3_pk3")) {
                 s_mods.list.itemnames[s_mods.list.numitems] = COM_Localize(336);
-        }
-        if ( Q_strequal(s_mods.fs_gamePtr,"missionpack_pk3")) {
+        } else if ( Q_strequal(s_mods.fs_gamePtr,"missionpack_pk3")) {
                 s_mods.list.itemnames[s_mods.list.numitems] = COM_Localize(319);
-        }
-        if ( Q_strequal(s_mods.fs_gamePtr,"baseoa_pk3")) {
+        } else if ( Q_strequal(s_mods.fs_gamePtr,"baseoa_pk3")) {
                 s_mods.list.itemnames[s_mods.list.numitems] = COM_Localize(325); //open dimensions
+        } else if ( Q_strequal(s_mods.fs_gamePtr,"borrowed")) {
+                s_mods.list.itemnames[s_mods.list.numitems] = COM_Localize(338); //borrowed dimension
         }
 	s_mods.descriptionPtr += strlen( s_mods.descriptionPtr ) + 1;
 	s_mods.fs_gamePtr += strlen( s_mods.fs_gamePtr ) + 1;
