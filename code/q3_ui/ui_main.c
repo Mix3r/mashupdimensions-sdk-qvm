@@ -534,6 +534,7 @@ char *strings_en[] = {
 "thrust",
 "8-shape",
 "Quaked Dimensions",
+"Based upon Quake III Arena(c) 1999-2000, ID Software.",
 NULL
 };
 char *strings_ru[] = {
@@ -873,6 +874,7 @@ char *strings_ru[] = {
 "вдоль",
 "цифра 8",
 "Дрожащий Мир",
+"Основано на Quake III Arena(c) 1999-2000, ID Software.",
 NULL
 };
 
