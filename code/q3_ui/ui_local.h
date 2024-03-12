@@ -117,6 +117,7 @@ extern vmCvar_t ui_setupchecked;
 extern vmCvar_t ui_browserOnlyHumans;
 extern vmCvar_t ui_developer;
 extern qboolean ui_is_missionpack;
+extern qboolean ui_is_baseq3;
 
 //
 // ui_qmenu.c

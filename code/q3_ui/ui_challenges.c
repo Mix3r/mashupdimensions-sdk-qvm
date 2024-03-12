@@ -76,7 +76,7 @@ static void UI_Contests_Event( void *ptr, int event ) {
 		break;
 
 	case ID_ELIMINATION:
-                if (trap_R_RegisterShaderNoMip("levelshots/Q3DM0.jpg")) {
+                if (ui_is_baseq3) {
                         UI_SPSkillMenu( "exec q3elmn.cfg" );
                 } else if (ui_is_missionpack) {
                         UI_SPSkillMenu( "exec taelmn.cfg" );
@@ -97,7 +97,7 @@ static void UI_Contests_Event( void *ptr, int event ) {
 		break;
 
 	case ID_COOP:
-                if (trap_R_RegisterShaderNoMip("levelshots/Q3DM0.jpg")) {
+                if (ui_is_baseq3) {
                         UI_SPSkillMenu( "exec coop_q3dm0.cfg" );
                 } else if (ui_is_missionpack) {
                         UI_SPSkillMenu( "exec ta1_mpteam1.cfg" );

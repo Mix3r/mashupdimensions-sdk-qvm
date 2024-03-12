@@ -1835,7 +1835,7 @@ void Menu_Cache( void )
 
         if (ui_is_missionpack) {
                 uis.menuBackShader = trap_R_RegisterShaderNoMip( va("textures/sfx/logo512_tatribute%s",COM_Localize(1)) );
-        } else if (trap_R_RegisterShaderNoMip("levelshots/Q3DM0.jpg")) {
+        } else if (ui_is_baseq3) {
                 uis.menuBackShader = trap_R_RegisterShaderNoMip( va("textures/sfx/logo512_qtribute%s",COM_Localize(1)) );
                 n = 5;
         } else if (trap_R_RegisterShaderNoMip("levelshots/delta.jpg")) {

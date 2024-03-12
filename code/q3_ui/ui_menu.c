@@ -353,7 +353,11 @@ static void Main_MenuDraw( void )
 
 	UI_DrawString( 320, 400, COM_Localize(14), UI_CENTER|UI_SMALLFONT, color );
 	UI_DrawString( 320, 414, COM_Localize(327), UI_CENTER|UI_SMALLFONT, color );
-	UI_DrawString( 320, 428, COM_Localize(15), UI_CENTER|UI_SMALLFONT, color );
+        if (ui_is_missionpack || ui_is_baseq3) {
+                UI_DrawString( 320, 428, COM_Localize(337), UI_CENTER|UI_SMALLFONT, color );
+        } else {
+	        UI_DrawString( 320, 428, COM_Localize(15), UI_CENTER|UI_SMALLFONT, color );
+        }
 	UI_DrawString( 320, 444, COM_Localize(323), UI_CENTER|UI_SMALLFONT, color );
 
 	//Draw version.

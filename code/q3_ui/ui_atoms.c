@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 uiStatic_t		uis;
 qboolean		m_entersound;		// after a frame, so caching won't disrupt the sound
 qboolean                ui_is_missionpack;      // Mix3r_Durachok: team arena pak0.pk3 detector for ui stuff
+qboolean                ui_is_baseq3;           // Mix3r_Durachok: q3's pak0.pk3 detector
 
 void QDECL Com_Error( int level, const char *error, ... ) {
 	va_list		argptr;
@@ -1194,6 +1195,11 @@ void UI_Init( void ) {
                 ui_is_missionpack = qtrue;
         } else {
                 ui_is_missionpack = qfalse;
+        }
+        if (trap_R_RegisterShaderNoMip("levelshots/Q3DM0.jpg")) {
+                ui_is_baseq3 = qtrue;
+        } else {
+                ui_is_baseq3 = qfalse;
         }
 
 	UI_InitGameinfo();
