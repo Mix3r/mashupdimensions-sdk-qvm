@@ -579,13 +579,9 @@ typedef enum {
 	TORSO_FALL2, 	// fall with gauntlet
 	TORSO_FALL3, 	// fall with flag
 	TORSO_TALK, 	// fall with flag
-//	TORSO_AIMUP, 	// aiming upward
-//	TORSO_AIMDOWN, 	// aiming downward
 	TORSO_STRAFE, 	// strafing sideways
 	LEGS_STRAFE_LEFT, // strafing to the player's left
 	LEGS_STRAFE_RIGHT, // strafing to the player's right
-
-//	BOTH_POSE,		// leilei - crappy ui posing code trying
 
 	MAX_ANIMATIONS,
 
