@@ -1498,50 +1498,61 @@ static void CG_PlayerAnimation(centity_t *cent, int *legsOld, int *legs, float *
                 // Mix3r_Durachok: weird hack for angelyss one-piece-model idle-shooting-anim
                 // angelyss/animation.cfg modified (torso_attack first frame fake anim set to 101 to detect angelyss model easily)
                 // even if torso is fake, we still can catch it's current played frame and use it to set some decent tits-from-legs-piece frame:
-                if ((cent->currentState.legsAnim & ~ANIM_TOGGLEBIT) == LEGS_IDLE) {
-                   if ( cgs.clientinfo[ cent->currentState.clientNum ].animations[TORSO_ATTACK].firstFrame == cgs.clientinfo[ cent->currentState.clientNum ].animations[LEGS_WALK].firstFrame ) {
-                      //CG_Printf("effect %i\n", cent->pe.torso.frame);
-                      if (cent->pe.torso.frame >= 101 && cent->pe.torso.frame < 106) {
-                         if (cent->pe.torso.frame == 102) {
-                           cgs.clientinfo[ cent->currentState.clientNum ].animations[LEGS_IDLE].firstFrame = 196;
+
+                switch((cent->currentState.legsAnim & ~ANIM_TOGGLEBIT)) {
+                   case LEGS_IDLE:
+                      ///
+                      if ( cgs.clientinfo[ cent->currentState.clientNum ].animations[TORSO_ATTACK].firstFrame == cgs.clientinfo[ cent->currentState.clientNum ].animations[LEGS_WALK].firstFrame ) {
+                         //CG_Printf("effect %i\n", cent->pe.torso.frame);
+                         if (cent->pe.torso.frame >= 101 && cent->pe.torso.frame < 106) {
+                            if (cent->pe.torso.frame == 102) {
+                              cgs.clientinfo[ cent->currentState.clientNum ].animations[LEGS_IDLE].firstFrame = 196;
+                            } else {
+                              cgs.clientinfo[ cent->currentState.clientNum ].animations[LEGS_IDLE].firstFrame = 195;
+                            }
+                            cgs.clientinfo[ cent->currentState.clientNum ].animations[LEGS_IDLE].numFrames = 1;
+                            cgs.clientinfo[ cent->currentState.clientNum ].animations[LEGS_IDLE].loopFrames = 0;
+                         } else if (cent->pe.torso.frame >= 136 && cent->pe.torso.frame <= 139) {
+                            cgs.clientinfo[ cent->currentState.clientNum ].animations[LEGS_IDLE].firstFrame = 101;
+                            cgs.clientinfo[ cent->currentState.clientNum ].animations[LEGS_IDLE].numFrames = 1;
+                            cgs.clientinfo[ cent->currentState.clientNum ].animations[LEGS_IDLE].loopFrames = 0;
                          } else {
-                           cgs.clientinfo[ cent->currentState.clientNum ].animations[LEGS_IDLE].firstFrame = 195;
+                            cgs.clientinfo[ cent->currentState.clientNum ].animations[LEGS_IDLE].firstFrame = 181;
+                            cgs.clientinfo[ cent->currentState.clientNum ].animations[LEGS_IDLE].numFrames = 15;
+                            cgs.clientinfo[ cent->currentState.clientNum ].animations[LEGS_IDLE].loopFrames = 15;
                          }
-                         cgs.clientinfo[ cent->currentState.clientNum ].animations[LEGS_IDLE].numFrames = 1;
-                         cgs.clientinfo[ cent->currentState.clientNum ].animations[LEGS_IDLE].loopFrames = 0;
-                      } else if (cent->pe.torso.frame >= 136 && cent->pe.torso.frame <= 139) {
-                         cgs.clientinfo[ cent->currentState.clientNum ].animations[LEGS_IDLE].firstFrame = 101;
-                         cgs.clientinfo[ cent->currentState.clientNum ].animations[LEGS_IDLE].numFrames = 1;
-                         cgs.clientinfo[ cent->currentState.clientNum ].animations[LEGS_IDLE].loopFrames = 0;
-                      } else {
-                         cgs.clientinfo[ cent->currentState.clientNum ].animations[LEGS_IDLE].firstFrame = 181;
-                         cgs.clientinfo[ cent->currentState.clientNum ].animations[LEGS_IDLE].numFrames = 15;
-                         cgs.clientinfo[ cent->currentState.clientNum ].animations[LEGS_IDLE].loopFrames = 15;
                       }
-                   }
-                } else if ((cent->currentState.legsAnim & ~ANIM_TOGGLEBIT) == LEGS_IDLECR) {
-                   if ( cgs.clientinfo[ cent->currentState.clientNum ].animations[TORSO_ATTACK].firstFrame == cgs.clientinfo[ cent->currentState.clientNum ].animations[LEGS_WALK].firstFrame ) {
-                      //CG_Printf("effect %i\n", cent->pe.torso.frame);
-                      if (cent->pe.torso.frame >= 101 && cent->pe.torso.frame < 103) {
-                         cgs.clientinfo[ cent->currentState.clientNum ].animations[LEGS_IDLECR].firstFrame = 210;
-                         cgs.clientinfo[ cent->currentState.clientNum ].animations[LEGS_IDLECR].numFrames = 1;
-                         cgs.clientinfo[ cent->currentState.clientNum ].animations[LEGS_IDLECR].loopFrames = 0;
-                      } else if (cent->pe.torso.frame >= 136 && cent->pe.torso.frame <= 138) {
-                         cgs.clientinfo[ cent->currentState.clientNum ].animations[LEGS_IDLECR].firstFrame = 210;
-                         cgs.clientinfo[ cent->currentState.clientNum ].animations[LEGS_IDLECR].numFrames = 1;
-                         cgs.clientinfo[ cent->currentState.clientNum ].animations[LEGS_IDLECR].loopFrames = 0;
-                      } else {
-                         cgs.clientinfo[ cent->currentState.clientNum ].animations[LEGS_IDLECR].firstFrame = 197;
-                         cgs.clientinfo[ cent->currentState.clientNum ].animations[LEGS_IDLECR].numFrames = 13;
-                         cgs.clientinfo[ cent->currentState.clientNum ].animations[LEGS_IDLECR].loopFrames = 13;
+                      ///
+                      break;
+                   case LEGS_IDLECR:
+                      ///
+                      if ( cgs.clientinfo[ cent->currentState.clientNum ].animations[TORSO_ATTACK].firstFrame == cgs.clientinfo[ cent->currentState.clientNum ].animations[LEGS_WALK].firstFrame ) {
+                         //CG_Printf("effect %i\n", cent->pe.torso.frame);
+                         if (cent->pe.torso.frame >= 101 && cent->pe.torso.frame < 103) {
+                            cgs.clientinfo[ cent->currentState.clientNum ].animations[LEGS_IDLECR].firstFrame = 210;
+                            cgs.clientinfo[ cent->currentState.clientNum ].animations[LEGS_IDLECR].numFrames = 1;
+                            cgs.clientinfo[ cent->currentState.clientNum ].animations[LEGS_IDLECR].loopFrames = 0;
+                         } else if (cent->pe.torso.frame >= 136 && cent->pe.torso.frame <= 138) {
+                            cgs.clientinfo[ cent->currentState.clientNum ].animations[LEGS_IDLECR].firstFrame = 210;
+                            cgs.clientinfo[ cent->currentState.clientNum ].animations[LEGS_IDLECR].numFrames = 1;
+                            cgs.clientinfo[ cent->currentState.clientNum ].animations[LEGS_IDLECR].loopFrames = 0;
+                         } else {
+                            cgs.clientinfo[ cent->currentState.clientNum ].animations[LEGS_IDLECR].firstFrame = 197;
+                            cgs.clientinfo[ cent->currentState.clientNum ].animations[LEGS_IDLECR].numFrames = 13;
+                            cgs.clientinfo[ cent->currentState.clientNum ].animations[LEGS_IDLECR].loopFrames = 13;
+                         }
                       }
-                   }
-                } else if ((cent->currentState.legsAnim & ~ANIM_TOGGLEBIT) == LEGS_RUN || (cent->currentState.legsAnim & ~ANIM_TOGGLEBIT) == LEGS_BACK || (cent->currentState.legsAnim & ~ANIM_TOGGLEBIT) == LEGS_STRAFE_LEFT || (cent->currentState.legsAnim & ~ANIM_TOGGLEBIT) == LEGS_STRAFE_RIGHT) {
-                   *legsOld = cgs.clientinfo[ cent->currentState.clientNum ].animations[(cent->currentState.legsAnim & ~ANIM_TOGGLEBIT)].firstFrame; // left footstep frame
-                   *legs = (int)(cgs.clientinfo[ cent->currentState.clientNum ].animations[(cent->currentState.legsAnim & ~ANIM_TOGGLEBIT)].numFrames*0.5); // frame count from left to right footstep
-                   *legsBackLerp = *legsOld + *legs; // to get middle frame of run animation
-                   if ((cent->pe.legs.frame <= *legsBackLerp && cgs.clientinfo[ cent->currentState.clientNum ].animations[MAX_ANIMATIONS].firstFrame > *legsBackLerp) || (cent->pe.legs.frame >= *legsBackLerp && cgs.clientinfo[ cent->currentState.clientNum ].animations[MAX_ANIMATIONS].firstFrame < *legsBackLerp)) {
-                      //if (cent->pe.legs.frame != cgs.clientinfo[ cent->currentState.clientNum ].animations[MAX_ANIMATIONS].firstFrame) {
+                      ///
+                      break;
+                   case LEGS_RUN:
+                   case LEGS_BACK:
+                   case LEGS_STRAFE_LEFT:
+                   case LEGS_STRAFE_RIGHT:
+                      ///
+                      *legsOld = cgs.clientinfo[ cent->currentState.clientNum ].animations[(cent->currentState.legsAnim & ~ANIM_TOGGLEBIT)].firstFrame; // left footstep frame
+                      *legs = (int)(cgs.clientinfo[ cent->currentState.clientNum ].animations[(cent->currentState.legsAnim & ~ANIM_TOGGLEBIT)].numFrames*0.5); // frame count from left to right footstep
+                      *legsBackLerp = *legsOld + *legs; // to get middle frame of run animation
+                      if ((cent->pe.legs.frame <= *legsBackLerp && cgs.clientinfo[ cent->currentState.clientNum ].animations[MAX_ANIMATIONS].firstFrame > *legsBackLerp) || (cent->pe.legs.frame >= *legsBackLerp && cgs.clientinfo[ cent->currentState.clientNum ].animations[MAX_ANIMATIONS].firstFrame < *legsBackLerp)) {
                          cgs.clientinfo[ cent->currentState.clientNum ].animations[MAX_ANIMATIONS].firstFrame = cent->pe.legs.frame;
                          if (cgs.clientinfo[ cent->currentState.clientNum ].animations[MAX_ANIMATIONS].numFrames > cg.time - 600) {
                             switch (cgs.clientinfo[ cent->currentState.clientNum ].animations[MAX_ANIMATIONS].loopFrames) {
@@ -1561,13 +1572,21 @@ static void CG_PlayerAnimation(centity_t *cent, int *legsOld, int *legs, float *
 				  break;
 			       }
 		            }
+                            ///
+                            //if (cent->currentState.number == cg.snap->ps.clientNum) {
+                            //   cgs.clientinfo[ cent->currentState.clientNum ].animations[MAX_ANIMATIONS].firstFrame
+                            //   cg.bobfracsin = fabs( sin(  ) );
+                            //}
+                            ////
                          }
-                      //}
-                   } else {
-                      cgs.clientinfo[ cent->currentState.clientNum ].animations[MAX_ANIMATIONS].firstFrame = cent->pe.legs.frame;
-                   }
+                      } else {
+                         cgs.clientinfo[ cent->currentState.clientNum ].animations[MAX_ANIMATIONS].firstFrame = cent->pe.legs.frame;
+                      }
+                      ///
+                      break;
+                   // end cases
                 }
-                ///
+
                 CG_RunLerpFrame(ci, &cent->pe.legs, cent->currentState.legsAnim, speedScale);
 	}
 

@@ -1408,13 +1408,11 @@ static void PM_Footsteps( void )
 				PM_ContinueLegsAnim( LEGS_RUN );
 			}
 			footstep = qtrue;
-		}
-		else {
+		} else {
 			bobmove = 0.3f;	// walking bobs slow
 			if ( pm->ps->pm_flags & PMF_BACKWARDS_RUN ) {
 				PM_ContinueLegsAnim( LEGS_BACKWALK );
-			}
-			else {
+			} else {
 				PM_ContinueLegsAnim( LEGS_WALK );
 			}
 		}
@@ -1424,8 +1422,6 @@ static void PM_Footsteps( void )
 	old = pm->ps->bobCycle;
 
 	pm->ps->bobCycle = (int)( old + bobmove * pml.msec ) & 255;
-        // Mix3r_Durachok: let's make running footsteps a bit often
-        //pm->ps->bobCycle = (int)( old + bobmove * pml.msec * 1.25) & 255;
 
 	// if we just crossed a cycle boundary, play an apropriate footstep event
 	if ( ( ( old + 64 ) ^ ( pm->ps->bobCycle + 64 ) ) & 128 ) {
