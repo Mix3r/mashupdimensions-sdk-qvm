@@ -1474,8 +1474,7 @@ static void CG_ClearLerpFrame(clientInfo_t *ci, lerpFrame_t *lf, int animationNu
 CG_PlayerAnimation
 ===============
  */
-static void CG_PlayerAnimation(centity_t *cent, int *legsOld, int *legs, float *legsBackLerp,
-		int *torsoOld, int *torso, float *torsoBackLerp) {
+static void CG_PlayerAnimation(centity_t *cent, int *legsOld, int *legs, float *legsBackLerp, int *torsoOld, int *torso, float *torsoBackLerp) {
 	clientInfo_t *ci;
 	float speedScale;
 
@@ -1537,13 +1536,15 @@ static void CG_PlayerAnimation(centity_t *cent, int *legsOld, int *legs, float *
                          cgs.clientinfo[ cent->currentState.clientNum ].animations[LEGS_IDLECR].loopFrames = 13;
                       }
                    }
-                } else if ((cent->currentState.legsAnim & ~ANIM_TOGGLEBIT) == LEGS_RUN || (cent->currentState.legsAnim & ~ANIM_TOGGLEBIT) == LEGS_BACK) {
-                   if (cent->pe.legs.frame == cgs.clientinfo[ cent->currentState.clientNum ].animations[(cent->currentState.legsAnim & ~ANIM_TOGGLEBIT)].firstFrame) {
-                      if (cent->pe.legs.frame != cgs.clientinfo[ cent->currentState.clientNum ].animations[MAX_TOTALANIMATIONS].firstFrame) {
-                         cgs.clientinfo[ cent->currentState.clientNum ].animations[MAX_TOTALANIMATIONS].firstFrame = cent->pe.legs.frame;
-                         //CG_Printf("FOOTSTEP LEFT %i\n", cent->pe.legs.frame);
-                         if (cgs.clientinfo[ cent->currentState.clientNum ].animations[MAX_TOTALANIMATIONS].numFrames > cg.time - 600) {
-                            switch (cgs.clientinfo[ cent->currentState.clientNum ].animations[MAX_TOTALANIMATIONS].loopFrames) {
+                } else if ((cent->currentState.legsAnim & ~ANIM_TOGGLEBIT) == LEGS_RUN || (cent->currentState.legsAnim & ~ANIM_TOGGLEBIT) == LEGS_BACK || (cent->currentState.legsAnim & ~ANIM_TOGGLEBIT) == LEGS_STRAFE_LEFT || (cent->currentState.legsAnim & ~ANIM_TOGGLEBIT) == LEGS_STRAFE_RIGHT) {
+                   *legsOld = cgs.clientinfo[ cent->currentState.clientNum ].animations[(cent->currentState.legsAnim & ~ANIM_TOGGLEBIT)].firstFrame; // left footstep frame
+                   *legs = (int)(cgs.clientinfo[ cent->currentState.clientNum ].animations[(cent->currentState.legsAnim & ~ANIM_TOGGLEBIT)].numFrames*0.5); // frame count from left to right footstep
+                   *legsBackLerp = *legsOld + *legs; // to get middle frame of run animation
+                   if ((cent->pe.legs.frame <= *legsBackLerp && cgs.clientinfo[ cent->currentState.clientNum ].animations[MAX_ANIMATIONS].firstFrame > *legsBackLerp) || (cent->pe.legs.frame >= *legsBackLerp && cgs.clientinfo[ cent->currentState.clientNum ].animations[MAX_ANIMATIONS].firstFrame < *legsBackLerp)) {
+                      //if (cent->pe.legs.frame != cgs.clientinfo[ cent->currentState.clientNum ].animations[MAX_ANIMATIONS].firstFrame) {
+                         cgs.clientinfo[ cent->currentState.clientNum ].animations[MAX_ANIMATIONS].firstFrame = cent->pe.legs.frame;
+                         if (cgs.clientinfo[ cent->currentState.clientNum ].animations[MAX_ANIMATIONS].numFrames > cg.time - 600) {
+                            switch (cgs.clientinfo[ cent->currentState.clientNum ].animations[MAX_ANIMATIONS].loopFrames) {
 			       case 2:
 			       {
 				  trap_S_StartSound(NULL, cent->currentState.number, CHAN_BODY,cgs.media.footsteps[ FOOTSTEP_METAL ][rand()&3]);
@@ -1561,36 +1562,12 @@ static void CG_PlayerAnimation(centity_t *cent, int *legsOld, int *legs, float *
 			       }
 		            }
                          }
-                      }
-                   } else if (cent->pe.legs.frame == cgs.clientinfo[ cent->currentState.clientNum ].animations[(cent->currentState.legsAnim & ~ANIM_TOGGLEBIT)].firstFrame+(int)(cgs.clientinfo[ cent->currentState.clientNum ].animations[(cent->currentState.legsAnim & ~ANIM_TOGGLEBIT)].numFrames*0.5)) {
-                      if (cent->pe.legs.frame != cgs.clientinfo[ cent->currentState.clientNum ].animations[MAX_TOTALANIMATIONS].firstFrame) {
-                         cgs.clientinfo[ cent->currentState.clientNum ].animations[MAX_TOTALANIMATIONS].firstFrame = cent->pe.legs.frame;
-                         //CG_Printf("FOOTSTEP RIGHT %i\n", cent->pe.legs.frame);
-                         if (cgs.clientinfo[ cent->currentState.clientNum ].animations[MAX_TOTALANIMATIONS].numFrames > cg.time - 600) {
-                            switch (cgs.clientinfo[ cent->currentState.clientNum ].animations[MAX_TOTALANIMATIONS].loopFrames) {
-			       case 2:
-			       {
-				  trap_S_StartSound(NULL, cent->currentState.number, CHAN_BODY,cgs.media.footsteps[ FOOTSTEP_METAL ][rand()&3]);
-				  break;
-			       }
-                               case 3:
-			       {
-				  trap_S_StartSound(NULL, cent->currentState.number, CHAN_BODY,cgs.media.footsteps[ FOOTSTEP_SPLASH ][rand()&3]);
-				  break;
-			       }
-			       default:
-			       {
-				  trap_S_StartSound(NULL, cent->currentState.number, CHAN_BODY,cgs.media.footsteps[ cgs.clientinfo[ cent->currentState.clientNum ].footsteps ][rand()&3]);
-				  break;
-			       }
-		            }
-                         }
-                      }
+                      //}
                    } else {
-                      cgs.clientinfo[ cent->currentState.clientNum ].animations[MAX_TOTALANIMATIONS].firstFrame = cent->pe.legs.frame;
+                      cgs.clientinfo[ cent->currentState.clientNum ].animations[MAX_ANIMATIONS].firstFrame = cent->pe.legs.frame;
                    }
                 }
-                ///////////////////////////////////////////////
+                ///
                 CG_RunLerpFrame(ci, &cent->pe.legs, cent->currentState.legsAnim, speedScale);
 	}
 

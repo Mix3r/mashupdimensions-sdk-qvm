@@ -1297,8 +1297,10 @@ static void PM_CheckDuck (void)
 	pm->mins[2] = MINS_Z;
 
 	if (pm->ps->pm_type == PM_DEAD) {
-		pm->maxs[2] = -8;
-		pm->ps->viewheight = DEAD_VIEWHEIGHT;
+		//pm->maxs[2] = -8;
+		//pm->ps->viewheight = DEAD_VIEWHEIGHT;
+                pm->maxs[2] = 16;
+		pm->ps->viewheight = CROUCH_VIEWHEIGHT;
 		return;
 	}
 
