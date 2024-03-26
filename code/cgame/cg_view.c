@@ -440,9 +440,9 @@ static void CG_OffsetFirstPersonView( void ) {
 			speed = 320;
 		}
 		delta = cg.bobfracsin * 0.006 * speed;
-		if (cg.bobcycle & 1) {
-			delta = -delta;
-		}
+		//if (cg.bobcycle & 1) {
+		//	delta = -delta;
+		//}
 		AngleVectors (angles, forward, right, up);
 		VectorMA (origin, delta, right, origin);
 	}
@@ -451,7 +451,8 @@ static void CG_OffsetFirstPersonView( void ) {
 		// make sure the bob is visible even at low speeds
 		speed = cg.xyspeed > 200 ? cg.xyspeed : 200;
 
-		delta = cg.bobfracsin * cg_bobpitch.value * speed;
+		//delta = cg.bobfracsin * cg_bobpitch.value * speed;
+                delta = sin(cg.time * 0.001 * M_PI * cg.fBobMultiplier) * cg_bobpitch.value * speed; ///rtcw
 		if (cg.predictedPlayerState.pm_flags & PMF_DUCKED) {
 			delta *= 3;		// crouching
 		}
@@ -463,9 +464,9 @@ static void CG_OffsetFirstPersonView( void ) {
 		if (cg.predictedPlayerState.pm_flags & PMF_DUCKED) {
 			delta *= 3;		// crouching accentuates roll
 		}
-		if (cg.bobcycle & 1) {
-			delta = -delta;
-		}
+		//if (cg.bobcycle & 1) {
+		//	delta = -delta;
+		//}
 		// leilei - no roll for 2 or 4
 		if ( cg_bob.integer == 1 || cg_bob.integer == 3 || cg_bob.integer == 5 ) {
 			angles[ROLL] += delta;
@@ -745,10 +746,9 @@ static int CG_CalcViewValues( void ) {
 		return CG_CalcFov();
 	}
 
-	cg.bobcycle = ( ps->bobCycle & 128 ) >> 7;
-	cg.bobfracsin = fabs( sin( ( ps->bobCycle & 127 ) / 127.0 * M_PI ) );
-	cg.bobfraccos = fabs( cos( ( ps->bobCycle & 127 ) / 127.0 * M_PI ) );
-	cg.bobfracsin2 = fabs( sin( ( ps->bobCycle & 127) / 127.0 * (M_PI) ));
+	//cg.bobcycle = ( ps->bobCycle & 128 ) >> 7;
+	cg.bobfracsin = sin(cg.time * 0.001 * M_PI * cg.fBobMultiplier * 2);
+        //CG_Printf("bobcycle %i\n", ps->bobCycle);
 
 	cg.xyspeed = sqrt( ps->velocity[0] * ps->velocity[0] +
 		ps->velocity[1] * ps->velocity[1] );

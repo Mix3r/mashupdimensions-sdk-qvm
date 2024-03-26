@@ -1557,32 +1557,33 @@ static void CG_PlayerAnimation(centity_t *cent, int *legsOld, int *legs, float *
                          if (cgs.clientinfo[ cent->currentState.clientNum ].animations[MAX_ANIMATIONS].numFrames > cg.time - 600) {
                             switch (cgs.clientinfo[ cent->currentState.clientNum ].animations[MAX_ANIMATIONS].loopFrames) {
 			       case 2:
-			       {
-				  trap_S_StartSound(NULL, cent->currentState.number, CHAN_BODY,cgs.media.footsteps[ FOOTSTEP_METAL ][rand()&3]);
-				  break;
-			       }
+			          trap_S_StartSound(NULL, cent->currentState.number, CHAN_BODY,cgs.media.footsteps[ FOOTSTEP_METAL ][rand()&3]);
+			          break;
                                case 3:
-			       {
 				  trap_S_StartSound(NULL, cent->currentState.number, CHAN_BODY,cgs.media.footsteps[ FOOTSTEP_SPLASH ][rand()&3]);
 				  break;
-			       }
 			       default:
-			       {
 				  trap_S_StartSound(NULL, cent->currentState.number, CHAN_BODY,cgs.media.footsteps[ cgs.clientinfo[ cent->currentState.clientNum ].footsteps ][rand()&3]);
 				  break;
-			       }
 		            }
-                            ///
-                            //if (cent->currentState.number == cg.snap->ps.clientNum) {
-                            //   cgs.clientinfo[ cent->currentState.clientNum ].animations[MAX_ANIMATIONS].firstFrame
-                            //   cg.bobfracsin = fabs( sin(  ) );
-                            //}
-                            ////
+                            //cgs.clientinfo[ cent->currentState.clientNum ].animations[MAX_ANIMATIONS].frameLerp = cg.time - cgs.clientinfo[ cent->currentState.clientNum ].animations[MAX_ANIMATIONS].initialLerp;
+                            //cgs.clientinfo[ cent->currentState.clientNum ].animations[MAX_ANIMATIONS].initialLerp = cg.time;
+
+
                          }
                       } else {
                          cgs.clientinfo[ cent->currentState.clientNum ].animations[MAX_ANIMATIONS].firstFrame = cent->pe.legs.frame;
                       }
-                      ///
+
+                      if (cent->currentState.number == cg.snap->ps.clientNum) {
+                         //if (cgs.clientinfo[ cent->currentState.clientNum ].animations[MAX_ANIMATIONS].initialLerp > 0) {
+                            //cg.bobfracsin = sin( cg.time*0.001*M_PI*(1000/cgs.clientinfo[ cent->currentState.clientNum ].animations[MAX_ANIMATIONS].frameLerp) ) ;
+                      //      cg.bobfracsin = fabs( sin( cg.time*0.001*M_PI ) );
+                              //cg.fBobMultiplier = (cgs.clientinfo[ cent->currentState.clientNum ].animations[(cent->currentState.legsAnim & ~ANIM_TOGGLEBIT)].initialLerp*1000) / (cgs.clientinfo[ cent->currentState.clientNum ].animations[(cent->currentState.legsAnim & ~ANIM_TOGGLEBIT)].numFrames * 1.0f);
+                              cg.fBobMultiplier = 1.25;
+                         //}
+                      //   CG_Printf("fracsin %f\n", cg.bobfracsin);
+                      }
                       break;
                    // end cases
                 }
@@ -1593,6 +1594,9 @@ static void CG_PlayerAnimation(centity_t *cent, int *legsOld, int *legs, float *
 	*legsOld = cent->pe.legs.oldFrame;
 	*legs = cent->pe.legs.frame;
 	*legsBackLerp = cent->pe.legs.backlerp;
+
+        //////
+        //////
 
 	CG_RunLerpFrame(ci, &cent->pe.torso, cent->currentState.torsoAnim, speedScale);
 

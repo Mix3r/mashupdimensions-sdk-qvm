@@ -706,8 +706,8 @@ typedef struct {
 
 	// temp working variables for player view
 	float		bobfracsin;
-	int			bobcycle;
-	float			bobcycle2; /* leilei - for more bobbing styles */
+	float		fBobMultiplier;
+	float		bobcycle2; /* leilei - for more bobbing styles */
 	float		xyspeed;
 	int     nextOrbitTime;
 
@@ -729,9 +729,6 @@ typedef struct {
         int redObeliskHealth;
         int blueObeliskHealth;
 
-	// leilei
-	float		bobfraccos;
-	float		bobfracsin2;
         // Mix3r_Durachok: substitute cache
         char*         lg_subst;
         char*         mg_subst;
