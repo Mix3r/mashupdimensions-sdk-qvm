@@ -1572,7 +1572,7 @@ static void CG_PlayerAnimation(centity_t *cent, int *legsOld, int *legs, float *
                       }
 
                       if (cent->currentState.number == cg.snap->ps.clientNum) {
-                         cg.fBobMultiplier = (1000 / cgs.clientinfo[ cent->currentState.clientNum ].animations[(cent->currentState.legsAnim & ~ANIM_TOGGLEBIT)].initialLerp) / (cgs.clientinfo[ cent->currentState.clientNum ].animations[(cent->currentState.legsAnim & ~ANIM_TOGGLEBIT)].numFrames+0.00001f);
+                         cg.fBobMultiplier = (1000 / (cgs.clientinfo[ cent->currentState.clientNum ].animations[(cent->currentState.legsAnim & ~ANIM_TOGGLEBIT)].initialLerp+0.000005f)) / (cgs.clientinfo[ cent->currentState.clientNum ].animations[(cent->currentState.legsAnim & ~ANIM_TOGGLEBIT)].numFrames+0.000005f);
                          cg.iBobDecay = cg.time + (int)((1 / cg.fBobMultiplier) * 1000);
                          //CG_Printf("fracsin %f\n", cg.fBobMultiplier);
                       }
