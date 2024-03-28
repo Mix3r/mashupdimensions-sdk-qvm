@@ -753,7 +753,7 @@ static int CG_CalcViewValues( void ) {
 	cg.xyspeed = sqrt( ps->velocity[0] * ps->velocity[0] +
 		ps->velocity[1] * ps->velocity[1] );
 
-	cg.bobcycle2 = ps->bobCycle; // leilei - copy the bobcycle so we can use it directly elsewhere
+	//cg.bobcycle2 = ps->bobCycle; // leilei - copy the bobcycle so we can use it directly elsewhere
 
 	VectorCopy( ps->origin, cg.refdef.vieworg );
 	VectorCopy( ps->viewangles, cg.refdefViewAngles );

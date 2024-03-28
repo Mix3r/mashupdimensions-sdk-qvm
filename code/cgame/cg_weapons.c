@@ -1184,7 +1184,7 @@ static void CG_CalculateWeaponPosition( vec3_t origin, vec3_t angles )
 			VectorMA (origin, up[0], forward, origin);
                 break;
                 case 3:
-                        forward[1] = ( cg.bobcycle2 ) * (1.0f / 41.0f);
+                        forward[1] = cg.bobfracsin * (1.0f / 41.0f);
 			forward[2] =  0.001f * scale;
 			if (forward[2] < 0) forward[2] *= -1;
 			VectorMA (origin, (sin(forward[1]) * 1.5) * forward[2], right, origin);

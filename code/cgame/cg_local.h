@@ -565,13 +565,13 @@ typedef struct {
 	int			stepTime;
 
 	float		duckChange;				// for duck viewheight smoothing
-	int			duckTime;
+	int		duckTime;
 
 	float		landChange;				// for landing hard
-	int			landTime;
+	int		landTime;
 
 	// input state sent to server
-	int			weaponSelect;
+	int		weaponSelect;
 
 	// auto rotating items
 	vec3_t		autoAngles;
@@ -707,9 +707,10 @@ typedef struct {
 	// temp working variables for player view
 	float		bobfracsin;
 	float		fBobMultiplier;
-	float		bobcycle2; /* leilei - for more bobbing styles */
+	int		iBobDecay;
 	float		xyspeed;
-	int     nextOrbitTime;
+
+	int             nextOrbitTime;
 
 	// development tool
 	refEntity_t		testModelEntity;
