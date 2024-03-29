@@ -371,11 +371,7 @@ CG_OffsetFirstPersonView
 static void CG_OffsetFirstPersonView( void ) {
 	float			*origin;
 	float			*angles;
-	float			bob;
-	float			ratio;
 	float			delta;
-	float			speed;
-	float			f;
 	vec3_t			predictedVelocity;
 	
 	if ( cg.snap->ps.pm_type == PM_INTERMISSION ) {
@@ -399,26 +395,26 @@ static void CG_OffsetFirstPersonView( void ) {
 
 	// add angles based on damage kick
 	if ( cg.damageTime && !CG_IsARoundBasedGametype(cgs.gametype)) {
-		ratio = cg.time - cg.damageTime;
-		if ( ratio < DAMAGE_DEFLECT_TIME ) {
-			ratio /= DAMAGE_DEFLECT_TIME;
-			angles[PITCH] += ratio * cg.v_dmg_pitch * cg_kickScale.value;
-			angles[ROLL] += ratio * cg.v_dmg_roll * cg_kickScale.value;
+		predictedVelocity[0] = cg.time - cg.damageTime;
+		if ( predictedVelocity[0] < DAMAGE_DEFLECT_TIME ) {
+			predictedVelocity[0] /= DAMAGE_DEFLECT_TIME;
+			angles[PITCH] += predictedVelocity[0] * cg.v_dmg_pitch * cg_kickScale.value;
+			angles[ROLL] += predictedVelocity[0] * cg.v_dmg_roll * cg_kickScale.value;
 		} else {
-			ratio = 1.0 - ( ratio - DAMAGE_DEFLECT_TIME ) / DAMAGE_RETURN_TIME;
-			if ( ratio > 0 ) {
-				angles[PITCH] += ratio * cg.v_dmg_pitch * cg_kickScale.value;
-				angles[ROLL] += ratio * cg.v_dmg_roll * cg_kickScale.value;
+			predictedVelocity[0] = 1.0 - ( predictedVelocity[0] - DAMAGE_DEFLECT_TIME ) / DAMAGE_RETURN_TIME;
+			if ( predictedVelocity[0] > 0 ) {
+				angles[PITCH] += predictedVelocity[0] * cg.v_dmg_pitch * cg_kickScale.value;
+				angles[ROLL] += predictedVelocity[0] * cg.v_dmg_roll * cg_kickScale.value;
 			}
 		}
 	}
 
 	// add pitch based on fall kick
 #if 0
-	ratio = ( cg.time - cg.landTime) / FALL_TIME;
-	if (ratio < 0)
-		ratio = 0;
-	angles[PITCH] += ratio * cg.fall_value;
+	predictedVelocity[0] = ( cg.time - cg.landTime) / FALL_TIME;
+	if (predictedVelocity[0] < 0)
+		predictedVelocity[0] = 0;
+	angles[PITCH] += predictedVelocity[0] * cg.fall_value;
 #endif
 
 	// add angles based on velocity
@@ -432,45 +428,50 @@ static void CG_OffsetFirstPersonView( void ) {
 
 	// add angles based on bob
 
-	if ( cg_bob.integer == 6 ) // leilei - sweeney bob
-	{
+	if ( cg_bob.integer ) {
+            if ( cg_bob.integer == 6 ) { // leilei - sweeney bob
 		vec3_t		forward, right, up;
-		speed = cg.xyspeed;
-		if (speed > 320) {
-			speed = 320;
+		predictedVelocity[1] = cg.xyspeed;
+		if (predictedVelocity[1] > 320) {
+		        predictedVelocity[1] = 320;
 		}
-		delta = cg.bobfracsin * 0.006 * speed;
-		//if (cg.bobcycle & 1) {
-		//	delta = -delta;
-		//}
+		delta = cg.bobfracsin * 0.006 * predictedVelocity[1];
 		AngleVectors (angles, forward, right, up);
 		VectorMA (origin, delta, right, origin);
-	}
-	else if ( cg_bob.integer ) 
-	{
+	    } else {
 		// make sure the bob is visible even at low speeds
-		speed = cg.xyspeed > 200 ? cg.xyspeed : 200;
+		predictedVelocity[1] = cg.xyspeed > 200 ? cg.xyspeed : 200;
 
-		//delta = cg.bobfracsin * cg_bobpitch.value * speed;
-                delta = sin(cg.time * 0.004 * M_PI * (1000/(cg.iBobDuration+0.0000001f))) * cg_bobpitch.value * 0.25 * speed; // twice as fast as bobfracsin
+		predictedVelocity[2] = cg.iBobDuration+0.0000001f;
+                delta = 1 + (cg.iBobDecay-cg.time)/predictedVelocity[2];
+                if (delta > 1) {
+                        delta = 1;
+                } else if (delta < 0) {
+                        delta = 0;
+                }
+                delta = sin(cg.time * 0.004 * M_PI * (1000/predictedVelocity[2])) * cg_bobpitch.value * 0.25 * delta * predictedVelocity[1]; // twice as fast as bobfracsin
+
 		if (cg.predictedPlayerState.pm_flags & PMF_DUCKED) {
-			delta *= 3;		// crouching
+			delta *= 3; // crouching
 		}
 		// leilei - no pitch for 3 or 4
 		if ( cg_bob.integer == 1 || cg_bob.integer == 2 ) {
 			angles[PITCH] += delta;
 		}
-		delta = cg.bobfracsin * cg_bobroll.value * speed;
+		delta = cg.bobfracsin * cg_bobroll.value * predictedVelocity[1];
 		if (cg.predictedPlayerState.pm_flags & PMF_DUCKED) {
-			delta *= 3;		// crouching accentuates roll
+			delta *= 3; // crouching accentuates roll
 		}
-		//if (cg.bobcycle & 1) {
-		//	delta = -delta;
-		//}
 		// leilei - no roll for 2 or 4
 		if ( cg_bob.integer == 1 || cg_bob.integer == 3 || cg_bob.integer == 5 ) {
 			angles[ROLL] += delta;
 		}
+            }
+            predictedVelocity[2] = cg.bobfracsin * cg.xyspeed * cg_bobup.value;
+	    if (predictedVelocity[2] > 6) {
+	        predictedVelocity[2] = 6;
+	    }
+	    origin[2] += predictedVelocity[2];
 	}
 
 //===================================
@@ -481,33 +482,24 @@ static void CG_OffsetFirstPersonView( void ) {
 	// smooth out duck height changes
 	predictedVelocity[2] = cg.time - cg.duckTime;
 	if ( predictedVelocity[2] < DUCK_TIME) {
-		cg.refdef.vieworg[2] -= cg.duckChange * (DUCK_TIME - predictedVelocity[2]) / DUCK_TIME;
-	}
-
-	if ( cg_bob.integer ) {
-		// add bob height
-		bob = cg.bobfracsin * cg.xyspeed * cg_bobup.value;
-		if (bob > 6) {
-			bob = 6;
-		}
-		origin[2] += bob;
+	        cg.refdef.vieworg[2] -= cg.duckChange * (DUCK_TIME - predictedVelocity[2]) / DUCK_TIME;
 	}
 
 	// add fall height
 	delta = cg.time - cg.landTime;
 	if ( delta < LAND_DEFLECT_TIME ) {
-		f = delta / LAND_DEFLECT_TIME;
+		predictedVelocity[0] = delta / LAND_DEFLECT_TIME;
                 if (cg.landChange > 0) {
-                        f = -f;
+                        predictedVelocity[0] = -predictedVelocity[0];
                 }
-		cg.refdef.vieworg[2] += cg.landChange * f;
+		cg.refdef.vieworg[2] += cg.landChange * predictedVelocity[0];
 	} else if ( delta < LAND_DEFLECT_TIME + LAND_RETURN_TIME ) {
 		delta -= LAND_DEFLECT_TIME;
-		f = 1.0 - ( delta / LAND_RETURN_TIME );
+		predictedVelocity[0] = 1.0 - ( delta / LAND_RETURN_TIME );
                 if (cg.landChange > 0) {
-                        f = -f;
+                        predictedVelocity[0] = -predictedVelocity[0];
                 }
-		cg.refdef.vieworg[2] += cg.landChange * f;
+		cg.refdef.vieworg[2] += cg.landChange * predictedVelocity[0];
 	}
 
 	// add step offset
