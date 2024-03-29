@@ -452,7 +452,7 @@ static void CG_OffsetFirstPersonView( void ) {
 		speed = cg.xyspeed > 200 ? cg.xyspeed : 200;
 
 		//delta = cg.bobfracsin * cg_bobpitch.value * speed;
-                delta = sin(cg.time * 0.001 * M_PI * cg.fBobMultiplier) * cg_bobpitch.value * speed; ///rtcw
+                delta = sin(cg.time * 0.004 * M_PI * (1000/(cg.iBobDuration+0.0000001f))) * cg_bobpitch.value * 0.25 * speed; // twice as fast as bobfracsin
 		if (cg.predictedPlayerState.pm_flags & PMF_DUCKED) {
 			delta *= 3;		// crouching
 		}
@@ -746,9 +746,14 @@ static int CG_CalcViewValues( void ) {
 		return CG_CalcFov();
 	}
 
-	//cg.bobcycle = ( ps->bobCycle & 128 ) >> 7;
-	cg.bobfracsin = sin(cg.time * 0.001 * M_PI * cg.fBobMultiplier * 2);
-        //CG_Printf("bobcycle %i\n", ps->bobCycle);
+        cg.xyspeed = cg.iBobDuration+0.0000001f;
+        cg.bobfracsin = 1 + (cg.iBobDecay-cg.time)/cg.xyspeed;
+        if (cg.bobfracsin > 1) {
+                cg.bobfracsin = 1;
+        } else if (cg.bobfracsin < 0) {
+                cg.bobfracsin = 0;
+        }
+	cg.bobfracsin = sin(cg.time * 0.002 * M_PI * (1000/cg.xyspeed)) * cg.bobfracsin;
 
 	cg.xyspeed = sqrt( ps->velocity[0] * ps->velocity[0] +
 		ps->velocity[1] * ps->velocity[1] );
