@@ -1154,13 +1154,7 @@ static void CG_CalculateWeaponPosition( vec3_t origin, vec3_t angles )
 	VectorCopy( cg.refdef.vieworg, origin );
 	VectorCopy( cg.refdefViewAngles, angles );
 
-	// on odd legs, invert some angles
-
-	//if ( cg.bobfracsin < 0.5 ) {
-	//	scale = -cg.xyspeed;
-	//} else {
-		scale = cg.xyspeed;
-	//}
+	scale = cg.xyspeed_lerp;
 
 	// gun angles from bobbing
 
@@ -1173,23 +1167,25 @@ static void CG_CalculateWeaponPosition( vec3_t origin, vec3_t angles )
 		AngleVectors (angles, forward, right, up);
 
                 switch (cg_bobmodel.integer) {
-                case 1:
+                   case 1:
                         forward[0] = scale * 2 * 0.05 * cg.bobfracsin * 0.04;
 			VectorMA (origin, forward[0], right, origin);
 			forward[0] = cos(scale * 0.07 * cg.bobfracsin * 0.05) - cos(scale * 0.07 * cg.bobfracsin * 0.1);
 			VectorMA (origin, forward[0], up, origin);
-                break;
-                case 2:
+                        break;
+                   case 2:
                         up[0] = scale * 2 * 0.05 * cg.bobfracsin * 0.04;
 			VectorMA (origin, up[0], forward, origin);
-                break;
-                case 3:
+                        break;
+                   case 3:
+                        fracsin = (cg.bobfracsin + 1) * 128;
                         forward[1] = cg.bobfracsin * (1.0f / 41.0f);
 			forward[2] =  0.001f * scale;
 			if (forward[2] < 0) forward[2] *= -1;
 			VectorMA (origin, (sin(forward[1]) * 1.5) * forward[2], right, origin);
 			VectorMA (origin, (sin(forward[1] * 2) * 0.5) * forward[2], up, origin);
-                break;
+                        break;
+                   // end cases
                 }
                 delta = 1;
 	} else {
@@ -1202,7 +1198,7 @@ static void CG_CalculateWeaponPosition( vec3_t origin, vec3_t angles )
 
 		angles[ROLL] += scale * cg.bobfracsin * 0.005;
 		angles[YAW] += scale * cg.bobfracsin * 0.01;
-		angles[PITCH] += cg.xyspeed * cg.bobfracsin * 0.005;
+		angles[PITCH] += cg.xyspeed_lerp * cg.bobfracsin * 0.005;
                 delta = 2;
 	}
 
@@ -1227,7 +1223,7 @@ static void CG_CalculateWeaponPosition( vec3_t origin, vec3_t angles )
 
 	// idle drift
 	if (delta) {
-		scale = cg.xyspeed + 40;
+		scale = cg.xyspeed_lerp + 40;
 		//fracsin = sin( cg.time * 0.001 );
                 fracsin = sin( cg.time * 0.0021 );
 		angles[ROLL] += scale * fracsin * 0.01;
@@ -1239,7 +1235,7 @@ static void CG_CalculateWeaponPosition( vec3_t origin, vec3_t angles )
                         cg.headEndYaw = cg.time;
                         //CG_Printf("aangleF: %.4f \n", cg.autoAnglesFast[0] );
                 } else if (delta > 1 || cg.landChange > 0) {
-                        fracsin = cg.xyspeed * 0.09;
+                        fracsin = cg.xyspeed_lerp * 0.09;
                         if (fracsin > 55) {
                                 fracsin = 55;
                         }

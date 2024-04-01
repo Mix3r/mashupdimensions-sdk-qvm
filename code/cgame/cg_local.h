@@ -693,7 +693,7 @@ typedef struct {
 	float		headEndYaw;
 	int		headEndTime;
 	float		headStartPitch;
-	float		headStartYaw;
+
 	int		headStartTime;
 
 	// view movement
@@ -709,6 +709,7 @@ typedef struct {
 	int		iBobDuration;
 	int		iBobDecay;
 	float		xyspeed;
+        float		xyspeed_lerp;
 
 	int             nextOrbitTime;
 

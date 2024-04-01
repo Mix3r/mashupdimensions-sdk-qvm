@@ -167,6 +167,7 @@ void CG_DrawInformation( void ) {
                 cg.mg_subst = "machinegun";
         }
 
+        cg.xyspeed_lerp = 0;
         levelshot = trap_R_RegisterShaderNoMip( va( "surrogates/%s_lg.tga", s ) );
         if (levelshot) {
                 cg.lg_subst = "f";

@@ -1501,7 +1501,6 @@ static void CG_PlayerAnimation(centity_t *cent, int *legsOld, int *legs, float *
 
                 switch((cent->currentState.legsAnim & ~ANIM_TOGGLEBIT)) {
                    case LEGS_IDLE:
-                      ///
                       if ( cgs.clientinfo[ cent->currentState.clientNum ].animations[TORSO_ATTACK].firstFrame == cgs.clientinfo[ cent->currentState.clientNum ].animations[LEGS_WALK].firstFrame ) {
                          //CG_Printf("effect %i\n", cent->pe.torso.frame);
                          if (cent->pe.torso.frame >= 101 && cent->pe.torso.frame < 106) {
@@ -1522,10 +1521,8 @@ static void CG_PlayerAnimation(centity_t *cent, int *legsOld, int *legs, float *
                             cgs.clientinfo[ cent->currentState.clientNum ].animations[LEGS_IDLE].loopFrames = 15;
                          }
                       }
-                      ///
                       break;
                    case LEGS_IDLECR:
-                      ///
                       if ( cgs.clientinfo[ cent->currentState.clientNum ].animations[TORSO_ATTACK].firstFrame == cgs.clientinfo[ cent->currentState.clientNum ].animations[LEGS_WALK].firstFrame ) {
                          //CG_Printf("effect %i\n", cent->pe.torso.frame);
                          if (cent->pe.torso.frame >= 101 && cent->pe.torso.frame < 103) {
@@ -1542,18 +1539,15 @@ static void CG_PlayerAnimation(centity_t *cent, int *legsOld, int *legs, float *
                             cgs.clientinfo[ cent->currentState.clientNum ].animations[LEGS_IDLECR].loopFrames = 13;
                          }
                       }
-                      ///
                       break;
                    case LEGS_RUN:
                    case LEGS_BACK:
                    case LEGS_STRAFE_LEFT:
                    case LEGS_STRAFE_RIGHT:
-                      ///
                       *legsOld = cgs.clientinfo[ cent->currentState.clientNum ].animations[(cent->currentState.legsAnim & ~ANIM_TOGGLEBIT)].firstFrame; // left footstep frame
                       *legs = (int)(cgs.clientinfo[ cent->currentState.clientNum ].animations[(cent->currentState.legsAnim & ~ANIM_TOGGLEBIT)].numFrames*0.5); // frame count from left to right footstep
                       *legsBackLerp = *legsOld + *legs; // to get middle frame of run animation
                       if ((cent->pe.legs.frame <= *legsBackLerp && cgs.clientinfo[ cent->currentState.clientNum ].animations[MAX_ANIMATIONS].firstFrame > *legsBackLerp) || (cent->pe.legs.frame >= *legsBackLerp && cgs.clientinfo[ cent->currentState.clientNum ].animations[MAX_ANIMATIONS].firstFrame < *legsBackLerp)) {
-                         cgs.clientinfo[ cent->currentState.clientNum ].animations[MAX_ANIMATIONS].firstFrame = cent->pe.legs.frame;
                          if (cgs.clientinfo[ cent->currentState.clientNum ].animations[MAX_ANIMATIONS].numFrames > cg.time - 600) {
                             switch (cgs.clientinfo[ cent->currentState.clientNum ].animations[MAX_ANIMATIONS].loopFrames) {
 			       case 2:
@@ -1567,33 +1561,17 @@ static void CG_PlayerAnimation(centity_t *cent, int *legsOld, int *legs, float *
 				  break;
 		            }
                          }
-                      } else {
-                         cgs.clientinfo[ cent->currentState.clientNum ].animations[MAX_ANIMATIONS].firstFrame = cent->pe.legs.frame;
                       }
-
-                      if (cent->currentState.number == cg.snap->ps.clientNum) {
-                         cg.iBobDuration = cgs.clientinfo[ cent->currentState.clientNum ].animations[(cent->currentState.legsAnim & ~ANIM_TOGGLEBIT)].initialLerp * cgs.clientinfo[ cent->currentState.clientNum ].animations[(cent->currentState.legsAnim & ~ANIM_TOGGLEBIT)].numFrames;
-                         cg.iBobDecay = cg.time + cg.iBobDuration;
-                         //CG_Printf("ibobduration %i\n", cg.iBobDuration);
-                      }
+                      cgs.clientinfo[ cent->currentState.clientNum ].animations[MAX_ANIMATIONS].firstFrame = cent->pe.legs.frame;
                       break;
-                   //case LEGS_JUMP:
-                   //case LEGS_JUMPB:
-                   //   cg.iBobDecay = cg.time + cg.iBobDuration;
-                   //   break;
-
                    // end cases
                 }
-
                 CG_RunLerpFrame(ci, &cent->pe.legs, cent->currentState.legsAnim, speedScale);
 	}
 
 	*legsOld = cent->pe.legs.oldFrame;
 	*legs = cent->pe.legs.frame;
 	*legsBackLerp = cent->pe.legs.backlerp;
-
-        //////
-        //////
 
 	CG_RunLerpFrame(ci, &cent->pe.torso, cent->currentState.torsoAnim, speedScale);
 

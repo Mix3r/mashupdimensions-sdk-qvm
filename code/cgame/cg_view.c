@@ -390,6 +390,42 @@ static void CG_OffsetFirstPersonView( void ) {
 		return;
 	}
 
+        //Mix3r_Durachok: bob duration resolving, depending on local pawn anim
+        //CG_Printf("legs anim: %i \n", (cg.predictedPlayerState.legsAnim & ~ANIM_TOGGLEBIT));
+        switch((cg.predictedPlayerState.legsAnim & ~ANIM_TOGGLEBIT)) {
+            case LEGS_RUN:
+            case LEGS_BACK:
+            case LEGS_STRAFE_LEFT:
+            case LEGS_STRAFE_RIGHT:
+            case LEGS_WALK:
+            case LEGS_BACKWALK:
+                cg.iBobDecay = (cg.predictedPlayerState.legsAnim & ~ANIM_TOGGLEBIT);
+                cg.iBobDuration = cgs.clientinfo[ cg.predictedPlayerState.clientNum ].animations[cg.iBobDecay].initialLerp * cgs.clientinfo[ cg.predictedPlayerState.clientNum ].animations[cg.iBobDecay].numFrames;
+                if (cg.predictedPlayerState.powerups[PW_HASTE]) {
+                    cg.iBobDuration *= 0.666666;
+                    delta = 1-(cg.predictedPlayerState.powerups[PW_HASTE]-cg.time) / 1000.0f;
+                    if (delta < 0) {
+                        delta = 0;
+                    } else if (delta > 1) {
+                        delta = 1;
+                    }
+                } else {
+                    delta = 0;
+                }
+                switch(cg.iBobDecay) {
+                    case LEGS_WALK:
+                    case LEGS_BACKWALK:
+                        cg.iBobDecay = cg.time - cg.iBobDuration * 0.5 - cg.iBobDuration * 0.5 * delta;
+                        break;
+                    default:
+                        cg.iBobDecay = cg.time - cg.iBobDuration * delta;
+                        break;
+                    // end cases
+                }
+                break;
+            // end cases
+        }
+
 	// add angles based on weapon kick
 	VectorAdd (angles, cg.kick_angles, angles);
 
@@ -440,6 +476,7 @@ static void CG_OffsetFirstPersonView( void ) {
 		VectorMA (origin, delta, right, origin);
 	    } else {
 		// make sure the bob is visible even at low speeds
+                //CG_Printf("xyspd: %.4f xyspd_lerp: %.4f \n", cg.xyspeed, cg.xyspeed_lerp );
 		predictedVelocity[1] = cg.xyspeed > 200 ? cg.xyspeed : 200;
 
 		predictedVelocity[2] = cg.iBobDuration+0.0000001f;
@@ -749,8 +786,7 @@ static int CG_CalcViewValues( void ) {
 
 	cg.xyspeed = sqrt( ps->velocity[0] * ps->velocity[0] +
 		ps->velocity[1] * ps->velocity[1] );
-
-	//cg.bobcycle2 = ps->bobCycle; // leilei - copy the bobcycle so we can use it directly elsewhere
+        cg.xyspeed_lerp = cg.xyspeed_lerp + (cg.xyspeed-cg.xyspeed_lerp) * cg.frametime * 0.009;
 
 	VectorCopy( ps->origin, cg.refdef.vieworg );
 	VectorCopy( ps->viewangles, cg.refdefViewAngles );
