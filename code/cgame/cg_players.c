@@ -1495,6 +1495,8 @@ static void CG_PlayerAnimation(centity_t *cent, int *legsOld, int *legs, float *
 	if (cent->pe.legs.yawing && (cent->currentState.legsAnim & ~ANIM_TOGGLEBIT) == LEGS_IDLE) {
 		CG_RunLerpFrame(ci, &cent->pe.legs, LEGS_TURN, speedScale);
 	} else {
+                *torsoOld = 0;
+
                 // Mix3r_Durachok: weird hack for angelyss one-piece-model idle-shooting-anim
                 // angelyss/animation.cfg modified (torso_attack first frame fake anim set to 101 to detect angelyss model easily)
                 // even if torso is fake, we still can catch it's current played frame and use it to set some decent tits-from-legs-piece frame:
@@ -1549,22 +1551,33 @@ static void CG_PlayerAnimation(centity_t *cent, int *legsOld, int *legs, float *
                       *legsBackLerp = *legsOld + *legs; // to get middle frame of run animation
                       if ((cent->pe.legs.frame <= *legsBackLerp && cgs.clientinfo[ cent->currentState.clientNum ].animations[MAX_ANIMATIONS].firstFrame > *legsBackLerp) || (cent->pe.legs.frame >= *legsBackLerp && cgs.clientinfo[ cent->currentState.clientNum ].animations[MAX_ANIMATIONS].firstFrame < *legsBackLerp)) {
                          if (cgs.clientinfo[ cent->currentState.clientNum ].animations[MAX_ANIMATIONS].numFrames > cg.time - 600) {
-                            switch (cgs.clientinfo[ cent->currentState.clientNum ].animations[MAX_ANIMATIONS].loopFrames) {
-			       case 2:
-			          trap_S_StartSound(NULL, cent->currentState.number, CHAN_BODY,cgs.media.footsteps[ FOOTSTEP_METAL ][rand()&3]);
-			          break;
-                               case 3:
-				  trap_S_StartSound(NULL, cent->currentState.number, CHAN_BODY,cgs.media.footsteps[ FOOTSTEP_SPLASH ][rand()&3]);
-				  break;
-			       default:
-				  trap_S_StartSound(NULL, cent->currentState.number, CHAN_BODY,cgs.media.footsteps[ cgs.clientinfo[ cent->currentState.clientNum ].footsteps ][rand()&3]);
-				  break;
-		            }
+                            *torsoOld = 1;
                          }
                       }
                       cgs.clientinfo[ cent->currentState.clientNum ].animations[MAX_ANIMATIONS].firstFrame = cent->pe.legs.frame;
                       break;
+                   case LEGS_LAND:
+                      if (cgs.clientinfo[ cent->currentState.clientNum ].animations[MAX_ANIMATIONS].numFrames > cg.time - 600) {
+                            // Mix3r_Durachok: let's shut down further run footsteps until next footstep event, but play this one now
+                            cgs.clientinfo[ cent->currentState.clientNum ].animations[MAX_ANIMATIONS].numFrames = 0;
+                            *torsoOld = 1;
+                      }
+                      break;
                    // end cases
+                }
+                if (*torsoOld == 1) {
+                   switch (cgs.clientinfo[ cent->currentState.clientNum ].animations[MAX_ANIMATIONS].loopFrames) {
+		       case 2:
+		           trap_S_StartSound(NULL, cent->currentState.number, CHAN_BODY,cgs.media.footsteps[ FOOTSTEP_METAL ][rand()&3]);
+		           break;
+                       case 3:
+		           trap_S_StartSound(NULL, cent->currentState.number, CHAN_BODY,cgs.media.footsteps[ FOOTSTEP_SPLASH ][rand()&3]);
+		           break;
+		       default:
+		           trap_S_StartSound(NULL, cent->currentState.number, CHAN_BODY,cgs.media.footsteps[ cgs.clientinfo[ cent->currentState.clientNum ].footsteps ][rand()&3]);
+		           break;
+                       // end cases
+		   }
                 }
                 CG_RunLerpFrame(ci, &cent->pe.legs, cent->currentState.legsAnim, speedScale);
 	}

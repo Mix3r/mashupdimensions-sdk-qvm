@@ -168,6 +168,7 @@ void CG_DrawInformation( void ) {
         }
 
         cg.xyspeed_lerp = 0;
+        cg.bobfracsin = 0;
         levelshot = trap_R_RegisterShaderNoMip( va( "surrogates/%s_lg.tga", s ) );
         if (levelshot) {
                 cg.lg_subst = "f";

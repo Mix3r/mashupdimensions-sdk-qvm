@@ -476,7 +476,7 @@ static void CG_OffsetFirstPersonView( void ) {
 		VectorMA (origin, delta, right, origin);
 	    } else {
 		// make sure the bob is visible even at low speeds
-                //CG_Printf("xyspd: %.4f xyspd_lerp: %.4f \n", cg.xyspeed, cg.xyspeed_lerp );
+                CG_Printf("xyspd: %.4f xyspd_lerp: %.4f fracsin_lerp: %.4f \n", cg.xyspeed, cg.xyspeed_lerp, cg.bobfracsin);
 		predictedVelocity[1] = cg.xyspeed > 200 ? cg.xyspeed : 200;
 
 		predictedVelocity[2] = cg.iBobDuration+0.0000001f;
@@ -775,20 +775,22 @@ static int CG_CalcViewValues( void ) {
 		return CG_CalcFov();
 	}
 
-        cg.xyspeed = cg.iBobDuration+0.0000001f;
-        cg.bobfracsin = 1 + (cg.iBobDecay-cg.time)/cg.xyspeed;
-        if (cg.bobfracsin > 1) {
-                cg.bobfracsin = 1;
-        } else if (cg.bobfracsin < 0) {
-                cg.bobfracsin = 0;
-        }
-	cg.bobfracsin = sin(cg.time * 0.002 * M_PI * (1000/cg.xyspeed)) * cg.bobfracsin;
-
-	cg.xyspeed = sqrt( ps->velocity[0] * ps->velocity[0] +
-		ps->velocity[1] * ps->velocity[1] );
+        cg.xyspeed = sqrt( ps->velocity[0] * ps->velocity[0] + ps->velocity[1] * ps->velocity[1] );
         cg.xyspeed_lerp = cg.xyspeed_lerp + (cg.xyspeed-cg.xyspeed_lerp) * cg.frametime * 0.009;
 
-	VectorCopy( ps->origin, cg.refdef.vieworg );
+        // Mix3r_Durachok: resolving bob phase with linear interpolation between -1:1
+        // let's borrow cg.refdef.vieworg storage, because it's values gonna be replaced soon anyway :)
+        cg.refdef.vieworg[0] = cg.iBobDuration+0.0000001f;
+        cg.refdef.vieworg[1] = 1 + (cg.iBobDecay-cg.time)/cg.refdef.vieworg[0];
+        if (cg.refdef.vieworg[1] > 1) {
+                cg.refdef.vieworg[1] = 1;
+        } else if (cg.refdef.vieworg[1] < 0) {
+                cg.refdef.vieworg[1] = 0;
+        }
+	cg.refdef.vieworg[1] = sin(cg.time * 0.002 * M_PI * (1000/cg.refdef.vieworg[0])) * cg.refdef.vieworg[1];
+        cg.bobfracsin = cg.bobfracsin + (cg.refdef.vieworg[1]-cg.bobfracsin) * cg.frametime * cg_leiDebug.value;  //0.02
+
+	VectorCopy( ps->origin, cg.refdef.vieworg ); // replacement happens here :)
 	VectorCopy( ps->viewangles, cg.refdefViewAngles );
 
 	if (cg_cameraOrbit.integer) {
