@@ -476,7 +476,7 @@ static void CG_OffsetFirstPersonView( void ) {
 		VectorMA (origin, delta, right, origin);
 	    } else {
 		// make sure the bob is visible even at low speeds
-                CG_Printf("xyspd: %.4f xyspd_lerp: %.4f fracsin_lerp: %.4f \n", cg.xyspeed, cg.xyspeed_lerp, cg.bobfracsin);
+                //CG_Printf("xyspd: %.4f xyspd_lerp: %.4f fracsin_lerp: %.4f \n", cg.xyspeed, cg.xyspeed_lerp, cg.bobfracsin);
 		predictedVelocity[1] = cg.xyspeed > 200 ? cg.xyspeed : 200;
 
 		predictedVelocity[2] = cg.iBobDuration+0.0000001f;
@@ -788,7 +788,11 @@ static int CG_CalcViewValues( void ) {
                 cg.refdef.vieworg[1] = 0;
         }
 	cg.refdef.vieworg[1] = sin(cg.time * 0.002 * M_PI * (1000/cg.refdef.vieworg[0])) * cg.refdef.vieworg[1];
-        cg.bobfracsin = cg.bobfracsin + (cg.refdef.vieworg[1]-cg.bobfracsin) * cg.frametime * cg_leiDebug.value;  //0.02
+        cg.bobfracsin = cg.bobfracsin + (cg.refdef.vieworg[1]-cg.bobfracsin) * cg.frametime * 0.15778;  //0.15778;
+        //if (cg.bobfracsin > cg_gun_x.value) {
+        //        cg_gun_x.value = cg.bobfracsin * 1.0f;
+        //}
+        //CG_Printf("cg_gun_x: %.5f \n", cg_gun_x.value);
 
 	VectorCopy( ps->origin, cg.refdef.vieworg ); // replacement happens here :)
 	VectorCopy( ps->viewangles, cg.refdefViewAngles );
