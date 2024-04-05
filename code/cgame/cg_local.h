@@ -692,7 +692,7 @@ typedef struct {
 	float		headEndPitch[MAX_WEAPONS];
 	float		headEndYaw;
 	int		headEndTime;
-	float		headStartPitch;
+	//float		headStartPitch;
 
 	int		headStartTime;
 
@@ -708,6 +708,7 @@ typedef struct {
 	float		bobfracsin;
 	int		iBobDuration;
 	int		iBobDecay;
+        int             iBobPhase;
 	float		xyspeed;
         float		xyspeed_lerp;
 
