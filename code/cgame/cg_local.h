@@ -706,9 +706,9 @@ typedef struct {
 
 	// temp working variables for player view
 	float		bobfracsin;
-	int		iBobDuration;
 	int		iBobDecay;
-        int             iBobPhase;
+        int		iBobDuration;
+        float           fBobFraction;
 	float		xyspeed;
         float		xyspeed_lerp;
 

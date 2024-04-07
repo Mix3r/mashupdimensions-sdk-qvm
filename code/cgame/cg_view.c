@@ -399,27 +399,28 @@ static void CG_OffsetFirstPersonView( void ) {
             case LEGS_STRAFE_RIGHT:
             case LEGS_WALK:
             case LEGS_BACKWALK:
+            case LEGS_WALKCR:
+            case LEGS_BACKCR:
                 cg.iBobDecay = (cg.predictedPlayerState.legsAnim & ~ANIM_TOGGLEBIT);
                 cg.iBobDuration = cgs.clientinfo[ cg.predictedPlayerState.clientNum ].animations[cg.iBobDecay].initialLerp * cgs.clientinfo[ cg.predictedPlayerState.clientNum ].animations[cg.iBobDecay].numFrames;
-                //cg.iBobDuration = cg.iBobDuration + ((cgs.clientinfo[ cg.predictedPlayerState.clientNum ].animations[cg.iBobDecay].initialLerp * cgs.clientinfo[ cg.predictedPlayerState.clientNum ].animations[cg.iBobDecay].numFrames)-cg.iBobDuration)*(cg.frametime*cg_leiDebug.value+1);
                 if (cg.predictedPlayerState.powerups[PW_HASTE]) {
                     cg.iBobDuration *= 0.666666;
-                    delta = 1-(cg.predictedPlayerState.powerups[PW_HASTE]-cg.time) / 1000.0f;
-                    if (delta < 0) {
-                        delta = 0;
-                    } else if (delta > 1) {
+                    delta = (cg.predictedPlayerState.powerups[PW_HASTE]-cg.time) / 1000.0f;
+                    if (delta > 1) {
                         delta = 1;
                     }
                 } else {
-                    delta = 0;
+                    delta = 1;
                 }
                 switch(cg.iBobDecay) {
                     case LEGS_WALK:
                     case LEGS_BACKWALK:
-                        cg.iBobDecay = cg.time - cg.iBobDuration * 0.5 - cg.iBobDuration * 0.5 * delta;
+                    case LEGS_WALKCR:
+                    case LEGS_BACKCR:
+                        cg.iBobDecay = cg.iBobDuration * 0.5 * delta;
                         break;
                     default:
-                        cg.iBobDecay = cg.time - cg.iBobDuration * delta;
+                        cg.iBobDecay = cg.iBobDuration * delta;
                         break;
                     // end cases
                 }
@@ -782,57 +783,20 @@ static int CG_CalcViewValues( void ) {
         // Mix3r_Durachok: resolving bob phase with linear interpolation between -1:1
         // let's borrow cg.refdef.vieworg storage, because it's values gonna be replaced soon anyway :)
 
-        //cg.refdef.vieworg[0] = cg.iBobDuration+0.0000001f;
-        //cg.refdef.vieworg[1] = 1 + (cg.iBobDecay-cg.time)/cg.refdef.vieworg[0];
-        //if (cg.refdef.vieworg[1] > 1) {
-        //        cg.refdef.vieworg[1] = 1;
-        //} else if (cg.refdef.vieworg[1] < 0) {
-        //        cg.refdef.vieworg[1] = 0;
-        //}
-	//cg.refdef.vieworg[1] = sin(cg.time * 0.002 * M_PI * (1000/cg.refdef.vieworg[0])) * cg.refdef.vieworg[1];
+        if (cg.iBobDuration != 0) {
+            cg.refdef.vieworg[0] = (float)cg.frametime / cg.iBobDuration;
+            cg.fBobFraction += cg.refdef.vieworg[0];
 
+            //CG_Printf("div mod: %.5f \n", cg.refdef.vieworg[0]+cg.fBobOffset);
+            cg.refdef.vieworg[1] = (float)cg.iBobDecay / cg.iBobDuration;
+            cg.iBobDecay -= cg.frametime;
+            if (cg.refdef.vieworg[1] < 0) {
+                    cg.refdef.vieworg[1] = 0;
+            }
 
-         ////// another way is:
-         //cg.refdef.vieworg[0] = cg.time-cg.iBobPhase;
-         //cg.refdef.vieworg[2] = cg.iBobDuration+0.0000001f;
-         //if (cg.refdef.vieworg[0] > cg.iBobDuration) {
-         //    cg.refdef.vieworg[0] = cg.refdef.vieworg[0]-cg.iBobDuration;
-         //    if (cg.refdef.vieworg[0] > cg.iBobDuration || cg.refdef.vieworg[0] < 0) {
-         //        cg.refdef.vieworg[0] = 0;
-         //    }
-         //    cg.iBobPhase = cg.time-cg.refdef.vieworg[0];
-         //}
-         //cg.refdef.vieworg[0] = cg.refdef.vieworg[0]/cg.refdef.vieworg[2];
-
-         ///////////////
-         if (cg.iBobDuration > 0) {
-             cg.refdef.vieworg[0] = (float)cg.time / cg.iBobDuration;
-             CG_Printf("div mod: %.5f \n", cg.refdef.vieworg[0]);
-             cg.refdef.vieworg[1] = 1 + (cg.iBobDecay-cg.time)/cg.iBobDuration;
-             if (cg.refdef.vieworg[1] > 1) {
-                     cg.refdef.vieworg[1] = 1;
-             } else if (cg.refdef.vieworg[1] < 0) {
-                     cg.refdef.vieworg[1] = 0;
-             }
-             cg.refdef.vieworg[1] = sin(cg.refdef.vieworg[0] * M_PI * 2) * cg.refdef.vieworg[1];
-             cg.bobfracsin = cg.bobfracsin + (cg.refdef.vieworg[1]-cg.bobfracsin) * cg.frametime * 0.15778;  //0.15778;
-         }
-         ////////////////
-
-
-
-
-
-
-
-
-
-
-        //cg.bobfracsin = cg.bobfracsin + (cg.refdef.vieworg[1]-cg.bobfracsin) * cg.frametime * 0.15778;  //0.15778;
-        //if (cg.bobfracsin > cg_gun_x.value) {
-        //        cg_gun_x.value = cg.bobfracsin * 1.0f;
-        //}
-        //CG_Printf("cg_gun_x: %.5f \n", cg_gun_x.value);
+            cg.refdef.vieworg[1] = sin(cg.fBobFraction * M_PI * 2) * cg.refdef.vieworg[1];
+            cg.bobfracsin = cg.bobfracsin + (cg.refdef.vieworg[1]-cg.bobfracsin) * cg.frametime * 0.15778;  //0.15778;
+        }
 
 	VectorCopy( ps->origin, cg.refdef.vieworg ); // replacement happens here :)
 	VectorCopy( ps->viewangles, cg.refdefViewAngles );

@@ -1606,8 +1606,7 @@ PLAYER ANGLES
 CG_SwingAngles
 ==================
  */
-static void CG_SwingAngles(float destination, float swingTolerance, float clampTolerance,
-		float speed, float *angle, qboolean *swinging) {
+static void CG_SwingAngles(float destination, float swingTolerance, float clampTolerance, float speed, float *angle, qboolean *swinging) {
 	float swing;
 	float move;
 	float scale;
@@ -1685,7 +1684,6 @@ static void CG_AddPainTwitch(centity_t *cent, vec3_t torsoAngles) {
 	}
 }
 
-
 /*
 ===============
 CG_PlayerAngles
@@ -1700,8 +1698,6 @@ Handles seperate torso motion
   if < 45 degrees, also show in torso
 ===============
  */
-
-vec3_t eyeat;
 
 static void CG_PlayerAngles(centity_t *cent, vec3_t legs[3], vec3_t torso[3], vec3_t head[3]) {
 	vec3_t legsAngles, torsoAngles, headAngles;
