@@ -1178,12 +1178,16 @@ static void CG_CalculateWeaponPosition( vec3_t origin, vec3_t angles )
 			VectorMA (origin, up[0], forward, origin);
                         break;
                    case 3:
-                        fracsin = (cg.bobfracsin + 1) * 128;
-                        forward[1] = cg.bobfracsin * (1.0f / 41.0f);
 			forward[2] =  0.001f * scale;
 			if (forward[2] < 0) forward[2] *= -1;
-			VectorMA (origin, (sin(forward[1]) * 1.5) * forward[2], right, origin);
-			VectorMA (origin, (sin(forward[1] * 2) * 0.5) * forward[2], up, origin);
+			VectorMA (origin, (cg.bobfracsin * 1.5) * forward[2] * 3, right, origin);
+                        if (cg.bobfracsin > 0) {
+                            forward[1] = cg.bobfracsin;
+                        } else {
+                            forward[1] = -cg.bobfracsin;
+                        }
+                        forward[1] = forward[1]*2 - 1;
+			VectorMA (origin, (forward[1] * 0.5) * forward[2] * 3, up, origin);
                         break;
                    // end cases
                 }
@@ -1226,8 +1230,10 @@ static void CG_CalculateWeaponPosition( vec3_t origin, vec3_t angles )
 		scale = cg.xyspeed_lerp + 40;
 		//fracsin = sin( cg.time * 0.001 );
                 fracsin = sin( cg.time * 0.0021 );
-		angles[ROLL] += scale * fracsin * 0.01;
-		angles[YAW] += scale * fracsin * 0.01;
+		//angles[ROLL] += scale * fracsin * 0.01;
+		//angles[YAW] += scale * fracsin * 0.01;
+                angles[ROLL] += 40 * fracsin * 0.01; //// no more scale
+		angles[YAW] += 40 * fracsin * 0.01; //// no more scale
 		//angles[PITCH] += scale * fracsin * 0.01;
                 angles[PITCH] += 40 * fracsin * 0.01;
 

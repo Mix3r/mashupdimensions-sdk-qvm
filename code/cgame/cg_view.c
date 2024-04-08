@@ -417,7 +417,7 @@ static void CG_OffsetFirstPersonView( void ) {
                     case LEGS_BACKWALK:
                     case LEGS_WALKCR:
                     case LEGS_BACKCR:
-                        cg.iBobDecay = cg.iBobDuration * 0.5 * delta;
+                        cg.iBobDecay = cg.iBobDuration * delta;
                         break;
                     default:
                         cg.iBobDecay = cg.iBobDuration * delta;
@@ -482,13 +482,18 @@ static void CG_OffsetFirstPersonView( void ) {
 		predictedVelocity[1] = cg.xyspeed > 200 ? cg.xyspeed : 200;
 
 		predictedVelocity[2] = cg.iBobDuration+0.0000001f;
-                delta = 1 + (cg.iBobDecay-cg.time)/predictedVelocity[2];
-                if (delta > 1) {
-                        delta = 1;
-                } else if (delta < 0) {
+                delta = cg.iBobDecay/predictedVelocity[2];
+                if (delta < 0) {
                         delta = 0;
                 }
-                delta = sin(cg.time * 0.004 * M_PI * (1000/predictedVelocity[2])) * cg_bobpitch.value * 0.25 * delta * predictedVelocity[1]; // twice as fast as bobfracsin
+                if (cg.bobfracsin > 0) {
+                        predictedVelocity[2] = cg.bobfracsin;
+                } else {
+                        predictedVelocity[2] = -cg.bobfracsin;
+                }
+                predictedVelocity[2] = predictedVelocity[2] * 2 - 1; //fit to -1:1 range
+                delta = predictedVelocity[2] * cg_bobpitch.value * 0.25 * delta * predictedVelocity[1]; // twice as fast as cg.bobfracsin
+
 
 		if (cg.predictedPlayerState.pm_flags & PMF_DUCKED) {
 			delta *= 3; // crouching
@@ -780,6 +785,7 @@ static int CG_CalcViewValues( void ) {
         cg.xyspeed = sqrt( ps->velocity[0] * ps->velocity[0] + ps->velocity[1] * ps->velocity[1] );
         cg.xyspeed_lerp = cg.xyspeed_lerp + (cg.xyspeed-cg.xyspeed_lerp) * cg.frametime * 0.009;
 
+
         // Mix3r_Durachok: resolving bob phase with linear interpolation between -1:1
         // let's borrow cg.refdef.vieworg storage, because it's values gonna be replaced soon anyway :)
 
@@ -794,8 +800,9 @@ static int CG_CalcViewValues( void ) {
                     cg.refdef.vieworg[1] = 0;
             }
 
-            cg.refdef.vieworg[1] = sin(cg.fBobFraction * M_PI * 2) * cg.refdef.vieworg[1];
-            cg.bobfracsin = cg.bobfracsin + (cg.refdef.vieworg[1]-cg.bobfracsin) * cg.frametime * 0.15778;  //0.15778;
+            //cg.refdef.vieworg[1] = sin(cg.fBobFraction * M_PI * 2) * cg.refdef.vieworg[1];
+            //cg.bobfracsin = cg.bobfracsin + (cg.refdef.vieworg[1]-cg.bobfracsin) * cg.frametime * 0.15778;  //0.15778;
+            cg.bobfracsin = sin(cg.fBobFraction * M_PI * 2) * cg.refdef.vieworg[1];
         }
 
 	VectorCopy( ps->origin, cg.refdef.vieworg ); // replacement happens here :)
