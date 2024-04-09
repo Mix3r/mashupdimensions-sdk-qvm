@@ -1180,14 +1180,14 @@ static void CG_CalculateWeaponPosition( vec3_t origin, vec3_t angles )
                    case 3:
 			forward[2] =  0.001f * scale;
 			if (forward[2] < 0) forward[2] *= -1;
-			VectorMA (origin, (cg.bobfracsin * 1.5) * forward[2] * 3, right, origin);
                         if (cg.bobfracsin > 0) {
                             forward[1] = cg.bobfracsin;
                         } else {
                             forward[1] = -cg.bobfracsin;
                         }
-                        forward[1] = forward[1]*2 - 1;
-			VectorMA (origin, (forward[1] * 0.5) * forward[2] * 3, up, origin);
+                        forward[1] = forward[1]*2 - 1; // double frequency of cg.bobfracsin
+                        VectorMA (origin, cg.bobfracsin * forward[2], right, origin);
+			VectorMA (origin, forward[1] * 1.5 * forward[2], up, origin);
                         break;
                    // end cases
                 }
