@@ -978,6 +978,7 @@ typedef struct {
 	qhandle_t	skullShader;
         qhandle_t	ZoomReticle;
         qhandle_t	ZoomReticleCenter;
+        qhandle_t	FakeHand;
 
 	// sounds
 	sfxHandle_t	quadSound;

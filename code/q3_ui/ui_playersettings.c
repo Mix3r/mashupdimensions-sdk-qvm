@@ -44,6 +44,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define ID_MODEL		15
 #define ID_THIRDPRSON				700
 #define ID_WEAPPLACEMENT			701
+#define ID_GUNBOB			702
 #define MAX_NAMELENGTH	20
 
 
@@ -72,11 +73,21 @@ typedef struct {
 	char				playerModel[MAX_QPATH];
         menuradiobutton_s	thirdprson;
         menulist_s		weapplacement;
+        menulist_s              gunbob;
 } playersettings_t;
 
 static playersettings_t	s_playersettings;
 
 const char *weapplacement_names_ps[4];
+static const char *gunbob_names[] =
+{
+	"",
+	"",
+	"",
+	"",
+        "",
+	NULL
+};
 
 static int gamecodetoui[] = {4,2,3,0,5,1,6};
 static int uitogamecode[] = {4,6,2,3,1,5,7};
@@ -356,9 +367,10 @@ static void PlayerSettings_SetMenuItems( void ) {
 
 	// handicap
 	h = Com_Clamp( 5, 100, trap_Cvar_VariableValue("handicap") );
-	s_playersettings.handicap.curvalue = 20 - h / 5;
-        s_playersettings.thirdprson.curvalue = trap_Cvar_VariableValue( "cg_ThirdPerson" ) != 0;
+	s_playersettings.handicap.curvalue      = 20 - h / 5;
+        s_playersettings.thirdprson.curvalue    = trap_Cvar_VariableValue( "cg_ThirdPerson" ) != 0;
         s_playersettings.weapplacement.curvalue = Com_Clamp( 0, 3, trap_Cvar_VariableValue( "cg_drawGun" ) );
+        s_playersettings.gunbob.curvalue	= Com_Clamp( 0, 4, trap_Cvar_VariableValue( "cg_bobmodel" ) );
 }
 
 
@@ -384,6 +396,10 @@ static void PlayerSettings_MenuEvent( void* ptr, int event ) {
         case ID_WEAPPLACEMENT:
                 trap_Cvar_SetValue( "cg_drawGun", s_playersettings.weapplacement.curvalue );
                 break;
+
+        case ID_GUNBOB:
+		trap_Cvar_SetValue( "cg_bobmodel", s_playersettings.gunbob.curvalue );
+		break;
 
 	case ID_MODEL:
 		PlayerSettings_SaveChanges();
@@ -534,6 +550,22 @@ static void PlayerSettings_MenuInit( void ) {
 	s_playersettings.weapplacement.generic.y	       = 58;
 	s_playersettings.weapplacement.itemnames	= weapplacement_names_ps;
 
+        //////
+        s_playersettings.gunbob.generic.type = MTYPE_SPINCONTROL;
+	s_playersettings.gunbob.generic.name = COM_Localize(331);
+	s_playersettings.gunbob.generic.flags = QMF_PULSEIFFOCUS|QMF_SMALLFONT;
+	s_playersettings.gunbob.generic.callback = PlayerSettings_MenuEvent;
+	s_playersettings.gunbob.generic.id   = ID_GUNBOB;
+	s_playersettings.gunbob.generic.x    = 190-17;
+	s_playersettings.gunbob.generic.y    = s_playersettings.weapplacement.generic.y + BIGCHAR_HEIGHT + 2;
+	s_playersettings.gunbob.itemnames    = gunbob_names;
+        s_playersettings.gunbob.itemnames[0] = COM_Localize(332);
+        s_playersettings.gunbob.itemnames[1] = COM_Localize(333);
+        s_playersettings.gunbob.itemnames[2] = COM_Localize(334);
+        s_playersettings.gunbob.itemnames[3] = COM_Localize(335);
+        s_playersettings.gunbob.itemnames[4] = COM_Localize(154);
+        //////
+
         s_playersettings.thirdprson.generic.type     = MTYPE_RADIOBUTTON;
 	s_playersettings.thirdprson.generic.name	   = COM_Localize(9);
 	s_playersettings.thirdprson.generic.flags	   = QMF_PULSEIFFOCUS|QMF_SMALLFONT;
@@ -550,6 +582,7 @@ static void PlayerSettings_MenuInit( void ) {
 	Menu_AddItem( &s_playersettings.menu, &s_playersettings.model );
 	Menu_AddItem( &s_playersettings.menu, &s_playersettings.back );
         Menu_AddItem( &s_playersettings.menu, &s_playersettings.weapplacement );
+        Menu_AddItem( &s_playersettings.menu, &s_playersettings.gunbob );
         Menu_AddItem( &s_playersettings.menu, &s_playersettings.thirdprson );
 	Menu_AddItem( &s_playersettings.menu, &s_playersettings.player );
 	Menu_AddItem( &s_playersettings.menu, &s_playersettings.item_null );

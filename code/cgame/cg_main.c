@@ -1355,6 +1355,7 @@ static void CG_RegisterGraphics(void) {
 	cgs.media.skullShader = trap_R_RegisterShaderNoMip("icons/skull_red");
         cgs.media.ZoomReticle = trap_R_RegisterShader("gfx/2d/reticle");
         cgs.media.ZoomReticleCenter = trap_R_RegisterShaderNoMip("gfx/2d/reticle_center");
+        cgs.media.FakeHand = trap_R_RegisterShaderNoMip("gfx/2d/fakehand");
 
 
 	for (i = 0; i < NUM_CROSSHAIRS; i++) {

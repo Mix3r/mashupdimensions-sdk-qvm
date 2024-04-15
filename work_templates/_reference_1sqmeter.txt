@@ -1,0 +1,16 @@
+// 1 square meter ref dummy
+// copy via Ctrl+A, then Ctrl+C and paste the brush in Trenchbroom window via Ctrl+V
+{
+"classname" "worldspawn"
+"_tb_textures" "textures/base;textures/common"
+// brush 0
+{
+( -64 -64 -16 ) ( -64 -63 -16 ) ( -64 -64 -15 ) common/aaa 0 0 0 0.5 0.5
+( -64 -64 -16 ) ( -64 -64 -15 ) ( -63 -64 -16 ) common/aaa 0 0 0 0.5 0.5
+( -64 -64 -16 ) ( -63 -64 -16 ) ( -64 -63 -16 ) common/aaa 0 0 0 0.5 0.5
+( 64 64 34 ) ( 64 65 34 ) ( 65 64 34 ) common/aaa 0 0 0 0.5 0.5
+( 64 -14 16 ) ( 65 -14 16 ) ( 64 -14 17 ) common/aaa 0 0 0 0.5 0.5
+( -14 64 16 ) ( -14 64 17 ) ( -14 65 16 ) common/aaa 0 0 0 0.5 0.5
+}
+}
+
