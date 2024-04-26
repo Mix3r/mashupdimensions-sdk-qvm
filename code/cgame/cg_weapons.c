@@ -1927,8 +1927,12 @@ void CG_AddViewWeapon( playerState_t *ps )
 
 	// add everything onto the hand
 	CG_AddPlayerWeapon( &hand, ps, &cg.predictedPlayerEntity, ps->persistant[PERS_TEAM], "tag_weapon" );
-        //////////
-        hand.hModel = cgs.media.mHands;
+
+        if (!ci->handModel) {
+            return;
+        }
+
+        hand.hModel = ci->handModel;
         hand.frame = 1;
 
         VectorCopy( cg.refdef.vieworg, hand.origin );

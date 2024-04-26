@@ -393,6 +393,9 @@ typedef struct {
 	qhandle_t		headModel;
 	qhandle_t		headSkin;
 
+        qhandle_t	        handModel;
+	qhandle_t		handSkin;
+
 	qhandle_t		modelIcon;
 
 	animation_t		animations[MAX_TOTALANIMATIONS];
@@ -983,7 +986,6 @@ typedef struct {
 	qhandle_t	skullShader;
         qhandle_t	ZoomReticle;
         qhandle_t	ZoomReticleCenter;
-        qhandle_t	FakeHand;
 
 	// sounds
 	sfxHandle_t	quadSound;

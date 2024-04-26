@@ -734,6 +734,11 @@ static qboolean CG_RegisterClientModelname(clientInfo_t *ci, const char *modelNa
 			}
 		}
 
+                Com_sprintf(filename, sizeof ( filename), "models/players/%s/hand_fpv.md3", modelName);
+		ci->handModel = trap_R_RegisterModel(filename);
+                // register hand skin todo
+                //
+
 	} // enableFS
 
 	if (headName[0] == '*') {
