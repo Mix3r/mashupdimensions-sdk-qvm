@@ -1927,6 +1927,33 @@ void CG_AddViewWeapon( playerState_t *ps )
 
 	// add everything onto the hand
 	CG_AddPlayerWeapon( &hand, ps, &cg.predictedPlayerEntity, ps->persistant[PERS_TEAM], "tag_weapon" );
+        //////////
+        hand.hModel = cgs.media.mHands;
+        hand.frame = 1;
+
+        VectorCopy( cg.refdef.vieworg, hand.origin );
+        AxisCopy( cg.refdef.viewaxis, hand.axis );
+        angles[0]=cg.bobfracsin;
+        angles[1]=(cg.refdefViewAngles[PITCH]-87.890) / -175.780; // 0 on look down, 1 on look up
+
+        if (angles[0]<0) {
+            if (cg.predictedPlayerState.weapon == 1) {
+                angles[0] = -angles[0];
+                VectorInverse(hand.axis[1]);
+                hand.nonNormalizedAxes = qtrue;
+            } else {
+                angles[0]=0;
+            }
+        }
+        for (hand.oldframe=0 ; hand.oldframe<3 ; hand.oldframe++) {
+	    hand.origin[hand.oldframe] += cg.refdef.viewaxis[0][hand.oldframe] * (cg_gun_x.value+4.005);
+	    hand.origin[hand.oldframe] += cg.refdef.viewaxis[1][hand.oldframe] * 0;
+	    hand.origin[hand.oldframe] += cg.refdef.viewaxis[2][hand.oldframe] * (cg_gun_z.value-1.15+2.82*angles[0]-2.82*angles[1]);//1.67
+	}
+        hand.oldframe = 0;
+        VectorCopy( hand.origin, hand.lightingOrigin );
+        CG_AddWeaponWithPowerups( &hand, cent->currentState.powerups );
+        //////////
 }
 
 /*
@@ -3112,7 +3139,10 @@ void CG_FireWeapon( centity_t *cent )
 
 	// play quad sound if needed
 	if ( cent->currentState.powerups & ( 1 << PW_QUAD ) ) {
-		trap_S_StartSound (NULL, cent->currentState.number, CHAN_ITEM, cgs.media.quadSound );
+                if (cg.time > cg.nQuadSoundUnleash) {
+		    trap_S_StartSound (NULL, cent->currentState.number, CHAN_ITEM, cgs.media.quadSound );
+                    cg.nQuadSoundUnleash = cg.time+750;
+                }
 	}
 
 	// play a sound

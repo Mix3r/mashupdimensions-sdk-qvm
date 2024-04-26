@@ -3058,8 +3058,8 @@ static void CG_DrawCrosshair(void) {
         h=cgs.glconfig.vidHeight*0.3981481481481481;
         f=0.5813953488372093*h;
         ////pitch+90/180
-        trap_R_DrawStretchPic(cgs.glconfig.vidWidth*0.1041666666666667, cgs.glconfig.vidHeight-h*cg.bobfracsin+f+(f-h)*(cg.refdefViewAngles[PITCH]/90), w, h, 0, 0, 1, 1, cgs.media.FakeHand);
-        trap_R_DrawStretchPic(cgs.glconfig.vidWidth-w-cgs.glconfig.vidWidth*0.1041666666666667, cgs.glconfig.vidHeight+h*cg.bobfracsin+f+(f-h)*(cg.refdefViewAngles[PITCH]/90), w, h, 1, 0, 0, 1, cgs.media.FakeHand);
+        //trap_R_DrawStretchPic(cgs.glconfig.vidWidth*0.1041666666666667, cgs.glconfig.vidHeight-h*cg.bobfracsin+f+(f-h)*(cg.refdefViewAngles[PITCH]/90), w, h, 0, 0, 1, 1, cgs.media.FakeHand);
+        //trap_R_DrawStretchPic(cgs.glconfig.vidWidth-w-cgs.glconfig.vidWidth*0.1041666666666667, cgs.glconfig.vidHeight+h*cg.bobfracsin+f+(f-h)*(cg.refdefViewAngles[PITCH]/90), w, h, 1, 0, 0, 1, cgs.media.FakeHand);
 
         //CG_Printf("cg.refdefViewAngles[PITCH]: %f \n", cg.refdefViewAngles[PITCH] );
         //////////////////////

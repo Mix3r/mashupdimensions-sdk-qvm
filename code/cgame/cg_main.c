@@ -1489,6 +1489,8 @@ static void CG_RegisterGraphics(void) {
 	cgs.media.gibSkull = trap_R_RegisterModel("models/gibs/skull.md3");
 	cgs.media.gibBrain = trap_R_RegisterModel("models/gibs/brain.md3");
 
+        cgs.media.mHands = trap_R_RegisterModel("models/weapons/hand/hand_fpv.md3");
+
 	cgs.media.smoke2 = trap_R_RegisterModel("models/weapons2/shells/s_shell.md3");
 
 	cgs.media.balloonShader = trap_R_RegisterShader("sprites/balloon3");

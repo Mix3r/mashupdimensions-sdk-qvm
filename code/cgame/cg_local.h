@@ -712,6 +712,9 @@ typedef struct {
 	float		xyspeed;
         float		xyspeed_lerp;
 
+        // quad sound holder to hold it from overlap
+        int             nQuadSoundUnleash;
+
 	int             nextOrbitTime;
 
 	// development tool
@@ -820,6 +823,8 @@ typedef struct {
 	qhandle_t	gibLeg;
 	qhandle_t	gibSkull;
 	qhandle_t	gibBrain;
+
+        qhandle_t       mHands;
 
 	qhandle_t	smoke2;
 
