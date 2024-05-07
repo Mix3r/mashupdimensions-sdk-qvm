@@ -827,8 +827,6 @@ typedef struct {
 	qhandle_t	gibSkull;
 	qhandle_t	gibBrain;
 
-        qhandle_t       mHands;
-
 	qhandle_t	smoke2;
 
 	qhandle_t	machinegunBrassModel;
