@@ -1913,8 +1913,7 @@ void CG_AddViewWeapon( playerState_t *ps )
 		// development tool
 		hand.frame = hand.oldframe = cg_gun_frame.integer;
 		hand.backlerp = 0;
-	}
-	else {
+	} else {
 		// get clientinfo for animation map
 		ci = &cgs.clientinfo[ cent->currentState.clientNum ];
 		hand.frame = CG_MapTorsoToWeaponFrame( ci, cent->pe.torso.frame );
@@ -1928,36 +1927,61 @@ void CG_AddViewWeapon( playerState_t *ps )
 	// add everything onto the hand
 	CG_AddPlayerWeapon( &hand, ps, &cg.predictedPlayerEntity, ps->persistant[PERS_TEAM], "tag_weapon" );
 
-        if (!ci->handModel) {
-            return;
-        }
+        if (ci->handModel) {
+            hand.hModel = ci->handModel;
 
-        hand.hModel = ci->handModel;
-        hand.frame = 1;
+            VectorCopy( cg.refdef.vieworg, hand.origin );
+            AxisCopy( cg.refdef.viewaxis, hand.axis );
+            angles[0]=cg.bobfracsin;
+            angles[1]=(cg.refdefViewAngles[PITCH]-87.890) / -175.780; // 0 on look down, 1 on look up
+            angles[2] = 0.48;
 
-        VectorCopy( cg.refdef.vieworg, hand.origin );
-        AxisCopy( cg.refdef.viewaxis, hand.axis );
-        angles[0]=cg.bobfracsin;
-        angles[1]=(cg.refdefViewAngles[PITCH]-87.890) / -175.780; // 0 on look down, 1 on look up
-
-        if (angles[0]<0) {
-            if (cg.predictedPlayerState.weapon == 1) {
-                angles[0] = -angles[0];
-                VectorInverse(hand.axis[1]);
-                hand.nonNormalizedAxes = qtrue;
+            if (angles[0]<0) {
+                if (cg.predictedPlayerState.weapon == 1) {
+                    angles[0] = -angles[0];
+                    angles[2] = -angles[2];
+                    //VectorInverse(hand.axis[1]);
+                    //hand.nonNormalizedAxes = qtrue;
+                    hand.frame = 1;
+                } else {
+                    angles[0]=0;
+                }
             } else {
-                angles[0]=0;
+                hand.frame = 0;
+
+            }
+            for (hand.oldframe=0 ; hand.oldframe<3 ; hand.oldframe++) {
+	        hand.origin[hand.oldframe] += cg.refdef.viewaxis[0][hand.oldframe] * 4.005;
+	        // hand.origin[hand.oldframe] += cg.refdef.viewaxis[1][hand.oldframe] * 0;
+	        hand.origin[hand.oldframe] += cg.refdef.viewaxis[2][hand.oldframe] * (-1.15+2.82*angles[0]-2.82*angles[1]);//1.67
+	    }
+            hand.oldframe = hand.frame;
+            VectorCopy( hand.origin, hand.lightingOrigin );
+
+            if ( cent->currentState.powerups & ( 1 << PW_INVIS ) ) {
+		if( (cgs.dmflags & DF_INVIS) == 0) {
+		    hand.customShader = cgs.media.invisShader;
+		}
+                trap_R_AddRefEntityToScene( &hand );
+            } else {
+                trap_R_AddRefEntityToScene( &hand );
+		if ( cent->currentState.powerups & ( 1 << PW_QUAD ) ) {
+		    hand.customShader = cgs.media.quadWeaponShader;
+                    hand.oldframe = -1;
+		} else if ( cent->currentState.powerups & ( 1 << PW_BATTLESUIT ) ) {
+		    hand.customShader = cgs.media.battleWeaponShader;
+                    hand.oldframe = -1;
+		}
+                if ( hand.oldframe == -1 ) {
+                    for (hand.oldframe=0 ; hand.oldframe<3 ; hand.oldframe++) {
+                        hand.origin[hand.oldframe] -= cg.refdef.viewaxis[0][hand.oldframe] * cg_gun_x.value;
+                        hand.origin[hand.oldframe] += cg.refdef.viewaxis[1][hand.oldframe] * angles[2];
+                    }
+                    hand.oldframe = hand.frame;
+                    trap_R_AddRefEntityToScene( &hand );
+                }
             }
         }
-        for (hand.oldframe=0 ; hand.oldframe<3 ; hand.oldframe++) {
-	    hand.origin[hand.oldframe] += cg.refdef.viewaxis[0][hand.oldframe] * (cg_gun_x.value+4.005);
-	    hand.origin[hand.oldframe] += cg.refdef.viewaxis[1][hand.oldframe] * 0;
-	    hand.origin[hand.oldframe] += cg.refdef.viewaxis[2][hand.oldframe] * (cg_gun_z.value-1.15+2.82*angles[0]-2.82*angles[1]);//1.67
-	}
-        hand.oldframe = 0;
-        VectorCopy( hand.origin, hand.lightingOrigin );
-        CG_AddWeaponWithPowerups( &hand, cent->currentState.powerups );
-        //////////
 }
 
 /*
