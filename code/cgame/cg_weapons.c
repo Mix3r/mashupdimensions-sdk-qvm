@@ -1174,7 +1174,7 @@ static void CG_CalculateWeaponPosition( vec3_t origin, vec3_t angles )
 			VectorMA (origin, forward[0], up, origin);
                         break;
                    case 2:
-                        up[0] = scale * 2 * 0.05 * cg.bobfracsin * 0.04;
+                        up[0] = scale * -2 * 0.05 * cg.bobfracsin * 0.04;
 			VectorMA (origin, up[0], forward, origin);
                         break;
                    case 3:
@@ -1937,19 +1937,31 @@ void CG_AddViewWeapon( playerState_t *ps )
             angles[2] = 0.48;
 
             if (angles[0]<0) {
-                if (cg.predictedPlayerState.weapon == 1) {
+                if (cg.predictedPlayerState.weapon == 1 && ci->handsFree) {
                     angles[0] = -angles[0];
-                    angles[2] = -angles[2];
-                    //VectorInverse(hand.axis[1]);
-                    //hand.nonNormalizedAxes = qtrue;
-                    hand.frame = 1;
+                    if (cg_drawGun.integer == 2) {
+                        hand.frame = 0;
+                    } else {
+                        hand.frame = 1;
+                        angles[2] = -angles[2];
+                    }
                 } else {
                     angles[0]=0;
                 }
             } else {
-                hand.frame = 0;
-
+                if (cg_drawGun.integer == 2) {
+                    hand.frame = 1;
+                    angles[2] = -angles[2];
+                } else {
+                    hand.frame = 0;
+                }
             }
+
+            hand.lightingOrigin[0]=cg.xyspeed_lerp/320.0f;
+            if (hand.lightingOrigin[0] < 1) {
+                angles[0] *= hand.lightingOrigin[0];
+            }
+
             for (hand.oldframe=0 ; hand.oldframe<3 ; hand.oldframe++) {
 	        hand.origin[hand.oldframe] += cg.refdef.viewaxis[0][hand.oldframe] * 4.005;
 	        // hand.origin[hand.oldframe] += cg.refdef.viewaxis[1][hand.oldframe] * 0;
@@ -1965,16 +1977,18 @@ void CG_AddViewWeapon( playerState_t *ps )
                 trap_R_AddRefEntityToScene( &hand );
             } else {
                 trap_R_AddRefEntityToScene( &hand );
-		if ( cent->currentState.powerups & ( 1 << PW_QUAD ) ) {
+
+		if ( cent->currentState.powerups & ( 1 << PW_BATTLESUIT ) ) {
+                    hand.customShader = cgs.media.battleWeaponShader;
+                    hand.oldframe = -1;
+		} else if ( cent->currentState.powerups & ( 1 << PW_QUAD ) ) {
 		    hand.customShader = cgs.media.quadWeaponShader;
                     hand.oldframe = -1;
-		} else if ( cent->currentState.powerups & ( 1 << PW_BATTLESUIT ) ) {
-		    hand.customShader = cgs.media.battleWeaponShader;
-                    hand.oldframe = -1;
 		}
+
                 if ( hand.oldframe == -1 ) {
                     for (hand.oldframe=0 ; hand.oldframe<3 ; hand.oldframe++) {
-                        hand.origin[hand.oldframe] -= cg.refdef.viewaxis[0][hand.oldframe] * cg_gun_x.value;
+                        hand.origin[hand.oldframe] -= cg.refdef.viewaxis[0][hand.oldframe] * 0.014;
                         hand.origin[hand.oldframe] += cg.refdef.viewaxis[1][hand.oldframe] * angles[2];
                     }
                     hand.oldframe = hand.frame;

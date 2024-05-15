@@ -395,6 +395,7 @@ typedef struct {
 
         qhandle_t	        handModel;
 	qhandle_t		handSkin;
+        qboolean                handsFree;
 
 	qhandle_t		modelIcon;
 
