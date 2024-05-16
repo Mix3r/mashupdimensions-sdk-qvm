@@ -1937,7 +1937,7 @@ void CG_AddViewWeapon( playerState_t *ps )
             angles[2] = 0.48;
 
             if (angles[0]<0) {
-                if (cg.predictedPlayerState.weapon == 1 && ci->handsFree) {
+                if (cg.predictedPlayerState.weapon == 1 && !weapon->weaponModel) {
                     angles[0] = -angles[0];
                     if (cg_drawGun.integer == 2) {
                         hand.frame = 0;

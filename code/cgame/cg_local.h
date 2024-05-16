@@ -393,9 +393,9 @@ typedef struct {
 	qhandle_t		headModel;
 	qhandle_t		headSkin;
 
-        qhandle_t	        handModel;
+    qhandle_t	    handModel;
 	qhandle_t		handSkin;
-        qboolean                handsFree;
+    qboolean        bOneHander;
 
 	qhandle_t		modelIcon;
 
