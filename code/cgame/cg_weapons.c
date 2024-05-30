@@ -1751,7 +1751,7 @@ void CG_AddPlayerWeapon( refEntity_t *parent, playerState_t *ps, centity_t *cent
 
         //if ( (parent->nonNormalizedAxes) || (weaponNum != WP_GAUNTLET && (cent->currentState.eFlags & EF_FIRING)) ) {
         if ( (parent->nonNormalizedAxes) || ((cent->currentState.eFlags & EF_FIRING) && !ps && weaponNum != WP_GAUNTLET) ) {
-                AnglesToAxis( cent->lerpAngles, gun.axis );
+            AnglesToAxis( cent->lerpAngles, gun.axis );
         } else {
 	        MatrixMultiply(lerped.axis, ((refEntity_t *)parent)->axis, gun.axis);
         }
@@ -1976,36 +1976,34 @@ void CG_AddViewWeapon( playerState_t *ps )
             }
 
             for (hand.oldframe=0 ; hand.oldframe<3 ; hand.oldframe++) {
-	        hand.origin[hand.oldframe] += cg.refdef.viewaxis[0][hand.oldframe] * 4.005;
-	        // hand.origin[hand.oldframe] += cg.refdef.viewaxis[1][hand.oldframe] * 0;
-	        hand.origin[hand.oldframe] += cg.refdef.viewaxis[2][hand.oldframe] * (-1.15+2.82*angles[0]-2.82*angles[1]);//1.67
-	    }
+	            hand.origin[hand.oldframe] += cg.refdef.viewaxis[0][hand.oldframe] * 4.005;
+	            hand.origin[hand.oldframe] += cg.refdef.viewaxis[2][hand.oldframe] * (cg_leiDebug.value-1.15+2.82*angles[0]-2.82*angles[1]); //angles[0]: bob fraction, angles [1]: look up fraction
+	        }
             hand.oldframe = hand.frame;
             VectorCopy( hand.origin, hand.lightingOrigin );
 
             if ( cent->currentState.powerups & ( 1 << PW_INVIS ) ) {
-		if( (cgs.dmflags & DF_INVIS) == 0) {
-		    hand.customShader = cgs.media.invisShader;
-		}
-                trap_R_AddRefEntityToScene( &hand );
+		        if( (cgs.dmflags & DF_INVIS) == 0) {
+		            hand.customShader = cgs.media.invisShader;
+		        }
+                trap_R_AddRefEntityToScene( &hand ); // invisible hand
             } else {
-                trap_R_AddRefEntityToScene( &hand );
+                trap_R_AddRefEntityToScene( &hand ); // normal hand
 
-		if ( cent->currentState.powerups & ( 1 << PW_BATTLESUIT ) ) {
+		        if ( cent->currentState.powerups & ( 1 << PW_BATTLESUIT ) ) {
                     hand.customShader = cgs.media.battleWeaponShader;
                     hand.oldframe = -1;
-		} else if ( cent->currentState.powerups & ( 1 << PW_QUAD ) ) {
-		    hand.customShader = cgs.media.quadWeaponShader;
+		        } else if ( cent->currentState.powerups & ( 1 << PW_QUAD ) ) {
+		            hand.customShader = cgs.media.quadWeaponShader;
                     hand.oldframe = -1;
-		}
-
+		        }
                 if ( hand.oldframe == -1 ) {
                     for (hand.oldframe=0 ; hand.oldframe<3 ; hand.oldframe++) {
                         hand.origin[hand.oldframe] -= cg.refdef.viewaxis[0][hand.oldframe] * 0.014;
                         hand.origin[hand.oldframe] += cg.refdef.viewaxis[1][hand.oldframe] * angles[2];
                     }
                     hand.oldframe = hand.frame;
-                    trap_R_AddRefEntityToScene( &hand );
+                    trap_R_AddRefEntityToScene( &hand ); // effect-overlay hand
                 }
             }
         }
