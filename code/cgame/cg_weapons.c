@@ -1975,9 +1975,16 @@ void CG_AddViewWeapon( playerState_t *ps )
                 angles[0] *= hand.lightingOrigin[0];
             }
 
+            // Mix3r_Durachok: hand z axis adjustment for 4:3 aspect ratio
+            if (cgs.glconfig.vidWidth != 0) {
+                hand.lightingOrigin[0] = (cgs.glconfig.vidHeight/(float)cgs.glconfig.vidWidth - 0.5625) / 0.1875 * -1.18;
+            } else {
+                hand.lightingOrigin[0] = 0;
+            }
+
             for (hand.oldframe=0 ; hand.oldframe<3 ; hand.oldframe++) {
 	            hand.origin[hand.oldframe] += cg.refdef.viewaxis[0][hand.oldframe] * 4.005;
-	            hand.origin[hand.oldframe] += cg.refdef.viewaxis[2][hand.oldframe] * (cg_leiDebug.value-1.15+2.82*angles[0]-2.82*angles[1]); //angles[0]: bob fraction, angles [1]: look up fraction
+	            hand.origin[hand.oldframe] += cg.refdef.viewaxis[2][hand.oldframe] * (hand.lightingOrigin[0]-1.15+2.82*angles[0]-2.82*angles[1]); //angles[0]: bob fraction, angles [1]: look up fraction
 	        }
             hand.oldframe = hand.frame;
             VectorCopy( hand.origin, hand.lightingOrigin );
