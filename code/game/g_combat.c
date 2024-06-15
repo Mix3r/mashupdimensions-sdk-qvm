@@ -30,19 +30,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ScorePlum
 ============
 */
-void ScorePlum( gentity_t *ent, vec3_t origin, int score, int dmgf )
-{
+void ScorePlum( gentity_t *ent, vec3_t origin, int score, int dmgf ) {
 	gentity_t *plum;
 	plum = G_TempEntity( origin, EV_SCOREPLUM );
 	plum->r.singleClient = ent->s.number;
 	plum->s.otherEntityNum = ent->s.number;
-        if (dmgf == 10 || dmgf == 11) {
-                plum->r.svFlags |= SVF_BROADCAST;
-        } else {
-                plum->r.svFlags |= SVF_SINGLECLIENT;
-        }
+    if (dmgf == 10 || dmgf == 11) {
+        plum->r.svFlags |= SVF_BROADCAST;
+    } else {
+        plum->r.svFlags |= SVF_SINGLECLIENT;
+    }
 	plum->s.time = score;
-        plum->s.weapon = dmgf;
+    plum->s.weapon = dmgf;
 }
 
 /*
