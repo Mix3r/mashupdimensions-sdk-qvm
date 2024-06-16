@@ -173,8 +173,7 @@ void CG_DrawStringExt( int x, int y, const char *string, const float *setColor,
         char	        ch;
         int prev_unicode = 0;
 
-	if (maxChars <= 0)
-		maxChars = 32767; // do them all!
+	if (maxChars <= 0) maxChars = 32767; // do them all!
 
 	// draw the drop shadow
 	if (shadow) {
@@ -189,32 +188,32 @@ void CG_DrawStringExt( int x, int y, const char *string, const float *setColor,
 				s += 2;
 				continue;
 			}
-                        ////////////////////////////////////
-                        ch = *s & 255;
-                        // unicode russian stuff support
-                        //Com_Printf("UI_letter: is %d\n", *s);
-                        if (ch < 0) {
-                           if ((ch == -48) || (ch == -47)) {
-                              prev_unicode = ch;
-                              s++;
-                              cnt++;
-                              continue;
-                           }
-                           if (ch >= -112) {
-                              if ((ch == -111) && (prev_unicode == -47)) {
-                                 ch = ch - 13;
-                              } else {
-                                 ch = ch + 48;
-                              }
-                           } else {
-                              if ((ch == -127) && (prev_unicode == -48)) {
-                                 // ch = ch +
-                              } else {
-                                 ch = ch + 112; // +64 offset of damn unicode
-                              }
-                           }
-                        }
-                        //////////////////////////////////////////
+            ////////////////////////////////////
+            ch = *s & 255;
+            // unicode russian stuff support
+            //Com_Printf("UI_letter: is %d\n", *s);
+            if (ch < 0) {
+                if ((ch == -48) || (ch == -47)) {
+                    prev_unicode = ch;
+                    s++;
+                    cnt++;
+                    continue;
+                }
+                if (ch >= -112) {
+                    if ((ch == -111) && (prev_unicode == -47)) {
+                        ch = ch - 13;
+                    } else {
+                        ch = ch + 48;
+                    }
+                } else {
+                    if ((ch == -127) && (prev_unicode == -48)) {
+                        // ch = ch +
+                    } else {
+                        ch = ch + 112; // +64 offset of damn unicode
+                    }
+                }
+            }
+            //////////////////////////////////////////
 			CG_DrawChar( xx + 2, y + 2, charWidth, charHeight, ch );
 			cnt++;
 			xx += charWidth;
