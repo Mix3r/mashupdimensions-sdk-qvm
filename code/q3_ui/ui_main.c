@@ -536,6 +536,8 @@ char *strings_en[] = {
 "Quaked Dimensions",
 "Based upon Quake III Arena(c) 1999-2000, ID Software.",
 "Borrowed Dimension",
+"Survival (one life):",
+"Respawn will starts your way from scratch.",
 NULL
 };
 char *strings_ru[] = {
@@ -877,6 +879,8 @@ char *strings_ru[] = {
 "Дрожащий Мир",
 "Основано на Quake III Arena(c) 1999-2000, ID Software.",
 "Спёртое Измерение",
+"Выживание (одна жизнь):",
+"Возрождение начнёт ваш путь сначала.",
 NULL
 };
 

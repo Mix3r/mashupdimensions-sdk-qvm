@@ -1126,6 +1126,7 @@ extern vmCvar_t g_elimination_lockspectator;
 extern vmCvar_t g_rockets;
 //new in elimination Beta2
 extern vmCvar_t g_instantgib;
+extern vmCvar_t g_survival;
 extern vmCvar_t g_vampire;
 extern vmCvar_t g_vampireMaxHealth;
 //new in elimination Beta3

@@ -56,7 +56,8 @@ typedef struct {
 
 	menubitmap_s	art_frame;
 	menutext_s		art_banner;
-        menuradiobutton_s	instantgib;
+    menuradiobutton_s	instantgib;
+    menuradiobutton_s	survival;
 	menutext_s		item_baby;
 	menutext_s		item_easy;
 	menutext_s		item_medium;
@@ -107,6 +108,9 @@ static void SetSkillColor( int skill, vec4_t color ) {
 static void SpSkill_StatusBar_Instantgib( void* ptr ) {
 	UI_DrawString( 320, 440, COM_Localize(57), UI_CENTER|UI_SMALLFONT, colorWhite );
 }
+static void SpSkill_StatusBar_Survival( void* ptr ) {
+	UI_DrawString( 320, 440, COM_Localize(340), UI_CENTER|UI_SMALLFONT, colorWhite );
+}
 /*
 =================
 UI_SPSkillMenu_SkillEvent
@@ -143,18 +147,18 @@ UI_SPSkillMenu_FightEvent
 =================
 */
 static void UI_SPSkillMenu_FightEvent( void *ptr, int notification ) {
-        static const char *mpgt_prefix[] =
-        {
-	"ta",
-	"ta1",
-	"tao",
-	"tah",
-	NULL
-        };
+    static const char *mpgt_prefix[] = {
+	    "ta",
+	    "ta1",
+	    "tao",
+	    "tah",
+	    NULL
+    };
 	if (notification != QM_ACTIVATED)
 		return;
         SetSkillColor( 0, color_white );
         trap_Cvar_SetValue( "g_instantgib", skillMenuInfo.instantgib.curvalue );
+        trap_Cvar_SetValue( "g_survival", skillMenuInfo.survival.curvalue );
         if (strstr(skillMenuInfo.arenaInfo,"exec ")) {
                // just wait
         } else if (ui_is_missionpack) {
@@ -237,12 +241,19 @@ static void UI_SPSkillMenu_Init( void ) {
 	skillMenuInfo.art_banner.color				= color_white;
 	skillMenuInfo.art_banner.style				= UI_CENTER;
 
-	skillMenuInfo.instantgib.generic.type			= MTYPE_RADIOBUTTON;
-	skillMenuInfo.instantgib.generic.flags			= QMF_PULSEIFFOCUS|QMF_SMALLFONT;
-	skillMenuInfo.instantgib.generic.x				= 336;
-	skillMenuInfo.instantgib.generic.y				= 90;
-	skillMenuInfo.instantgib.generic.name			= COM_Localize(48);
+	skillMenuInfo.instantgib.generic.type		= MTYPE_RADIOBUTTON;
+	skillMenuInfo.instantgib.generic.flags		= QMF_PULSEIFFOCUS|QMF_SMALLFONT;
+	skillMenuInfo.instantgib.generic.x			= 389;
+	skillMenuInfo.instantgib.generic.y			= 71;
+	skillMenuInfo.instantgib.generic.name		= COM_Localize(48);
 	skillMenuInfo.instantgib.generic.statusbar  = SpSkill_StatusBar_Instantgib;
+
+    skillMenuInfo.survival.generic.type		= MTYPE_RADIOBUTTON;
+	skillMenuInfo.survival.generic.flags		= QMF_PULSEIFFOCUS|QMF_SMALLFONT;
+	skillMenuInfo.survival.generic.x			= 389;
+	skillMenuInfo.survival.generic.y			= 89;
+	skillMenuInfo.survival.generic.name		    = COM_Localize(339);
+	skillMenuInfo.survival.generic.statusbar    = SpSkill_StatusBar_Survival;
 
 	skillMenuInfo.item_baby.generic.type		= MTYPE_PTEXT;
 	skillMenuInfo.item_baby.generic.flags		= QMF_CENTER_JUSTIFY|QMF_PULSEIFFOCUS;
@@ -325,7 +336,8 @@ static void UI_SPSkillMenu_Init( void ) {
 
 	Menu_AddItem( &skillMenuInfo.menu, ( void * )&skillMenuInfo.art_frame );
 	Menu_AddItem( &skillMenuInfo.menu, ( void * )&skillMenuInfo.art_banner );
-        Menu_AddItem( &skillMenuInfo.menu, ( void * )&skillMenuInfo.instantgib );
+    Menu_AddItem( &skillMenuInfo.menu, ( void * )&skillMenuInfo.instantgib );
+    Menu_AddItem( &skillMenuInfo.menu, ( void * )&skillMenuInfo.survival );
 	Menu_AddItem( &skillMenuInfo.menu, ( void * )&skillMenuInfo.item_baby );
 	Menu_AddItem( &skillMenuInfo.menu, ( void * )&skillMenuInfo.item_easy );
 	Menu_AddItem( &skillMenuInfo.menu, ( void * )&skillMenuInfo.item_medium );
@@ -336,7 +348,8 @@ static void UI_SPSkillMenu_Init( void ) {
 	Menu_AddItem( &skillMenuInfo.menu, ( void * )&skillMenuInfo.item_fight );
 
 	skill = (int)Com_Clamp( 1, 5, trap_Cvar_VariableValue( "g_spSkill" ) );
-        skillMenuInfo.instantgib.curvalue = Com_Clamp( 0, 1, trap_Cvar_VariableValue( "g_instantgib" ) );
+    skillMenuInfo.instantgib.curvalue = Com_Clamp( 0, 1, trap_Cvar_VariableValue( "g_instantgib" ) );
+    skillMenuInfo.survival.curvalue = Com_Clamp( 0, 1, trap_Cvar_VariableValue( "g_survival" ) );
 	SetSkillColor( skill, color_white );
 	skillMenuInfo.art_skillPic.shader = skillMenuInfo.skillpics[skill - 1];
 	if( skill == 5 ) {

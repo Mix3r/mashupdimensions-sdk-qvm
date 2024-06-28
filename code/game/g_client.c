@@ -485,16 +485,20 @@ void ClientRespawn( gentity_t *ent ) {
         //Mix3r_Durachok: reload map for coop and sp missions if human players failed
         if ( ent->r.svFlags & SVF_BOT ) {
         } else {
-                if (g_fraglimit.integer > 9999 && ent->client->sess.sessionTeam != TEAM_RED) {
+                if (g_survival.integer) {
+                    if( g_gametype.integer == GT_SINGLE_PLAYER ) {
+                        trap_SendConsoleCommand( EXEC_APPEND, "disconnect; levelselect\n" );
+                    } else if (G_IsACoop() && ent->client->sess.sessionTeam != TEAM_RED) {
+                        ReloadCoopMap();
+                    }
+                } else if (g_fraglimit.integer > 9999 && ent->client->sess.sessionTeam != TEAM_RED) {
+                    if( g_gametype.integer == GT_SINGLE_PLAYER ) {
                         char map1[ MAX_QPATH ];
                         trap_Cvar_VariableStringBuffer( "mapname", map1, sizeof( map1 ) );
-                        if( g_gametype.integer == GT_SINGLE_PLAYER ) {
-                                trap_SendConsoleCommand( EXEC_APPEND, va("spmap %s\n",map1) );
-                        } else {
-                                char sav1[MAX_STRING_CHARS];
-                                trap_Cvar_VariableStringBuffer( "nextmap", sav1, sizeof(sav1) );
-                                trap_SendConsoleCommand( EXEC_APPEND, va("map %s; set nextmap \"%s\"\n",map1,sav1) );
-                        }
+                        trap_SendConsoleCommand( EXEC_APPEND, va("spmap %s\n",map1) );
+                    } else {
+                        ReloadCoopMap();
+                    }
                 }
         }
 	if( !G_IsARoundBasedGametype(g_gametype.integer) && !ent->client->isEliminated)

@@ -141,6 +141,7 @@ vmCvar_t g_elimination_lockspectator;
 vmCvar_t g_rockets;
 //dmn_clowns suggestions (with my idea of implementing):
 vmCvar_t g_instantgib;
+vmCvar_t g_survival;
 vmCvar_t g_vampire;
 vmCvar_t g_vampireMaxHealth;
 //Regen
@@ -363,6 +364,7 @@ static cvarTable_t gameCvarTable[] = {
 
 	//Instantgib and Vampire thingies
 	{ &g_instantgib, "g_instantgib", "0", CVAR_SERVERINFO | CVAR_LATCH, 0, qfalse },
+    { &g_survival, "g_survival", "0", 0, 0, qtrue },
 	{ &g_vampire, "g_vampire", "0.0", 0, 0, qtrue },
 	{ &g_regen, "g_regen", "0", 0, 0, qtrue },
 	{ &g_vampireMaxHealth, "g_vampire_max_health", "500", 0, 0, qtrue },
@@ -2899,8 +2901,19 @@ void MapInfoPrint(mapinfo_result_t *info)
 // Mix3r_Durachok: check coop mode shortcut
 
 qboolean G_IsACoop() {
-        return (g_gametype.integer == GT_TEAM && g_weaponTeamRespawn.integer == g_weaponRespawn.integer);
+    return (g_gametype.integer == GT_TEAM && g_weaponTeamRespawn.integer == g_weaponRespawn.integer);
 }
+
+// Mix3r_Durachok: reload coop mode map
+
+void ReloadCoopMap() {
+    char map1[ MAX_QPATH ];
+    char sav1[MAX_STRING_CHARS];
+    trap_Cvar_VariableStringBuffer( "mapname", map1, sizeof( map1 ) );
+    trap_Cvar_VariableStringBuffer( "nextmap", sav1, sizeof(sav1) );
+    trap_SendConsoleCommand( EXEC_APPEND, va("map %s; set nextmap \"%s\"\n",map1,sav1) );
+}
+
 
 /* Neon_Knight: Useful check in order to have code consistency. */
 /*
