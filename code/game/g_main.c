@@ -141,9 +141,8 @@ vmCvar_t g_elimination_lockspectator;
 vmCvar_t g_rockets;
 //dmn_clowns suggestions (with my idea of implementing):
 vmCvar_t g_instantgib;
+
 vmCvar_t g_survival;
-vmCvar_t g_vampire;
-vmCvar_t g_vampireMaxHealth;
 //Regen
 vmCvar_t g_regen;
 vmCvar_t g_lms_lives;
@@ -362,12 +361,11 @@ static cvarTable_t gameCvarTable[] = {
 	//nexuiz style rocket arena
 	{ &g_rockets, "g_rockets", "0", CVAR_SERVERINFO | CVAR_LATCH, 0, qfalse },
 
-	//Instantgib and Vampire thingies
+	//Instantgib thing
 	{ &g_instantgib, "g_instantgib", "0", CVAR_SERVERINFO | CVAR_LATCH, 0, qfalse },
+
     { &g_survival, "g_survival", "0", 0, 0, qtrue },
-	{ &g_vampire, "g_vampire", "0.0", 0, 0, qtrue },
 	{ &g_regen, "g_regen", "0", 0, 0, qtrue },
-	{ &g_vampireMaxHealth, "g_vampire_max_health", "500", 0, 0, qtrue },
 	{ &g_lms_lives, "g_lms_lives", "1", 0, 0, qtrue },
 	{ &g_lms_mode, "g_lms_mode", "0", CVAR_SERVERINFO | CVAR_ARCHIVE, 0, qtrue },
 
@@ -767,10 +765,9 @@ void G_InitGame( int levelTime, int randomSeed, int restart )
 	G_UpdateTimestamp();
 
 	//disable unwanted cvars
-	if( g_gametype.integer == GT_SINGLE_PLAYER ) {
+	if ( g_gametype.integer == GT_SINGLE_PLAYER ) {
 		//g_instantgib.integer = 0;
 		g_rockets.integer = 0;
-		g_vampire.value = 0.0f;
 	}
 
 	G_ProcessIPBans();

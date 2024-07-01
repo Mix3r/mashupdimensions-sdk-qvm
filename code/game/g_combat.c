@@ -1370,20 +1370,6 @@ void G_Damage( gentity_t *targ, gentity_t *inflictor, gentity_t *attacker, vec3_
 		targ->client->lasthurt_mod = mod;
 	}
 
-	//If vampire is enabled, gain health but not from self or teammate, cannot steal more than targ has
-	if( g_vampire.value>0.0 && (targ != attacker) && damage > 0 &&
-	        !(OnSameTeam(targ, attacker)) && attacker->health > 0 && targ->health > 0 ) {
-		if(damage<targ->health) {
-			attacker->health += (int)(((float)damage)*g_vampire.value);
-		}
-		else {
-			attacker->health += (int)(((float)targ->health)*g_vampire.value);
-		}
-		if(attacker->health>g_vampireMaxHealth.integer) {
-			attacker->health = g_vampireMaxHealth.integer;
-		}
-	}
-
 	// do the damage
 	if (damage) {
 		targ->health = targ->health - damage;
