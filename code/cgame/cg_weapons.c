@@ -3206,17 +3206,22 @@ void CG_FireWeapon( centity_t *cent )
 	}
 
 	// play a sound
-	for ( c = 0 ; c < 4 ; c++ ) {
-		if ( !weap->flashSound[c] ) {
-			break;
-		}
-	}
-	if ( c > 0 ) {
-		c = rand() % c;
-		if ( weap->flashSound[c] ) {
-			trap_S_StartSound( NULL, ent->number, CHAN_WEAPON, weap->flashSound[c] );
-		}
-	}
+    // Mix3r_Durachok: play underwater dull sound
+    if (CG_WaterLevel(cent) == 3) {
+        trap_S_StartSound (NULL, ent->number, CHAN_WEAPON, cgs.media.UwFireSound );
+    } else {
+	    for ( c = 0 ; c < 4 ; c++ ) {
+		    if ( !weap->flashSound[c] ) {
+			    break;
+		    }
+	    }
+        if ( c > 0 ) {
+		    c = rand() % c;
+		    if ( weap->flashSound[c] ) {
+			    trap_S_StartSound( NULL, ent->number, CHAN_WEAPON, weap->flashSound[c] );
+		    }
+	    }
+    }
 
 	// do brass ejection
 	if ( weap->ejectBrassFunc && cg_brassTime.integer > 0 ) {

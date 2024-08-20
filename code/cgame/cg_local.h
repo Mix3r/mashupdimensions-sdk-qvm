@@ -988,6 +988,7 @@ typedef struct {
 
 	// sounds
 	sfxHandle_t	quadSound;
+    sfxHandle_t UwFireSound;
 	sfxHandle_t	tracerSound;
 	sfxHandle_t	selectSound;
 	sfxHandle_t	useNothingSound;
